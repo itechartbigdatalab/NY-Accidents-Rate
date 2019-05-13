@@ -3,10 +3,8 @@ package com.itechart.ny_accidents.districts.parser
 import com.github.tototoshi.csv.CSVReader
 import com.itechart.ny_accidents.entity.District
 import com.itechart.ny_accidents.utils.PostgisUtils
-import com.sun.net.httpserver.Authenticator.{Failure, Success}
 import org.slf4j.LoggerFactory
 
-import scala.util.{Failure, Success, Try}
 import scala.util.control.Exception
 
 class DistrictsParser {

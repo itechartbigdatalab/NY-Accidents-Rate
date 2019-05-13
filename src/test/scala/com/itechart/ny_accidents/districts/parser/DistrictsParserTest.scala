@@ -4,8 +4,6 @@ import com.itechart.ny_accidents.entity.District
 import com.itechart.ny_accidents.utils.PostgisUtils
 import org.scalatest.FunSpec
 
-import scala.util.Try
-
 class DistrictsParserTest extends FunSpec {
   val testSubject = new DistrictsParser
 

@@ -1,10 +1,8 @@
 package com.itechart.ny_accidents.districts.database
 
 import com.itechart.ny_accidents.entity.District
-import com.vividsolutions.jts.geom.{Geometry, MultiPolygon}
-import slick.dbio.Effect
+import com.vividsolutions.jts.geom.{Geometry, Point}
 import slick.jdbc.{JdbcProfile, PostgresProfile}
-import slick.sql.FixedSqlAction
 
 class DistrictsDao(val profile: JdbcProfile = PostgresProfile) {
   private lazy val TABLE_NAME = "district"
@@ -23,4 +21,5 @@ class DistrictsDao(val profile: JdbcProfile = PostgresProfile) {
 
   def insert(dist: District): DBIO[Int] = query += dist
 
+  def getByCoordinates(point: Point): DBIO[Option[District]] = query.filter(_.geometry.contains(point)).result.headOption
 }
