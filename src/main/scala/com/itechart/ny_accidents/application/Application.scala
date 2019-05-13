@@ -1,5 +1,5 @@
 package com.itechart.ny_accidents.application
 
-class Application extends App {
+object Application extends App {
 
 }
