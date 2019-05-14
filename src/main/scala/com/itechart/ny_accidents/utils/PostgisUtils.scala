@@ -5,7 +5,7 @@ import com.vividsolutions.jts.geom.{Coordinate, Geometry, Point}
 import com.vividsolutions.jts.io.WKTReader
 
 object PostgisUtils {
-  def getMultiPolygonFromText(text: String): Geometry = {
+  def getGeometryFromText(text: String): Geometry = {
     new WKTReader().read(text)
   }
 

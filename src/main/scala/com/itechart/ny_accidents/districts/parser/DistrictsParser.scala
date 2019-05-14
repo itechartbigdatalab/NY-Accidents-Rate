@@ -22,6 +22,6 @@ class DistrictsParser {
   def parseList(cols: List[String]): Option[District] = {
     Exception.allCatch.opt(District(cols(NTANAME_COL_NUMBER),
       cols(BORONAME_COL_NUMBER),
-      PostgisUtils.getMultiPolygonFromText(cols(GEOM_COL_NUMBER))))
+      PostgisUtils.getGeometryFromText(cols(GEOM_COL_NUMBER))))
   }
 }

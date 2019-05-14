@@ -20,3 +20,10 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.3"
 
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5" % "test"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+
+enablePlugins(FlywayPlugin)
+flywayDriver := "org.postgresql.Driver"
+flywayUrl := "jdbc:postgresql://localhost:5432/ny_data"
+flywayUser := "postgres" // Replace with your postgres login & password
+flywayPassword := "postgres"
+flywayLocations := Seq("filesystem:" + (resourceDirectory in Compile).value + "/db/migration/")
