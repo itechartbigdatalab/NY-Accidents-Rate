@@ -1,5 +1,6 @@
 package com.itechart.ny_accidents.application
 
+
 import com.itechart.ny_accidents.utils.CsvReader
 import com.itechart.ny_accidents.utils.AccidentsUtils._
 import com.typesafe.config.ConfigFactory
