@@ -18,6 +18,10 @@ libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.5"
 libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.3" % "provided"
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.3" % "provided"
 
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-core" % "2.9.8" % "provided"
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-databind" % "2.9.8" % "provided"
+libraryDependencies += "com.fasterxml.jackson.core" % "jackson-annotations" % "2.9.8" % "provided"
+
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5" % "test"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
