@@ -15,8 +15,8 @@ libraryDependencies += "com.github.tminglei" %% "slick-pg_jts" % "0.17.2"
 libraryDependencies += "com.typesafe" % "config" % "1.3.3"
 libraryDependencies += "com.github.tototoshi" %% "scala-csv" % "1.3.5"
 
-libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.3"
-libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.3"
+libraryDependencies += "org.apache.spark" %% "spark-core" % "2.4.3" % "provided"
+libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.3" % "provided"
 
 libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.5" % "test"
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
