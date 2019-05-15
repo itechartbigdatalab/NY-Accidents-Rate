@@ -1,29 +1,43 @@
 package com.itechart.ny_accidents.weather
 
-import com.itechart.ny_accidents.weather.WeatherDAO.WeatherEntities
-import com.itechart.ny_accidents.weather.entity.WeatherEntity
-import slick.lifted.{TableQuery, Tag}
-import slick.model.Table
+import com.itechart.ny_accidents.districts.controller.ExtendedPostgresDriver.api._
+import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherStation}
+import com.vividsolutions.jts.geom.Point
+import slick.jdbc.{JdbcProfile, PostgresProfile}
 
-object WeatherDAO extends TableQuery(new WeatherEntities(_)) {
+class WeatherDAO(val profile: JdbcProfile = PostgresProfile) {
 
-  private lazy val TABLE_NAME = "weather"
+  private lazy val WEATHER_TABLE_NAME = "weather"
+  private lazy val STATION_TABLE_NAME = "station"
+  private lazy val weatherQuery = TableQuery[WeatherEntities]
+  private lazy val stationQuery = TableQuery[Stations]
 
-  private class WeatherEntities(tag: Tag) extends Table[WeatherEntity](tag, "WEATHER_ENTITIES") {
-    def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
-    def localDateTime = column[Long]("DateTime")
-    def temperature = column[Int]("Temperature")
-    def pressure = column[Double]("Pressure")
-    def humidity = column[Int]("Humidity")
-    def windSpeed = column[Double]("windSpeed")
-    def phenomenon = column[String]("Phenomenon")
-    def visibility = column[Double]("Visibility")
+  private class WeatherEntities(tag: Tag) extends Table[WeatherEntity](tag, WEATHER_TABLE_NAME) {
+    val id = column[Long]("id", O.PrimaryKey, O.AutoInc)
+    val stationId = column[Int]("station_fk")
+    val localDateTime = column[Long]("datetime")
+    val temperature = column[Int]("temperature")
+    val pressure = column[Double]("pressure")
+    val humidity = column[Int]("humidity")
+    val windSpeed = column[Double]("windspeed")
+    val phenomenon = column[String]("phenomenon")
+    val visibility = column[Double]("visibility")
 
-    def * = (id, localDateTime, temperature, pressure, humidity, windSpeed, phenomenon, visibility) <> (WeatherEntity.tupled, WeatherEntity.unapply)
+    def * = (id, stationId, localDateTime, temperature, pressure, humidity, windSpeed, phenomenon, visibility) <>
+      (WeatherEntity.tupled, WeatherEntity.unapply)
+  }
+
+  private class Stations(tag: Tag) extends Table[WeatherStation](tag, STATION_TABLE_NAME) {
+    val stationId = column[Int]("id", O.PrimaryKey)
+    val name = column[String]("name")
+    val point = column[Point]("geom")
+
+    def * = (stationId, name, point) <> (WeatherStation.tupled, WeatherStation.unapply)
   }
 
 
-  def insert(weather: WeatherEntity) = {
+  def insert(weather: WeatherEntity): DBIO[Int] = weatherQuery += weather
 
-  }
+  def insert(station: WeatherStation): DBIO[Int] = stationQuery += station
+
 }
