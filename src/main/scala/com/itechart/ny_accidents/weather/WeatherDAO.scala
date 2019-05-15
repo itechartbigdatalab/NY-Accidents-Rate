@@ -16,9 +16,9 @@ class WeatherDAO(val profile: JdbcProfile = PostgresProfile) {
     val id = column[Long]("id", O.PrimaryKey, O.AutoInc)
     val stationId = column[Int]("station_fk")
     val localDateTime = column[Long]("datetime")
-    val temperature = column[Int]("temperature")
+    val temperature = column[Double]("temperature")
     val pressure = column[Double]("pressure")
-    val humidity = column[Int]("humidity")
+    val humidity = column[Double]("humidity")
     val windSpeed = column[Double]("windspeed")
     val phenomenon = column[String]("phenomenon")
     val visibility = column[Double]("visibility")
@@ -35,8 +35,11 @@ class WeatherDAO(val profile: JdbcProfile = PostgresProfile) {
     def * = (stationId, name, point) <> (WeatherStation.tupled, WeatherStation.unapply)
   }
 
+//  def findStationByCoordinate():DBIO[Int] = stationQuery
 
-  def insert(weather: WeatherEntity): DBIO[Int] = weatherQuery += weather
+  def insert(weather: WeatherEntity): DBIO[Int] = {
+    weatherQuery += weather
+  }
 
   def insert(station: WeatherStation): DBIO[Int] = stationQuery += station
 
