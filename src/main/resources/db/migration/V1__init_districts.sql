@@ -1,0 +1,7 @@
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+CREATE TABLE district (
+    nta_name VARCHAR(60) NOT NULL PRIMARY KEY,
+    borough_name VARCHAR(60) NOT NULL,
+    geom geometry(MULTIPOLYGON) NOT NULL
+);
