@@ -19,4 +19,5 @@ object Application extends App {
   val inputFileAccidents = pathToDataFolder + filesConfig.getString("file.input.inputFileNYAccidents")
   val raw = sc.parallelize(CsvReader.readData(inputFileAccidents))
 
+  println(raw.count())
 }

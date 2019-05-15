@@ -25,6 +25,7 @@ object AccidentsUtils {
       case e: NumberFormatException => None
     }
   }
+
   def accidentsMapper(value: Map[String, String]): RawAccidentsNY={
 
 //
