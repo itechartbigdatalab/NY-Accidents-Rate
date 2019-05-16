@@ -1,8 +1,8 @@
 package com.itechart.ny_accidents.districts.parser
 
-import com.github.tototoshi.csv.CSVReader
 import com.itechart.ny_accidents.entity.District
 import com.itechart.ny_accidents.utils.PostgisUtils
+import org.apache.spark.sql.{Row, SparkSession}
 import org.slf4j.LoggerFactory
 
 import scala.util.control.Exception
@@ -15,13 +15,20 @@ class DistrictsParser {
   private lazy val NTANAME_COL_NUMBER = 5
 
   // TODO should add check if file exists
-  def parseCsv(path: String): Seq[District] = {
-    CSVReader.open(path).all().drop(1).map(parseList).filter(_.isDefined).map(_.get)
+  def parseCsv(path: String, spark: SparkSession): Seq[Option[District]] = {
+    val csv: Array[Row] = spark.read
+      .format("csv")
+      .option("header", "true") //first line in file has headers
+      .option("mode", "DROPMALFORMED")
+      .load(path)
+      .collect()
+
+    csv.map(parseList).toSeq
   }
 
-  def parseList(cols: List[String]): Option[District] = {
-    Exception.allCatch.opt(District(cols(NTANAME_COL_NUMBER),
-      cols(BORONAME_COL_NUMBER),
-      PostgisUtils.getGeometryFromText(cols(GEOM_COL_NUMBER))))
+  def parseList(row: Row): Option[District] = {
+    Exception.allCatch.opt(District(row(NTANAME_COL_NUMBER).toString,
+      row(BORONAME_COL_NUMBER).toString,
+      PostgisUtils.getGeometryFromText(row(GEOM_COL_NUMBER).toString)))
   }
 }

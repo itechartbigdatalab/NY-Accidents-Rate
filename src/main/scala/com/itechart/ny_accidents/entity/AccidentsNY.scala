@@ -1,6 +1,5 @@
 package com.itechart.ny_accidents.entity
 import java.time.{LocalDate, LocalTime}
-import java.util.Date
 
 object AccidentsNY {
 case class RawAccidentsNY(date: LocalDate, time: LocalTime, latitude: Option[Double], longitude: Option[Double],

@@ -1,13 +1,10 @@
 package com.itechart.ny_accidents.utils
 
-import java.time.{LocalDate, LocalTime}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, LocalTime}
 
-import com.itechart.ny_accidents.entity.AccidentsNY.RawAccidentsNY
 import com.itechart.ny_accidents.entity.AccidentsHeader._
-
-import scala.collection.immutable.HashMap
-import scala.util.{Failure, Success, Try}
+import com.itechart.ny_accidents.entity.AccidentsNY.RawAccidentsNY
 
 object AccidentsUtils {
   def toDouble(s: String):Option[Double] = {
