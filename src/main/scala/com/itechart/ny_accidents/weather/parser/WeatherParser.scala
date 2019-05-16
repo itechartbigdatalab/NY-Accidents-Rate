@@ -31,7 +31,7 @@ class WeatherParser {
     Exception.allCatch.opt(WeatherEntity(
       0,
       1,
-      DateUtils.parseDate(columns.head, GeneralConstants.DATE_FORMATTER_WEATHER).get,
+      DateUtils.parseDate(columns.head, GeneralConstants.DATE_TIME_FORMATTER_WEATHER).get,
       columns(1).toDouble,
       columns(3).toDouble,
       columns(4).toDouble,
