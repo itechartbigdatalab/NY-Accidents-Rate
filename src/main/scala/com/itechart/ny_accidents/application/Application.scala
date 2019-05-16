@@ -1,6 +1,7 @@
 package com.itechart.ny_accidents.application
 
 
+
 import com.itechart.ny_accidents.merge.Merger
 import com.itechart.ny_accidents.utils.CsvReader
 import com.typesafe.config.ConfigFactory
@@ -23,5 +24,6 @@ object Application extends App {
   val mergedData = Merger(raws, sc)
   println(mergedData.count())
   println(raws.count())
+
 
 }
