@@ -13,7 +13,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 object Application extends App {
   Logger.getLogger("org").setLevel(Level.OFF)
   Logger.getLogger("akka").setLevel(Level.OFF)
-
+  Logger.getLogger("spark").setLevel(Level.OFF)
   val conf = new SparkConf().setAppName("main").setMaster("local[*]")
   val sc = new SparkContext(conf)
   sc.setLogLevel("OFF")
