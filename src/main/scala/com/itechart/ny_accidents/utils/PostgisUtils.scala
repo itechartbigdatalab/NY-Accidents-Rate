@@ -11,6 +11,6 @@ object PostgisUtils {
 
   def createPoint(latitude: Double, longitude: Double): Point = {
     val geometryFactory = new geom.GeometryFactory
-    geometryFactory.createPoint(new Coordinate(latitude, longitude))
+    geometryFactory.createPoint(new Coordinate( longitude, latitude))
   }
 }
