@@ -20,7 +20,7 @@ class WeatherMappingService {
   def findWeatherByTimeAndCoordinates(time: Long, lat: Double, lon: Double): WeatherForAccident = {
     val id = getNearestStationId(lat, lon)
     val currentStationWeather = allWeather
-      .filter(_.id == id)
+      .filter(_.stationId == id)
 
     val farWeather = currentStationWeather
       .filter(_.localDateTime >= time)
@@ -43,7 +43,7 @@ class WeatherMappingService {
   }
 
   def nearestWeather(weatherEntity1: WeatherEntity, weatherEntity2: WeatherEntity, time: Long): WeatherEntity = {
-    if (Math.abs(weatherEntity1.localDateTime - time) > Math.abs(weatherEntity2.localDateTime - time)) {
+    if (Math.abs(weatherEntity1.localDateTime - time) < Math.abs(weatherEntity2.localDateTime - time)) {
       return weatherEntity1
     }
     weatherEntity2
