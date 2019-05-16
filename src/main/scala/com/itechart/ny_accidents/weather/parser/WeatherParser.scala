@@ -14,7 +14,8 @@ class WeatherParser {
     //      .all()
     val bufferedSource = Source.fromFile(path)
     bufferedSource.getLines()
-      .map(_.split(";"))
+//      .map(_.split(",").toList)
+      .map(_.split(";").toList)
       .toList
       .map(_.map(_.replaceAll("\"", "")).toList)
       .map(parseWeatherLine)
@@ -27,8 +28,7 @@ class WeatherParser {
   }
 
   def parseWeatherLine(columns: List[String]): Option[WeatherEntity] = {
-    Exception.allCatch.opt(
-      WeatherEntity(
+    Exception.allCatch.opt(WeatherEntity(
       0,
       1,
       DateUtils.parseDate(columns.head, GeneralConstants.DATE_FORMATTER_WEATHER).get,

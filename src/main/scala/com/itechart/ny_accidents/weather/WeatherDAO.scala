@@ -3,7 +3,9 @@ package com.itechart.ny_accidents.weather
 import com.itechart.ny_accidents.districts.controller.ExtendedPostgresDriver.api._
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherStation}
 import com.vividsolutions.jts.geom.Point
+import slick.dbio.Effect
 import slick.jdbc.{JdbcProfile, PostgresProfile}
+import slick.sql.{FixedSqlAction, SqlStreamingAction}
 
 class WeatherDAO(val profile: JdbcProfile = PostgresProfile) {
 
@@ -35,12 +37,25 @@ class WeatherDAO(val profile: JdbcProfile = PostgresProfile) {
     def * = (stationId, name, point) <> (WeatherStation.tupled, WeatherStation.unapply)
   }
 
-//  def findStationByCoordinate():DBIO[Int] = stationQuery
+  var schetchik = 0
+  def weatherByCoordinatesAndTime(accidentTime: Long, lat: Double, lon: Double): DBIO[Vector[(Double, Double, Double, String, Double, Double)]] = {
 
-  def insert(weather: WeatherEntity): DBIO[Int] = {
-    weatherQuery += weather
+    val retval = sql"""SELECT * from findByCoordinatesAndTime($accidentTime, $lat, $lon)""".as[(Double, Double, Double, String, Double, Double)]
+
+    schetchik += 1
+    println(schetchik)
+    retval
   }
 
+  def allWeather(): DBIO[Seq[WeatherEntity]] = weatherQuery.result
+
+  def allStations(): DBIO[Seq[WeatherStation]] = stationQuery.result
+
+  def insert(weather: WeatherEntity): DBIO[Int] = weatherQuery += weather
+
+  def insert(weathers: Seq[WeatherEntity]): FixedSqlAction[Option[Int], NoStream, Effect.Write] = weatherQuery ++= weathers
+
   def insert(station: WeatherStation): DBIO[Int] = stationQuery += station
+
 
 }
