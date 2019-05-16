@@ -42,11 +42,12 @@ class WeatherMappingService {
     )
   }
 
-  def nearestWeather(weatherEntity1: WeatherEntity, weatherEntity2: WeatherEntity, time: Long): WeatherEntity = {
+  private def nearestWeather(weatherEntity1: WeatherEntity, weatherEntity2: WeatherEntity, time: Long): WeatherEntity = {
     if (Math.abs(weatherEntity1.localDateTime - time) < Math.abs(weatherEntity2.localDateTime - time)) {
-      return weatherEntity1
+      weatherEntity1
+    } else {
+      weatherEntity2
     }
-    weatherEntity2
   }
 
   private def getNearestStationId(lat: Double, lon: Double): Int = {

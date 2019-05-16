@@ -1,0 +1,1 @@
+UPDATE station SET geom = ST_FlipCoordinates(geom);

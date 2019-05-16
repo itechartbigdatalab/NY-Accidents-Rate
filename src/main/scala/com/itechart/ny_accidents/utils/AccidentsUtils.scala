@@ -7,6 +7,8 @@ import com.itechart.ny_accidents.entity.AccidentsHeader._
 import com.itechart.ny_accidents.entity.AccidentsNY.RawAccidentsNY
 
 object AccidentsUtils {
+
+  // TODO replace try {} by Try-match
   def toDouble(s: String):Option[Double] = {
     try {
       Some(s.toDouble)
@@ -15,6 +17,7 @@ object AccidentsUtils {
     }
   }
 
+  // TODO replace try {} by Try-match
   def toInt(s: String):Option[Int] = {
     try {
       Some(s.toInt)

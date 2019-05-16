@@ -22,6 +22,7 @@ object Merger {
 
   }
 
+  // TODO Replace Districts Dao by DistrictsService!
   private def mapper(value: AccidentsNY.RawAccidentsNY): MergedData ={
     val dao = new DistrictsDao
     val fut = DistrictsDatabase.database.run(dao.getByCoordinates(PostgisUtils.createPoint(value.latitude.getOrElse(0), value.longitude.getOrElse(0))))
