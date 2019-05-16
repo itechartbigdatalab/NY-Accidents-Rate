@@ -7,6 +7,7 @@ import org.mongodb.scala.model.Filters
 
 import scala.concurrent.Future
 
+@Deprecated
 object MongoDistrictsDao {
   private final val COLLECTION_NAME = "districts"
   private lazy val collection = NyDataDatabaseMongo.database.getCollection(COLLECTION_NAME)

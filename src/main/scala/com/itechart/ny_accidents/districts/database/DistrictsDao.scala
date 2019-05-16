@@ -4,6 +4,7 @@ import com.itechart.ny_accidents.entity.District
 import com.vividsolutions.jts.geom.{Geometry, Point}
 import slick.jdbc.{JdbcProfile, PostgresProfile}
 
+@Deprecated
 class DistrictsDao(val profile: JdbcProfile = PostgresProfile) {
   private lazy val TABLE_NAME = "district"
   import com.itechart.ny_accidents.districts.controller.ExtendedPostgresDriver.api._

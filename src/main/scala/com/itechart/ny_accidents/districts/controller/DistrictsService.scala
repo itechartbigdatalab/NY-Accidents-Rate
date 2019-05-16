@@ -5,10 +5,10 @@ import com.itechart.ny_accidents.entity.{District, DistrictMongo}
 import com.itechart.ny_accidents.utils.PostgisUtils
 import com.mongodb.client.model.geojson.Position
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 
-class DistrictsController {
-  private implicit val ec = ExecutionContext.global
+class DistrictsService {
+  private implicit val ec: ExecutionContextExecutor = ExecutionContext.global
 
   def getDistrict(latitude: Double, longitude: Double): Future[Option[DistrictMongo]] = {
     val position = new Position(latitude, longitude)
