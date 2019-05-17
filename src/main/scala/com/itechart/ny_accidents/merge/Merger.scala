@@ -15,9 +15,9 @@ object Merger {
   }
   private def mapper(value: AccidentsNY.RawAccidentsNY): MergedData ={
 
-    if (value.longitude != None && value.latitude != None ) {
+    if (value.longitude.isDefined && value.latitude.isDefined ) {
       val district = ds.getDistrict(value.latitude.getOrElse(0), value.longitude.getOrElse(0), DistrictsStorage.data )
-      if (value.dateTimeMillis != None) {
+      if (value.dateTimeMillis.isDefined) {
         val weather = service.findWeatherByTimeAndCoordinates(value.dateTimeMillis.getOrElse(0), value.latitude.getOrElse(0), value.longitude.getOrElse(0))
         MergedData(value, district, Option(weather))
       }
