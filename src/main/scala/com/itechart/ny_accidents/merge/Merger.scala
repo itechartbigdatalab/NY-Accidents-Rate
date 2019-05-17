@@ -2,7 +2,7 @@ package com.itechart.ny_accidents.merge
 
 import com.itechart.ny_accidents.database.DistrictsStorage
 import com.itechart.ny_accidents.districts.controller.DistrictsService
-import com.itechart.ny_accidents.entity.{AccidentsNY, MergedData}
+import com.itechart.ny_accidents.entity.{Accident,  MergedData}
 import com.itechart.ny_accidents.weather.WeatherMappingService
 
 object Merger {
@@ -10,10 +10,10 @@ object Merger {
   private val ds = new DistrictsService
   private val service = new WeatherMappingService()
 
-  def apply(accidents: Seq[AccidentsNY.RawAccidentsNY]):  Seq[MergedData] ={
+  def apply(accidents: Seq[Accident]):  Seq[MergedData] ={
      accidents.map(mapper)
   }
-  private def mapper(value: AccidentsNY.RawAccidentsNY): MergedData ={
+  private def mapper(value: Accident): MergedData ={
 
     if (value.longitude.isDefined && value.latitude.isDefined ) {
       val district = ds.getDistrict(value.latitude.getOrElse(0), value.longitude.getOrElse(0), DistrictsStorage.data )

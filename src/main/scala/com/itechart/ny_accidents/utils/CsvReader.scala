@@ -1,13 +1,13 @@
 package com.itechart.ny_accidents.utils
 
 import com.github.tototoshi.csv.CSVReader
-import com.itechart.ny_accidents.entity.AccidentsNY.RawAccidentsNY
+import com.itechart.ny_accidents.entity.Accident
 import com.itechart.ny_accidents.spark.Spark
 import com.itechart.ny_accidents.utils.AccidentsUtils.accidentsMapper
 import org.apache.spark.sql.Row
 
 object CsvReader {
-  def readData(fileName: String): Seq[RawAccidentsNY] = {
+  def readData(fileName: String): Seq[Accident] = {
 
     val csvAccidentsData: Array[Row] = Spark.sparkSql.read
       .option("header", "true")

@@ -1,14 +1,13 @@
 package com.itechart.ny_accidents.utils
-
 import java.time.{LocalDate, LocalTime}
 
 import com.itechart.ny_accidents.GeneralConstants
 import com.itechart.ny_accidents.GeneralConstants.{DATE_FORMATTER_ACCIDENTS, TIME_FORMATTER_ACCIDENTS}
+import com.itechart.ny_accidents.entity.Accident
 import com.itechart.ny_accidents.entity.AccidentsHeader._
-import com.itechart.ny_accidents.entity.AccidentsNY.RawAccidentsNY
 import org.apache.spark.sql.Row
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 object AccidentsUtils {
 
@@ -46,9 +45,9 @@ object AccidentsUtils {
   //
   //  }
 
-  def accidentsMapper(accident: Row): RawAccidentsNY = {
+  def accidentsMapper(accident: Row): Accident = {
 
-    RawAccidentsNY(
+    Accident(
       LocalDate.parse(accident.getString(DATE_C), DATE_FORMATTER_ACCIDENTS),
       LocalTime.parse(accident.getString(TIME_C), TIME_FORMATTER_ACCIDENTS),
       toMillis(accident, DATE_C, TIME_C),
