@@ -4,14 +4,13 @@ import com.itechart.ny_accidents.database.DistrictsStorage
 import com.itechart.ny_accidents.districts.controller.DistrictsService
 import com.itechart.ny_accidents.entity.{Accident, MergedData}
 import com.itechart.ny_accidents.weather.WeatherMappingService
-import org.apache.spark.rdd.RDD
 
 object Merger {
 
   private val ds = new DistrictsService
   private val service = new WeatherMappingService()
 
-  def apply(accidents: RDD[Accident]): RDD[MergedData] = {
+  def apply(accidents: Seq[Accident]): Seq[MergedData] = {
     accidents.map(mapper)
   }
 

@@ -11,10 +11,12 @@ object Application extends App {
   val filesConfig = ConfigFactory.load("app.conf")
   val pathToDataFolder = filesConfig.getString("file.inputPath")
   val inputFileAccidents = pathToDataFolder + filesConfig.getString("file.input.inputFileNYAccidents")
-  val raws = Spark.sc.parallelize(CsvReader.readData(inputFileAccidents)).cache()
-  val mergedData = Merger(raws)
-  //  val q = mergedData.take(8)
-  //  println(mergedData.count())
-  println(raws.count() + "KISAKISA")
-  //  println(q)
+  val raws = CsvReader.readData(inputFileAccidents)
+  val sc = Spark.sc
+  val mergedData = sc.parallelize(Merger(raws))
+  mergedData.foreach(println)
+//  val q = mergedData.take(8)
+//  println(mergedData.count())
+  println(raws.size)
+//  println(q)
 }
