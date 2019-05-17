@@ -2,6 +2,7 @@ package com.itechart.ny_accidents.database
 
 import org.mongodb.scala.{MongoClient, MongoDatabase}
 
+@Deprecated
 object NyDataDatabaseMongo {
   private final val MONGO_HOST = "mongodb://localhost:27017"
   private final val DATABASE = "ny_data"

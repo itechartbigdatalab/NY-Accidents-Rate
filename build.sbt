@@ -2,7 +2,7 @@ name := "New-York-accident-rate_v.ananase"
 version := "0.1"
 scalaVersion := "2.12.8"
 
-mainClass in (Compile, run) := Some("com.itechart.ny_accidents.application.Application")
+mainClass in (Compile, run) := Some("com.itechart.ny_accidents.Application")
 
 libraryDependencies ++= Seq(
   "ch.qos.logback" % "logback-classic" % "1.0.9",

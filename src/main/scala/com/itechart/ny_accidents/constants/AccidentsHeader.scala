@@ -1,4 +1,4 @@
-package com.itechart.ny_accidents.entity
+package com.itechart.ny_accidents.constants
 
 object AccidentsHeader {
 
@@ -37,12 +37,14 @@ object AccidentsHeader {
   val MOTORIST_INJURED = 16
   val MOTORIST_KILLED = 17
 
+  // TODO refactor arrays
   val CONTRIBUTING_FACTOR_VEHICLE_1_C = 18
   val CONTRIBUTING_FACTOR_VEHICLE_2_C = 19
   val CONTRIBUTING_FACTOR_VEHICLE_3_C = 20
   val CONTRIBUTING_FACTOR_VEHICLE_4_C = 21
   val CONTRIBUTING_FACTOR_VEHICLE_5_C = 22
-  val CONTRIBUTING_FACTOR_VEHICLE_COLUMNS = Array(18, 19, 20, 21, 22)
+  val CONTRIBUTING_FACTOR_VEHICLE_COLUMNS = Array(
+    CONTRIBUTING_FACTOR_VEHICLE_1_C, 19, 20, 21, 22)
 
   val VEHICLE_TYPE_CODE_1_C = 24
   val VEHICLE_TYPE_CODE_2_C = 25

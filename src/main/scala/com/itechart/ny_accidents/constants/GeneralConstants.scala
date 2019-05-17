@@ -1,4 +1,4 @@
-package com.itechart.ny_accidents
+package com.itechart.ny_accidents.constants
 
 import java.time.format.DateTimeFormatter
 

@@ -1,11 +1,12 @@
-package com.itechart.ny_accidents.weather
+package com.itechart.ny_accidents.database.dao
 
-import com.itechart.ny_accidents.districts.controller.ExtendedPostgresDriver.api._
+import com.itechart.ny_accidents.database.ExtendedPostgresDriver.api._
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherStation}
 import com.vividsolutions.jts.geom.Point
 import slick.dbio.Effect
 import slick.jdbc.{JdbcProfile, PostgresProfile}
-import slick.sql.{FixedSqlAction, SqlStreamingAction}
+import slick.sql.FixedSqlAction
+
 
 class WeatherDAO(val profile: JdbcProfile = PostgresProfile) {
 
@@ -35,16 +36,6 @@ class WeatherDAO(val profile: JdbcProfile = PostgresProfile) {
     val point = column[Point]("geom")
 
     def * = (stationId, name, point) <> (WeatherStation.tupled, WeatherStation.unapply)
-  }
-
-  var schetchik = 0
-  def weatherByCoordinatesAndTime(accidentTime: Long, lat: Double, lon: Double): DBIO[Vector[(Double, Double, Double, String, Double, Double)]] = {
-
-    val retval = sql"""SELECT * from findByCoordinatesAndTime($accidentTime, $lat, $lon)""".as[(Double, Double, Double, String, Double, Double)]
-
-    schetchik += 1
-    println(schetchik)
-    retval
   }
 
   def allWeather(): DBIO[Seq[WeatherEntity]] = weatherQuery.result

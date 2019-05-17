@@ -7,7 +7,7 @@ case class Accident(date: LocalDate,
                     dateTimeMillis: Option[Long],
                     latitude: Option[Double],
                     longitude: Option[Double],
-                    onStreet:Option[String],
+                    onStreet: Option[String],
                     crossStreet: Option[String],
                     offStreet: Option[String],
                     personsInjured: Option[Int],
@@ -19,5 +19,4 @@ case class Accident(date: LocalDate,
                     motoristInjured: Option[Int],
                     motoristKilled: Option[Int],
                     contributingFactors: List[Option[String]],
-                    vehicleType: List[Option[String]]
-                           )
+                    vehicleType: List[Option[String]])

@@ -1,6 +1,6 @@
-package com.itechart.ny_accidents.weather.parser
+package com.itechart.ny_accidents.parse
 
-import com.itechart.ny_accidents.GeneralConstants
+import com.itechart.ny_accidents.constants.GeneralConstants
 import com.itechart.ny_accidents.entity.WeatherEntity
 import com.itechart.ny_accidents.utils.DateUtils
 
@@ -10,11 +10,9 @@ import scala.util.control.Exception
 class WeatherParser {
 
   def parseCsv(path: String): Seq[WeatherEntity] = {
-    //    CSVReader.open(path)
-    //      .all()
     val bufferedSource = Source.fromFile(path)
     bufferedSource.getLines()
-//      .map(_.split(",").toList)
+      //      .map(_.split(",").toList)
       .map(_.split(";").toList)
       .toList
       .map(_.map(_.replaceAll("\"", "")).toList)

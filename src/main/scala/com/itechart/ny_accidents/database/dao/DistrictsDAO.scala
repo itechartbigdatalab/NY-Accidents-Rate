@@ -1,15 +1,16 @@
-package com.itechart.ny_accidents.districts.database
+package com.itechart.ny_accidents.database.dao
 
 import com.itechart.ny_accidents.entity.District
 import com.vividsolutions.jts.geom.{Geometry, Point}
 import slick.jdbc.{JdbcProfile, PostgresProfile}
+import slick.lifted
 
 @Deprecated
-class DistrictsDao(val profile: JdbcProfile = PostgresProfile) {
+class DistrictsDAO(val profile: JdbcProfile = PostgresProfile) {
   private lazy val TABLE_NAME = "district"
-  import com.itechart.ny_accidents.districts.controller.ExtendedPostgresDriver.api._
-  private lazy val query = TableQuery[DistrictsTable]
+  private lazy val query = lifted.TableQuery[DistrictsTable]
 
+  import com.itechart.ny_accidents.database.ExtendedPostgresDriver.api._
   private class DistrictsTable(tag: Tag) extends Table[District](tag, TABLE_NAME) {
     val districtName = column[String]("nta_name", O.PrimaryKey, O.Length(60))
     val boroughName = column[String]("borough_name", O.Length(60))
