@@ -1,34 +1,30 @@
 package com.itechart.ny_accidents.merge
 
-import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
 
-import com.itechart.ny_accidents.districts.controller.DistrictsDatabase
+import com.itechart.ny_accidents.GeneralConstants
+import com.itechart.ny_accidents.database.DistrictsStorage
+import com.itechart.ny_accidents.districts.controller.{DistrictsDatabase, DistrictsService}
 import com.itechart.ny_accidents.districts.database.DistrictsDao
 import com.itechart.ny_accidents.entity.{AccidentsNY, MergedData}
 import com.itechart.ny_accidents.utils.{DateUtils, PostgisUtils}
 import com.itechart.ny_accidents.weather.WeatherMappingService
-import org.apache.spark.SparkContext
-import org.apache.spark.rdd.RDD
+import org.codehaus.jackson.map.ext.JodaDeserializers.LocalDateTimeDeserializer
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 object Merger {
 
-  def apply(accidents: RDD[AccidentsNY.RawAccidentsNY], sc: SparkContext):  RDD[MergedData] ={
-
-    val q = accidents.map(mapper)
-      q
-
+  def apply(accidents: Seq[AccidentsNY.RawAccidentsNY]):  Seq[MergedData] ={
+     accidents.map(mapper)
   }
 
-  // TODO Replace Districts Dao by DistrictsService!
   private def mapper(value: AccidentsNY.RawAccidentsNY): MergedData ={
-    val dao = new DistrictsDao
-    val fut = DistrictsDatabase.database.run(dao.getByCoordinates(PostgisUtils.createPoint(value.latitude.getOrElse(0), value.longitude.getOrElse(0))))
-    val district = Await.result(fut, Duration.Inf)
+    val ds = new DistrictsService
+    val district = ds.getDistrict(value.latitude.getOrElse(0), value.longitude.getOrElse(0), DistrictsStorage.data )
     val service = new WeatherMappingService()
-    val weather = service.findWeatherByTimeAndCoordinates(DateUtils.parseDate(value.date.toString ,DateTimeFormatter.ofPattern("MM/d/yyyy")).getOrElse(0), value.latitude.getOrElse(0), value.longitude.getOrElse(0))
+    val weather = service.findWeatherByTimeAndCoordinates(value.datetimeunix), value.latitude.getOrElse(0), value.longitude.getOrElse(0))
     MergedData(value, district, weather)
   }
 }
