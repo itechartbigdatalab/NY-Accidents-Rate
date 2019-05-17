@@ -16,4 +16,5 @@ object Application extends App {
   println(mergedData.size)
   //raw.foreach(println)
   println(raw.size)
+  println(q)
 }
