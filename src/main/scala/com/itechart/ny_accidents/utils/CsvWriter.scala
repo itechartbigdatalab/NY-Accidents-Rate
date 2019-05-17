@@ -5,6 +5,7 @@ import com.github.tototoshi.csv.CSVWriter
 import scala.collection.immutable.HashMap
 import scala.concurrent.{ExecutionContext, Future}
 
+
 object CsvWriter {
 
   case class Answer(description: String, answer: Any)
