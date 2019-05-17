@@ -6,6 +6,7 @@ object AccidentsNY {
 
   case class RawAccidentsNY(date: LocalDate,
                             time: LocalTime,
+                            dateTimeMillis: Option[Long],
                             latitude: Option[Double],
                             longitude: Option[Double],
                             onStreet: String,
