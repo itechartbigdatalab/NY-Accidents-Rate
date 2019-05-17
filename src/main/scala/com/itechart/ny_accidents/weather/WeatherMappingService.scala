@@ -23,6 +23,7 @@ class WeatherMappingService {
         .groupBy(_._1)
         .mapValues(seq => seq.map(_._2))
     })
+  println("sd")
 
   def findWeatherByTimeAndCoordinates(accidentTime: Long, lat: Double, lon: Double): Option[WeatherForAccident] = {
     val stationId = getNearestStationId(lat, lon)
