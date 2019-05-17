@@ -5,7 +5,7 @@ import com.vividsolutions.jts.geom.Point
 
 case class WeatherEntity(id: Long,
                          stationId: Int,
-                         localDateTime: Long,
+                         dateTime: Long,
                          temperature: Double,
                          pressure: Double,
                          humidity: Double,

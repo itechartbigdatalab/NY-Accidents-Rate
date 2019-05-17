@@ -1,4 +1,5 @@
 package com.itechart.ny_accidents.utils
+
 import java.time.{LocalDate, LocalTime}
 
 import com.itechart.ny_accidents.GeneralConstants
@@ -53,9 +54,9 @@ object AccidentsUtils {
       toMillis(accident, DATE_C, TIME_C),
       toDouble(accident, LATITUDE_C),
       toDouble(accident, LONGITUDE_C),
-      accident.getString(ON_STREET_NAME_C),
-      accident.getString(CROSS_STREET_NAME_C),
-      accident.getString(OFF_STREET_NAME_C),
+      toString(accident, ON_STREET_NAME_C),
+      toString(accident, CROSS_STREET_NAME_C),
+      toString(accident, OFF_STREET_NAME_C),
       toInt(accident, PERSONS_INJURED_C),
       toInt(accident, PERSONS_KILLED_C),
       toInt(accident, PEDESTRIANS_INJURED),
@@ -66,12 +67,11 @@ object AccidentsUtils {
       toInt(accident, MOTORIST_KILLED),
       toStringList(accident, CONTRIBUTING_FACTOR_VEHICLE_COLUMNS),
       toStringList(accident, VEHICLE_TYPE_CODE_COLUMNS))
-
   }
 
   private def toMillis(row: Row, dateColumn: Int, timeColumn: Int): Option[Long] = {
     val dateTime = row.getString(dateColumn) + " " + row.getString(timeColumn)
-    DateUtils.parseDate(dateTime, GeneralConstants.DATE_TIME_FORMATTER_ACCIDENTS)
+    DateUtils.parseDate(dateTime, GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
   }
 
   private def toDouble(accident: Row, column: Int): Option[Double] = {
@@ -79,16 +79,16 @@ object AccidentsUtils {
   }
 
   private def toString(accident: Row, column: Int): Option[String] = {
-    Try(accident.getString(column)).toOption
+    Try(accident(column).toString).toOption
   }
 
   private def toInt(accident: Row, column: Int): Option[Int] = {
     Try(accident.getString(column).toInt).toOption
   }
 
-  private def toStringList(row: Row, columns: Array[Int]): List[String] = {
+  private def toStringList(row: Row, columns: Array[Int]): List[Option[String]] = {
     columns
-      .map(row.getString)
+      .map(toString(row, _))
       .toList
   }
 

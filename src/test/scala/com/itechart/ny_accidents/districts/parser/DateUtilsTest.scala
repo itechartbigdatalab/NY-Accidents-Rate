@@ -7,11 +7,11 @@ import org.scalatest.FunSpec
 class DateUtilsTest extends FunSpec {
   describe("DateUtils") {
     it("should return valid value") {
-      val expectedResult = 1463187060000L
-      val testValue = "14.05.2016 00:51"
-      println(DateUtils.parseDate(testValue, GeneralConstants.DATE_TIME_FORMATTER_WEATHER).isDefined)
+      val expectedResult = 1558095780000L
+      val testValue = "17.05.2019 15:23"
+      println(DateUtils.parseDate(testValue, GeneralConstants.DATE_TIME_WEATHER_PATTERN).isDefined)
 
-      assert(DateUtils.parseDate(testValue, GeneralConstants.DATE_TIME_FORMATTER_WEATHER).contains(expectedResult))
+      assert(DateUtils.parseDate(testValue, GeneralConstants.DATE_TIME_WEATHER_PATTERN).contains(expectedResult))
     }
   }
 }
