@@ -2,35 +2,55 @@ package com.itechart.ny_accidents.weather
 
 import com.itechart.ny_accidents.districts.controller.DistrictsDatabase
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherForAccident}
-import com.itechart.ny_accidents.utils.PostgisUtils
+import com.itechart.ny_accidents.utils.{DateUtils, PostgisUtils}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success, Try}
 
 class WeatherMappingService {
 
   val weatherDAO = new WeatherDAO()
 
-  private lazy val allStations = Await.result(DistrictsDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
-  private lazy val allWeather = Await.result(
-    DistrictsDatabase.database.run(weatherDAO.allWeather()), Duration.Inf
-  ).sortBy(weather => weather.localDateTime)
+  private val allStations = Await.result(DistrictsDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
+  // map under have such structure -> Map[stationId, Map[TimeHash, Seq[WeatherEntity]]]
+  private val allWeather: Map[Int, Map[Long, Seq[WeatherEntity]]] = Await.result(
+    DistrictsDatabase.database.run(weatherDAO.allWeather()), Duration.Inf)
+    .sortBy(weather => weather.dateTime)
+    .groupBy(weather => weather.stationId)
+    .mapValues(weathers => {
+      weathers.map(weather => (DateUtils.hashByDate(weather.dateTime), weather))
+        .groupBy(_._1)
+        .mapValues(seq => seq.map(_._2))
+    })
+
+  def findWeatherByTimeAndCoordinates(accidentTime: Long, lat: Double, lon: Double): Option[WeatherForAccident] = {
+    val stationId = getNearestStationId(lat, lon)
+
+    // we take weather for current hour, for future one and for previous, because if we have got 10:58 accident and
+    // weather time for 10 o'clock is 10:05, and the next weather is 11:05, it's will be more accurately to take 11:05 weather
+    Seq(
+      Try(allWeather(stationId)(DateUtils.hashByDate(accidentTime))).toOption,
+      Try(allWeather(stationId)(DateUtils.hashByDate(DateUtils.addHour(accidentTime)))).toOption,
+      Try(allWeather(stationId)(DateUtils.hashByDate(DateUtils.subtractHour(accidentTime)))).toOption
+    ).filter(_.isDefined).map(_.get).reduceOption(_ ++ _) match {
+      case Some(value) => Some(findBestMatchWeather(value, accidentTime))
+      case _ => None
+    }
+
+  }
 
 
-  def findWeatherByTimeAndCoordinates(time: Long, lat: Double, lon: Double): WeatherForAccident = {
-    val id = getNearestStationId(lat, lon)
-    val currentStationWeather = allWeather
-      .filter(_.stationId == id)
+  private def findBestMatchWeather(hashedWeatherForPeriod: Seq[WeatherEntity], accidentTime: Long): WeatherForAccident = {
+    val farWeather = hashedWeatherForPeriod
+      .filter(_.dateTime >= accidentTime)
+      .minBy(_.dateTime)
 
-    val farWeather = currentStationWeather
-      .filter(_.localDateTime >= time)
-      .minBy(_.localDateTime)
+    val lessWeather = hashedWeatherForPeriod
+      .filter(_.dateTime < accidentTime)
+      .maxBy(_.dateTime)
 
-    val lessWeather = currentStationWeather
-      .filter(_.localDateTime < time)
-      .maxBy(_.localDateTime)
-
-    val currentWeather = nearestWeather(farWeather, lessWeather, time)
+    val currentWeather = nearestWeather(farWeather, lessWeather, accidentTime)
 
     WeatherForAccident(
       currentWeather.temperature,
@@ -43,7 +63,7 @@ class WeatherMappingService {
   }
 
   private def nearestWeather(weatherEntity1: WeatherEntity, weatherEntity2: WeatherEntity, time: Long): WeatherEntity = {
-    if (Math.abs(weatherEntity1.localDateTime - time) < Math.abs(weatherEntity2.localDateTime - time)) {
+    if (Math.abs(weatherEntity1.dateTime - time) < Math.abs(weatherEntity2.dateTime - time)) {
       weatherEntity1
     } else {
       weatherEntity2

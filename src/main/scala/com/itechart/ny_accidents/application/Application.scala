@@ -14,8 +14,9 @@ object Application extends App {
   val raws = CsvReader.readData(inputFileAccidents)
   val sc = Spark.sc
   val mergedData = sc.parallelize(Merger(raws))
-  val q = mergedData.take(8)
-  println(mergedData.count())
+  mergedData.foreach(println)
+//  val q = mergedData.take(8)
+//  println(mergedData.count())
   println(raws.size)
-  println(q)
+//  println(q)
 }

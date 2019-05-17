@@ -18,10 +18,10 @@ object CsvReader {
     csvAccidentsData.map(accidentsMapper)
 
 
-//
-//    val reader = CSVReader.open(fileName)
-//    val dataFromFile: List[Map[String, String]] = reader.allWithHeaders()
-//    reader.close()
-//    dataFromFile.map(accidentsMapper)
+    //
+    //    val reader = CSVReader.open(fileName)
+    //    val dataFromFile: List[Map[String, String]] = reader.allWithHeaders()
+    //    reader.close()
+    //    dataFromFile.map(accidentsMapper)
   }
 }
