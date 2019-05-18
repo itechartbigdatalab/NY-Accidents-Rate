@@ -15,6 +15,7 @@ import scala.util.control.Exception
 
 class WeatherParser {
 
+  // TODO rewrite denamic update
   def parseCsv(path: String): Seq[WeatherEntity] = {
     val bufferedSource = Source.fromFile(path)
     bufferedSource.getLines()
@@ -31,6 +32,7 @@ class WeatherParser {
     paths.map(parseCsv).reduce(_ ++ _)
   }
 
+  // TODO rewrite to denamic update
   def parseWeatherLine(columns: List[String]): Option[WeatherEntity] = {
     Exception.allCatch.opt(WeatherEntity(
       0,
@@ -56,9 +58,9 @@ class WeatherParser {
       .map(dates => {
         val dayStr = dates.head
         (DATE_SUNRISES_FORMAT.parse(dayStr),
-        dates.drop(1)
-          .map(dayStr + " " + _)
-          .map(DATE_TIME_SUNRISES_FORMAT.parse))
+          dates.drop(1)
+            .map(dayStr + " " + _)
+            .map(DATE_TIME_SUNRISES_FORMAT.parse))
       }).toMap
   }
 

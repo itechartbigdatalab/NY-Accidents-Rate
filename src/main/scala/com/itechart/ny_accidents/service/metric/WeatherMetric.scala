@@ -10,6 +10,7 @@ import org.apache.spark.rdd.RDD
 
 object WeatherMetric {
 
+  // TODO rewrite to normal code
   val weatherMappingService = new WeatherMappingService
 
   def countHours(accidentsWithWeather: RDD[MergedData]): RDD[(Int, Int)] = {

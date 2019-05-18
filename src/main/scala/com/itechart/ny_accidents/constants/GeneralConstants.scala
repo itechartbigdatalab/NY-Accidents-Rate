@@ -9,8 +9,8 @@ object GeneralConstants {
   val TIME_FORMATTER_ACCIDENTS: DateTimeFormatter = DateTimeFormatter.ofPattern("H:mm")
   val DATE_TIME_FORMATTER_ACCIDENTS: DateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy H:mm")
 
-  val DATE_TIME_WEATHER_PATTERN: String = "dd.MM.yyyy HH:mm"
-  val DATE_TIME_ACCIDENTS_PATTERN: String = "MM/dd/yyyy H:mm"
+  val DATE_TIME_WEATHER_PATTERN:  SimpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm")
+  val DATE_TIME_ACCIDENTS_PATTERN: SimpleDateFormat = new SimpleDateFormat("MM/dd/yyyy H:mm")
   val DATE_SUNRISES_FORMAT: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
   val DATE_TIME_SUNRISES_FORMAT: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd H:mm:ss a")
 
