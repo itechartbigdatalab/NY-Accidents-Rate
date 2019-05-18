@@ -1,6 +1,9 @@
 package com.itechart.ny_accidents.parse
 
+import java.util.Date
+
 import com.itechart.ny_accidents.constants.GeneralConstants
+import com.itechart.ny_accidents.constants.GeneralConstants.{DATE_SUNRISES_FORMAT, DATE_TIME_SUNRISES_FORMAT}
 import com.itechart.ny_accidents.entity.WeatherEntity
 import com.itechart.ny_accidents.utils.DateUtils
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
@@ -42,7 +45,7 @@ class WeatherParser {
     ))
   }
 
-  def parseSunrisesSunsets: Seq[Seq[String]] = {
+  def parseSunrisesSunsets: Map[Date, Seq[Date]] = {
     val browser = JsoupBrowser()
     (1 to 12)
       .map("https://sunrise-sunset.org/us/new-york-ny/2019/" + _)
@@ -50,6 +53,13 @@ class WeatherParser {
       .map(_ >> elementList(".day"))
       .map(_.map(day => (day >> attr("rel")) +: (day >> texts("td")).toSeq.take(4)))
       .reduce(_ ++ _)
+      .map(dates => {
+        val dayStr = dates.head
+        (DATE_SUNRISES_FORMAT.parse(dayStr),
+        dates.drop(1)
+          .map(dayStr + " " + _)
+          .map(DATE_TIME_SUNRISES_FORMAT.parse))
+      }).toMap
   }
 
 }

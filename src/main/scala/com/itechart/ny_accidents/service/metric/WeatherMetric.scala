@@ -5,9 +5,12 @@ import java.time.format.TextStyle
 import java.util.{Calendar, Locale}
 
 import com.itechart.ny_accidents.entity.MergedData
+import com.itechart.ny_accidents.service.WeatherMappingService
 import org.apache.spark.rdd.RDD
 
 object WeatherMetric {
+
+  val weatherMappingService = new WeatherMappingService
 
   def countHours(accidentsWithWeather: RDD[MergedData]): RDD[(Int, Int)] = {
     countTimeMetric(accidentsWithWeather, Calendar.HOUR_OF_DAY)
@@ -27,6 +30,15 @@ object WeatherMetric {
         calendar.setTime(dateTime)
         calendar.get(calendarColumn)
       })
+      .groupBy(identity)
+      .mapValues(_.size)
+  }
+
+  def definePeriod(accidentsWithWeather: RDD[MergedData]): RDD[(String, Int)] = {
+    accidentsWithWeather
+      .filter(_.accident.dateTime.isDefined)
+      .map(_.accident.dateTime.get)
+      .map(weatherMappingService.defineLighting)
       .groupBy(identity)
       .mapValues(_.size)
   }
