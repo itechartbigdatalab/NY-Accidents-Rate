@@ -1,20 +1,19 @@
 package com.itechart.ny_accidents.utils
 
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
 
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 object DateUtils {
-
+  final val MILLIS_IN_HOUR = 3600000
 
   def subtractHour(dateTimeMillis: Long): Long = {
-    dateTimeMillis - 3600000
+    dateTimeMillis - MILLIS_IN_HOUR
   }
 
   def addHour(dateTimeMillis: Long): Long = {
-    dateTimeMillis + 3600000
+    dateTimeMillis + MILLIS_IN_HOUR
   }
 
   def parseDate(dateStr: String, datePattern: String): Option[Long] = {
@@ -30,5 +29,4 @@ object DateUtils {
     fromLongToLocalDateTime(localDateTimeMillis)
       .withMinute(0).toInstant(ZoneOffset.UTC).toEpochMilli
   }
-
 }

@@ -1,14 +1,15 @@
-package com.itechart.ny_accidents.districts.database
+package com.itechart.ny_accidents.database.dao
 
 import com.itechart.ny_accidents.database.NyDataDatabaseMongo
-import com.mongodb.client.model.geojson.{Point, Position}
+import com.mongodb.client.model.geojson.Point
 import org.mongodb.scala.Document
 import org.mongodb.scala.model.Filters
+import org.mongodb.scala.model.geojson.Position
 
 import scala.concurrent.Future
 
 @Deprecated
-object MongoDistrictsDao {
+class MongoDistrictsDAO {
   private final val COLLECTION_NAME = "districts"
   private lazy val collection = NyDataDatabaseMongo.database.getCollection(COLLECTION_NAME)
 

@@ -1,4 +1,4 @@
-package com.itechart.ny_accidents.districts.controller
+package com.itechart.ny_accidents.database
 
 import com.github.tminglei.slickpg.{ExPostgresProfile, PgArraySupport, PgEnumSupport, PgPostGISSupport}
 
@@ -7,7 +7,7 @@ trait ExtendedPostgresDriver extends ExPostgresProfile
   with PgEnumSupport
   with PgPostGISSupport {
 
-  override val api = new API with ArrayImplicits
+  override val api: API with ArrayImplicits with PostGISImplicits = new API with ArrayImplicits
     with PostGISImplicits {}
 }
 

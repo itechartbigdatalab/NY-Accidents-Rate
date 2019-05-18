@@ -1,6 +1,7 @@
 package com.itechart.ny_accidents.districts.parser
 
 import com.itechart.ny_accidents.entity.District
+import com.itechart.ny_accidents.parse.DistrictsParser
 import com.itechart.ny_accidents.utils.PostgisUtils
 import org.apache.spark.sql.Row
 import org.scalatest.FunSpec

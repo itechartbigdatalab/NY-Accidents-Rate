@@ -1,4 +1,4 @@
-package com.itechart.ny_accidents.districts.parser
+package com.itechart.ny_accidents.parse
 
 import com.itechart.ny_accidents.entity.District
 import com.itechart.ny_accidents.utils.PostgisUtils

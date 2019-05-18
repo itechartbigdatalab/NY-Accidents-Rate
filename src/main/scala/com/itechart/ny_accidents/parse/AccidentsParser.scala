@@ -1,50 +1,30 @@
-package com.itechart.ny_accidents.utils
+package com.itechart.ny_accidents.parse
 
 import java.time.{LocalDate, LocalTime}
 
-import com.itechart.ny_accidents.GeneralConstants
-import com.itechart.ny_accidents.GeneralConstants.{DATE_FORMATTER_ACCIDENTS, TIME_FORMATTER_ACCIDENTS}
+import com.itechart.ny_accidents.constants.GeneralConstants._
 import com.itechart.ny_accidents.entity.Accident
-import com.itechart.ny_accidents.entity.AccidentsHeader._
+import com.itechart.ny_accidents.constants.AccidentsHeader._
+import com.itechart.ny_accidents.constants.GeneralConstants
+import com.itechart.ny_accidents.spark.Spark
+import com.itechart.ny_accidents.utils.DateUtils
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 
 import scala.util.Try
 
-object AccidentsUtils {
+class AccidentsParser {
 
-  //  // TODO replace try {} by Try-match
-  //  def toDouble(s: String): Option[Double] = {
-  //    try {
-  //      Some(s.toDouble)
-  //    } catch {
-  //      case e: NumberFormatException => None
-  //    }
-  //  }
-  //
-  //  // TODO replace try {} by Try-match
-  //  def toInt(s: String): Option[Int] = {
-  //    try {
-  //      Some(s.toInt)
-  //    } catch {
-  //      case e: NumberFormatException => None
-  //    }
-  //  }
+  def readData(fileName: String): RDD[Accident] = {
 
-  //  def accidentsMapper(value: Map[String, String]): RawAccidentsNY={
-  //
-  //
-  //    val contributingFactorsFromFile =contributingFactors.toList.map(v=>value(v))
-  //    val vehicleTypeFromFile =vehicleType.toList.map(v=>value(v).toString)
-  //
-  //    RawAccidentsNY(
-  //      LocalDate.parse(value(date), DateTimeFormatter.ofPattern("MM/d/yyyy")), LocalTime.parse( value(time), DateTimeFormatter.ofPattern("H:mm")),
-  //      toDouble(value(latitude)) ,toDouble(value(longitude)),
-  //      value(onStreet).toString, value(crossStreet).toString, value(offStreet).toString, toInt(value(personsInjured)), toInt(value(personsKilled)),
-  //    toInt(value(pedastriansInjured)), toInt(value(pedastriansKilled)),  toInt(value(cyclistInjured)), toInt(value(cyclistKilled)), toInt(value(motoristInjured)),
-  //      toInt(value(motoristKilled)),
-  //      contributingFactorsFromFile, vehicleTypeFromFile)
-  //
-  //  }
+    val csvAccidentsData: Array[Row] = Spark.sparkSql.read
+      .option("header", "true")
+      .option("mode", "DROPMALFORMED")
+      .csv(fileName)
+      .collect()
+
+    Spark.sc.parallelize(csvAccidentsData.map(accidentsMapper))
+  }
 
   def accidentsMapper(accident: Row): Accident = {
 
