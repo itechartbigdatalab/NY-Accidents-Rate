@@ -2,6 +2,7 @@ package com.itechart.ny_accidents.utils
 
 import java.text.SimpleDateFormat
 import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
+import java.util.Date
 
 import scala.util.Try
 
@@ -16,9 +17,14 @@ object DateUtils {
     dateTimeMillis + MILLIS_IN_HOUR
   }
 
-  def parseDate(dateStr: String, datePattern: String): Option[Long] = {
+  def parseDateToMillis(dateStr: String, datePattern: String): Option[Long] = {
     val dateFormat = new SimpleDateFormat(datePattern)
     Try(dateFormat.parse(dateStr).getTime).toOption
+  }
+
+  def parseDate(dateStr: String, datePattern: String): Option[Date] = {
+    val dateFormat = new SimpleDateFormat(datePattern)
+    Try(dateFormat.parse(dateStr)).toOption
   }
 
   def fromLongToLocalDateTime(localDateTimeMillis: Long): LocalDateTime = {

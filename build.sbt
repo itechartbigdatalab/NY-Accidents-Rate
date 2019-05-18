@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "org.scalactic" %% "scalactic" % "3.0.5" % "test",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
   "org.mongodb.scala" %% "mongo-scala-driver" % "2.6.0",
-  "net.codingwell" %% "scala-guice" % "4.2.3"
+  "net.codingwell" %% "scala-guice" % "4.2.3",
+  "net.ruippeixotog" %% "scala-scraper" % "2.1.0"
 )
 dependencyOverrides ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7.1"

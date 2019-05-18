@@ -3,6 +3,7 @@ package com.itechart.ny_accidents.service
 import com.itechart.ny_accidents.database.NYDataDatabase
 import com.itechart.ny_accidents.database.dao.WeatherDAO
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherForAccident}
+import com.itechart.ny_accidents.parse.WeatherParser
 import com.itechart.ny_accidents.utils.{DateUtils, PostgisUtils}
 
 import scala.concurrent.Await
@@ -11,7 +12,8 @@ import scala.util.{Failure, Success, Try}
 
 class WeatherMappingService {
 
-  val weatherDAO = new WeatherDAO()
+  private val weatherDAO = new WeatherDAO
+  private val weatherParser = new WeatherParser
 
   private val allStations = Await.result(NYDataDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
   // map under have such structure -> Map[stationId, Map[TimeHash, Seq[WeatherEntity]]]
@@ -24,7 +26,12 @@ class WeatherMappingService {
         .groupBy(_._1)
         .mapValues(seq => seq.map(_._2))
     })
-  println("sd")
+
+  private val sunrisesSunsets = weatherParser.parseSunrisesSunsets
+
+  def defineLighting(dateTime: Long): String = {
+  "Str"
+  }
 
   def findWeatherByTimeAndCoordinates(accidentTime: Long, lat: Double, lon: Double): Option[WeatherForAccident] = {
     val stationId = getNearestStationId(lat, lon)

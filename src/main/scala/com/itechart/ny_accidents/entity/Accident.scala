@@ -1,10 +1,10 @@
 package com.itechart.ny_accidents.entity
 
-import java.time.{LocalDate, LocalTime}
+import java.util.Date
 
-case class Accident(date: LocalDate,
-                    time: LocalTime,
+case class Accident(dateTime: Option[Date],
                     dateTimeMillis: Option[Long],
+                    borough: Option[String],
                     latitude: Option[Double],
                     longitude: Option[Double],
                     onStreet: Option[String],
