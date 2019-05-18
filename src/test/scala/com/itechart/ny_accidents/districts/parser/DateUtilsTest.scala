@@ -1,6 +1,6 @@
 package com.itechart.ny_accidents.districts.parser
 
-import com.itechart.ny_accidents.GeneralConstants
+import com.itechart.ny_accidents.constants.GeneralConstants
 import com.itechart.ny_accidents.utils.DateUtils
 import org.scalatest.FunSpec
 

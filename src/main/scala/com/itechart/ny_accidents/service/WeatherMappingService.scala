@@ -1,21 +1,22 @@
-package com.itechart.ny_accidents.weather
+package com.itechart.ny_accidents.service
 
-import com.itechart.ny_accidents.districts.controller.DistrictsDatabase
+import com.itechart.ny_accidents.database.NYDataDatabase
+import com.itechart.ny_accidents.database.dao.WeatherDAO
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherForAccident}
 import com.itechart.ny_accidents.utils.{DateUtils, PostgisUtils}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 class WeatherMappingService {
 
   val weatherDAO = new WeatherDAO()
 
-  private val allStations = Await.result(DistrictsDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
+  private val allStations = Await.result(NYDataDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
   // map under have such structure -> Map[stationId, Map[TimeHash, Seq[WeatherEntity]]]
   private val allWeather: Map[Int, Map[Long, Seq[WeatherEntity]]] = Await.result(
-    DistrictsDatabase.database.run(weatherDAO.allWeather()), Duration.Inf)
+    NYDataDatabase.database.run(weatherDAO.allWeather()), Duration.Inf)
     .sortBy(weather => weather.dateTime)
     .groupBy(weather => weather.stationId)
     .mapValues(weathers => {

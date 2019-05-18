@@ -1,8 +1,7 @@
 package com.itechart.ny_accidents.districts.parser
 
-import com.itechart.ny_accidents.entity.WeatherForAccident
-import com.itechart.ny_accidents.weather.WeatherMappingService
-import org.scalatest.{FunSpec, PrivateMethodTester}
+import com.itechart.ny_accidents.service.WeatherMappingService
+import org.scalatest.FunSpec
 
 class WeatherServiceTest extends FunSpec {
 
@@ -10,9 +9,9 @@ class WeatherServiceTest extends FunSpec {
     it("should return correct pressure") {
       val resultValue = 757.4
       val service = new WeatherMappingService()
+      val returnedValue = service.findWeatherByTimeAndCoordinates(1557862500000L, 40.597415, -74.164599)
 
-//      assert(resultValue == service.findWeatherByTimeAndCoordinates(1557862500000L, 40.597415, -74.164599)
-//        .pressure)
+      assert(returnedValue.isDefined && returnedValue.get.pressure == resultValue)
     }
   }
 
