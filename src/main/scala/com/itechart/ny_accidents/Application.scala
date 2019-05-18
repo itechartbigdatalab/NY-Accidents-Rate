@@ -14,8 +14,4 @@ object Application extends App {
 
   val raws = accidentsParser.readData(inputFileAccidents).cache()
   val mergedData = MergeService.mergeAccidentsWithWeatherAndDistricts(raws)
-  //  val q = mergedData.take(8)
-  //  println(mergedData.count())
-  println(mergedData.count() + "KISAKISA")
-  //  println(q)
 }
