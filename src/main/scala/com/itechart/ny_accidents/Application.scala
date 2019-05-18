@@ -5,6 +5,7 @@ import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.service.MergeService
 import com.itechart.ny_accidents.service.metric.Metrics
 import com.itechart.ny_accidents.spark.Spark
+import com.itechart.ny_accidents.utils.FileWriterUtils
 import com.typesafe.config.ConfigFactory
 
 object Application extends App {
