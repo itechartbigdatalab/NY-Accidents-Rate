@@ -7,7 +7,7 @@ import com.itechart.ny_accidents.utils.{DateUtils, PostgisUtils}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 class WeatherMappingService {
 
@@ -39,18 +39,21 @@ class WeatherMappingService {
       case Some(value) => Some(findBestMatchWeather(value, accidentTime))
       case _ => None
     }
-
   }
 
 
   private def findBestMatchWeather(hashedWeatherForPeriod: Seq[WeatherEntity], accidentTime: Long): WeatherForAccident = {
-    val farWeather = hashedWeatherForPeriod
-      .filter(_.dateTime >= accidentTime)
-      .minBy(_.dateTime)
+    val farWeather = Try(
+      hashedWeatherForPeriod
+        .filter(_.dateTime >= accidentTime)
+        .minBy(_.dateTime)
+    ).toOption
 
-    val lessWeather = hashedWeatherForPeriod
-      .filter(_.dateTime < accidentTime)
-      .maxBy(_.dateTime)
+    val lessWeather = Try(
+      hashedWeatherForPeriod
+        .filter(_.dateTime < accidentTime)
+        .maxBy(_.dateTime)
+    ).toOption
 
     val currentWeather = nearestWeather(farWeather, lessWeather, accidentTime)
 
@@ -64,11 +67,16 @@ class WeatherMappingService {
     )
   }
 
-  private def nearestWeather(weatherEntity1: WeatherEntity, weatherEntity2: WeatherEntity, time: Long): WeatherEntity = {
-    if (Math.abs(weatherEntity1.dateTime - time) < Math.abs(weatherEntity2.dateTime - time)) {
-      weatherEntity1
-    } else {
-      weatherEntity2
+  private def nearestWeather(farWeather: Option[WeatherEntity], lessWeather: Option[WeatherEntity], time: Long): WeatherEntity = {
+    (farWeather, lessWeather) match {
+      case (Some(far), Some(less)) =>
+        if (Math.abs(far.dateTime - time) < Math.abs(less.dateTime - time)) {
+          far
+        } else {
+          less
+        }
+      case (None, Some(less)) => less
+      case (Some(far), None) => far
     }
   }
 
