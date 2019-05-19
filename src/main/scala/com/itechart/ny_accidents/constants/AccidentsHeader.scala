@@ -23,6 +23,7 @@ object AccidentsHeader {
 
   val DATE_C = 0
   val TIME_C = 1
+  val BOROUGH_C = 2
   val LATITUDE_C = 4
   val LONGITUDE_C = 5
   val ON_STREET_NAME_C = 7

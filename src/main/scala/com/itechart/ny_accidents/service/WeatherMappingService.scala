@@ -1,17 +1,22 @@
 package com.itechart.ny_accidents.service
 
+import java.util.{Calendar, Date}
+
+import com.itechart.ny_accidents.constants.GeneralConstants._
 import com.itechart.ny_accidents.database.NYDataDatabase
 import com.itechart.ny_accidents.database.dao.WeatherDAO
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherForAccident}
+import com.itechart.ny_accidents.parse.WeatherParser
 import com.itechart.ny_accidents.utils.{DateUtils, PostgisUtils}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 class WeatherMappingService {
 
-  val weatherDAO = new WeatherDAO()
+  private val weatherDAO = new WeatherDAO
+  private val weatherParser = new WeatherParser
 
   private val allStations = Await.result(NYDataDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
   // map under have such structure -> Map[stationId, Map[TimeHash, Seq[WeatherEntity]]]
@@ -24,7 +29,28 @@ class WeatherMappingService {
         .groupBy(_._1)
         .mapValues(seq => seq.map(_._2))
     })
-  println("sd")
+
+  private val sunrisesSunsets: Map[Date, Seq[Date]] = weatherParser.parseSunrisesSunsets
+
+  def defineLighting(dateTime: Date): String = {
+    val calendar = Calendar.getInstance()
+    calendar.setTime(dateTime)
+    calendar.set(Calendar.YEAR, SUNRISE_YEAR)
+    calendar.set(Calendar.HOUR_OF_DAY, 0)
+    calendar.set(Calendar.MINUTE, 0)
+    val lightParameters = sunrisesSunsets(calendar.getTime)
+    if (dateTime.before(lightParameters(TWILIGHT_START_C))) {
+      NIGHT
+    } else if (dateTime.before(lightParameters(SUNRISE_C))) {
+      MORNING_TWILIGHT
+    } else if (dateTime.before(lightParameters(SUNSET_C))) {
+      DAY
+    } else if (dateTime.before(lightParameters(TWILIGHT_END_C))) {
+      EVENING_TWILIGHT
+    } else {
+      NIGHT
+    }
+  }
 
   def findWeatherByTimeAndCoordinates(accidentTime: Long, lat: Double, lon: Double): Option[WeatherForAccident] = {
     val stationId = getNearestStationId(lat, lon)
