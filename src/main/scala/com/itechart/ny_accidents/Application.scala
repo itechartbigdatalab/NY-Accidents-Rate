@@ -7,7 +7,6 @@ import com.typesafe.config.ConfigFactory
 
 object Application extends App {
 
-
   val filesConfig = ConfigFactory.load("app.conf")
   val pathToDataFolder = filesConfig.getString("file.inputPath")
   val inputFileAccidents = pathToDataFolder + filesConfig.getString("file.input.inputFileNYAccidents")
@@ -28,5 +27,4 @@ object Application extends App {
   println()
   lightPeriods.foreach(println)
   println()
-
 }
