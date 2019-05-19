@@ -1,6 +1,8 @@
 package com.itechart.ny_accidents.parse
 
+import java.text.SimpleDateFormat
 import java.time.{LocalDate, LocalTime}
+import java.util.Date
 
 import com.itechart.ny_accidents.constants.GeneralConstants._
 import com.itechart.ny_accidents.entity.Accident
@@ -29,9 +31,9 @@ class AccidentsParser {
   def accidentsMapper(accident: Row): Accident = {
 
     Accident(
-      LocalDate.parse(accident.getString(DATE_C), DATE_FORMATTER_ACCIDENTS),
-      LocalTime.parse(accident.getString(TIME_C), TIME_FORMATTER_ACCIDENTS),
+      toDate(accident.getString(DATE_C), accident.getString(TIME_C)),
       toMillis(accident, DATE_C, TIME_C),
+      toString(accident, BOROUGH_C),
       toDouble(accident, LATITUDE_C),
       toDouble(accident, LONGITUDE_C),
       toString(accident, ON_STREET_NAME_C),
@@ -49,9 +51,14 @@ class AccidentsParser {
       toStringList(accident, VEHICLE_TYPE_CODE_COLUMNS))
   }
 
+  private def toDate(dateStr: String, timeStr: String): Option[Date] = {
+    val dateTimeStr = dateStr + " " + timeStr
+    DateUtils.parseDate(dateTimeStr, GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
+  }
+
   private def toMillis(row: Row, dateColumn: Int, timeColumn: Int): Option[Long] = {
     val dateTime = row.getString(dateColumn) + " " + row.getString(timeColumn)
-    DateUtils.parseDate(dateTime, GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
+    DateUtils.parseDateToMillis(dateTime, GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
   }
 
   private def toDouble(accident: Row, column: Int): Option[Double] = {
