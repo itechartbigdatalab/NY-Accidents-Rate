@@ -11,6 +11,12 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
 
 object Application extends App {
+  val filesConfig = ConfigFactory.load("app.conf")
+  val pathToDataFolder = filesConfig.getString("file.inputPath")
+  val inputFileAccidents = pathToDataFolder + filesConfig.getString("file.input.inputFileNYAccidents")
+  val accidentsParser = new AccidentsParser
+
+
   val raws = accidentsParser.readData(inputFileAccidents).cache()
   println("RAWS DATA READ")
   val splitData = MergeService.splitData(raws).cache()
