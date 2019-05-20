@@ -28,10 +28,10 @@ object Application extends App {
   val dayOfWeek: RDD[(String, Double)] = WeatherMetric.countDayOfWeek(mergeData)
   val hourOfDay: RDD[(Int, Double)] = WeatherMetric.countHours(mergeData)
   val period: RDD[(String, Double)] = WeatherMetric.definePeriod(mergeData)
-
   val weatherPhenomenon: RDD[(String, Double)] = Metrics.getPhenomenonPercentage(mergeData)
   val boroughPercentage: RDD[(String, Double)] = Metrics.getBoroughPercentage(mergeData)
   val districtsPercentage: RDD[(String, Double)] = Metrics.getDistrictsPercentage(mergeData)
+//  val districtsByBorough: RDD[(String, Map[String, Double])] = Metrics.getDistrictsPercentageByBorough(mergeData)
 
   val report = new Reports()
   val dayOfWeekReport = report.generateReportString[String,Double](dayOfWeek)
