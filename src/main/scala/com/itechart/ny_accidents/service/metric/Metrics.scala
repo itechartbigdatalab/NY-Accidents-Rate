@@ -1,32 +1,38 @@
 package com.itechart.ny_accidents.service.metric
 
-import com.itechart.ny_accidents.entity.{District, MergedData, WeatherForAccident}
-
+import com.itechart.ny_accidents.entity.{District, MergedData, ReportMergedData, WeatherForAccident}
 import org.apache.spark.rdd.RDD
 
 object Metrics {
-  def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Double)] = {
+  def getPhenomenonPercentage(data: RDD[ReportMergedData]): RDD[(String, Double)] = {
     val filteredData = data.filter(_.weather.isDefined).map(_.weather.get)
     val length = filteredData.count()
     val groupedData = filteredData.groupBy(_.phenomenon)
-    calculatePercentage[WeatherForAccident, String](groupedData, length)
+
+    // TODO Need rewrite
+    calculatePercentage[WeatherForAccident, String](groupedData, length).map(metric => {
+      metric._1.isEmpty match {
+        case true => ("Clear", metric._2)
+        case false => metric
+      }
+    })
   }
 
-  def getDistrictsPercentage(data: RDD[MergedData]): RDD[(String, Double)] = {
+  def getDistrictsPercentage(data: RDD[ReportMergedData]): RDD[(String, Double)] = {
     val filteredData = data.filter(_.district.isDefined).map(_.district.get)
     val length = filteredData.count()
     val groupedData = filteredData.groupBy(_.districtName)
     calculatePercentage[District, String](groupedData, length)
   }
 
-  def getBoroughPercentage(data: RDD[MergedData]): RDD[(String, Double)] = {
+  def getBoroughPercentage(data: RDD[ReportMergedData]): RDD[(String, Double)] = {
     val filteredData = data.filter(_.district.isDefined).map(_.district.get)
     val length = filteredData.count()
     val groupedData = filteredData.groupBy(_.boroughName)
     calculatePercentage[District, String](groupedData, length)
   }
 
-  def getDistrictsPercentageByBorough(data: RDD[MergedData]): RDD[(String, RDD[(String, Double)])] = {
+  def getDistrictsPercentageByBorough(data: RDD[ReportMergedData]): RDD[(String, RDD[(String, Double)])] = {
     data.filter(_.district.isDefined).groupBy(_.district.get.boroughName).map(a => {
       (a._1, getDistrictsPercentage(data.context.parallelize(a._2.toSeq)))
     })

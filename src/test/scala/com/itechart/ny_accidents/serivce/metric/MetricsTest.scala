@@ -1,5 +1,5 @@
 package com.itechart.ny_accidents.serivce.metric
-
+/*
 import com.itechart.ny_accidents.entity.{District, MergedData, WeatherForAccident}
 import com.itechart.ny_accidents.service.metric.Metrics
 import org.scalatest.FunSpec
@@ -68,3 +68,4 @@ class MetricsTest extends FunSpec {
 //    }
 //  }
 }
+*/
