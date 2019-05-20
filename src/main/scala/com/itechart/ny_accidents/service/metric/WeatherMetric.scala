@@ -5,43 +5,53 @@ import java.time.format.TextStyle
 import java.util.{Calendar, Locale}
 
 import com.itechart.ny_accidents.entity.MergedData
-import com.itechart.ny_accidents.service.WeatherMappingService
+import com.itechart.ny_accidents.service.DayPeriodService
 import org.apache.spark.rdd.RDD
 
 object WeatherMetric {
 
-  // TODO rewrite to normal code
-  val weatherMappingService = new WeatherMappingService
+  val dayPeriodService = new DayPeriodService
 
-  def countHours(accidentsWithWeather: RDD[MergedData]): RDD[(Int, Int)] = {
-    countTimeMetric(accidentsWithWeather, Calendar.HOUR_OF_DAY)
-  }
-
-  def countDayOfWeek(accidentsWithWeather: RDD[MergedData]): RDD[(String, Int)] = {
-    countTimeMetric(accidentsWithWeather, Calendar.DAY_OF_WEEK)
-      .map(d => (DayOfWeek.of(d._1).getDisplayName(TextStyle.SHORT, Locale.ENGLISH), d._2))
-  }
-
-  private def countTimeMetric(accidentsWithWeather: RDD[MergedData], calendarColumn: Int): RDD[(Int, Int)] = {
-    accidentsWithWeather
+  def countHours(accidentsWithWeather: RDD[MergedData]): RDD[(Int, Double)] = {
+    val filteredData = accidentsWithWeather
       .filter(_.accident.dateTime.isDefined)
       .map(_.accident.dateTime.get)
+    val length = filteredData.count
+    val groupedData = filteredData
       .map(dateTime => {
         val calendar = Calendar.getInstance()
         calendar.setTime(dateTime)
-        calendar.get(calendarColumn)
+        calendar.get(Calendar.HOUR_OF_DAY)
       })
       .groupBy(identity)
-      .mapValues(_.size)
+    Metrics.calculatePercentage(groupedData, length)
   }
 
-  def definePeriod(accidentsWithWeather: RDD[MergedData]): RDD[(String, Int)] = {
-    accidentsWithWeather
+  def countDayOfWeek(accidentsWithWeather: RDD[MergedData]): RDD[(String, Double)] = {
+    val filteredData = accidentsWithWeather
       .filter(_.accident.dateTime.isDefined)
       .map(_.accident.dateTime.get)
-      .map(weatherMappingService.defineLighting)
+    val length = filteredData.count
+    val groupedData = filteredData
+      .map(dateTime => {
+        val calendar = Calendar.getInstance()
+        calendar.setTime(dateTime)
+        calendar.get(Calendar.DAY_OF_WEEK)
+      })
       .groupBy(identity)
-      .mapValues(_.size)
+      .map(d => (DayOfWeek.of(d._1).getDisplayName(TextStyle.SHORT, Locale.ENGLISH), d._2))
+    Metrics.calculatePercentage(groupedData, length)
+  }
+
+  def definePeriod(accidentsWithWeather: RDD[MergedData]): RDD[(String, Double)] = {
+    val filteredData = accidentsWithWeather
+      .filter(_.accident.dateTime.isDefined)
+      .map(_.accident.dateTime.get)
+    val length = filteredData.count
+    val groupedData = filteredData
+      .map(dayPeriodService.defineLighting)
+      .groupBy(identity)
+    Metrics.calculatePercentage(groupedData, length)
   }
 
 }
