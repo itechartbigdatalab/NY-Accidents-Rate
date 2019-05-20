@@ -13,35 +13,41 @@ class DayPeriodService {
 
   private def parseSunrisesSunsets: Map[Date, Seq[Date]] = {
     val browser = JsoupBrowser()
-    (1 to 12)
-      .map("https://sunrise-sunset.org/us/new-york-ny/2019/" + _)
+    (FIRST_MONTH_URL to LAST_MONTH_URL)
+      .map(SUNRISES_SITE_URL_WITHOUT_MONTH_NUMBER + _)
       .map(browser.get)
-      .map(_ >> elementList(".day"))
-      .map(_.map(day => (day >> attr("rel")) +: (day >> texts("td")).toSeq.take(4)))
+      .map(_ >> elementList(HTML_ELEMENT_DAY_SELECTOR))
+      .map(_.map(day => (day >> attr(HTML_ELEMENT_DATE_ATTRIBUTE)) +: (day >> texts(HTML_ELEMENT_TD)).toSeq.take(4)))
       .reduce(_ ++ _)
       .map(dates => {
         val dayStr = dates.head
         (DATE_SUNRISES_FORMAT.parse(dayStr),
           dates.drop(1)
             .map(dayStr + " " + _)
+            .map(_.toUpperCase)
             .map(DATE_TIME_SUNRISES_FORMAT.parse))
       }).toMap
   }
 
   def defineLighting(dateTime: Date): String = {
-    val calendar = Calendar.getInstance()
-    calendar.setTime(dateTime)
-    calendar.set(Calendar.YEAR, SUNRISE_YEAR)
-    calendar.set(Calendar.HOUR_OF_DAY, 0)
-    calendar.set(Calendar.MINUTE, 0)
-    val lightParameters = sunrisesSunsets(calendar.getTime)
-    if (dateTime.before(lightParameters(TWILIGHT_START_C))) {
+    val hashDateCalendar = Calendar.getInstance()
+    hashDateCalendar.setTime(dateTime)
+    hashDateCalendar.set(Calendar.HOUR_OF_DAY, 0)
+    hashDateCalendar.set(Calendar.MINUTE, 0)
+    hashDateCalendar.set(Calendar.YEAR, SUNRISE_YEAR)
+    val lightParameters = sunrisesSunsets(hashDateCalendar.getTime)
+
+    val currentDateToCorrectYearCalendar = Calendar.getInstance()
+    currentDateToCorrectYearCalendar.setTime(dateTime)
+    currentDateToCorrectYearCalendar.set(Calendar.YEAR, SUNRISE_YEAR)
+    val formattedDateTime = currentDateToCorrectYearCalendar.getTime
+    if (formattedDateTime.before(lightParameters(TWILIGHT_START_C))) {
       NIGHT
-    } else if (dateTime.before(lightParameters(SUNRISE_C))) {
+    } else if (formattedDateTime.before(lightParameters(SUNRISE_C))) {
       MORNING_TWILIGHT
-    } else if (dateTime.before(lightParameters(SUNSET_C))) {
+    } else if (formattedDateTime.before(lightParameters(SUNSET_C))) {
       DAY
-    } else if (dateTime.before(lightParameters(TWILIGHT_END_C))) {
+    } else if (formattedDateTime.before(lightParameters(TWILIGHT_END_C))) {
       EVENING_TWILIGHT
     } else {
       NIGHT

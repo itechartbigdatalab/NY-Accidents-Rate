@@ -1,7 +1,5 @@
 package com.itechart.ny_accidents.utils
 
-import java.io.{BufferedWriter, FileWriter}
-
 import com.github.tototoshi.csv.CSVWriter
 
 object FileWriterUtils {
