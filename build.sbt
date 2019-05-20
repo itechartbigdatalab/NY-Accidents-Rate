@@ -29,6 +29,6 @@ dependencyOverrides ++= Seq(
 enablePlugins(FlywayPlugin)
 flywayDriver := "org.postgresql.Driver"
 flywayUrl := "jdbc:postgresql://localhost:5432/ny_data"
-flywayUser := "postgres" // Replace with your postgres login & password
-flywayPassword := "postgres"
+flywayUser := "root" // Replace with your postgres login & password
+flywayPassword := "root"
 flywayLocations := Seq("filesystem:" + (resourceDirectory in Compile).value + "/db/migration/")
