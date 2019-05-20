@@ -47,21 +47,4 @@ class WeatherParser {
     ))
   }
 
-  def parseSunrisesSunsets: Map[Date, Seq[Date]] = {
-    val browser = JsoupBrowser()
-    (1 to 12)
-      .map("https://sunrise-sunset.org/us/new-york-ny/2019/" + _)
-      .map(browser.get)
-      .map(_ >> elementList(".day"))
-      .map(_.map(day => (day >> attr("rel")) +: (day >> texts("td")).toSeq.take(4)))
-      .reduce(_ ++ _)
-      .map(dates => {
-        val dayStr = dates.head
-        (DATE_SUNRISES_FORMAT.parse(dayStr),
-          dates.drop(1)
-            .map(dayStr + " " + _)
-            .map(DATE_TIME_SUNRISES_FORMAT.parse))
-      }).toMap
-  }
-
 }

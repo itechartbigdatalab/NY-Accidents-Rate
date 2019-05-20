@@ -5,12 +5,12 @@ import java.time.format.TextStyle
 import java.util.{Calendar, Locale}
 
 import com.itechart.ny_accidents.entity.MergedData
-import com.itechart.ny_accidents.service.WeatherMappingService
+import com.itechart.ny_accidents.service.DayPeriodService
 import org.apache.spark.rdd.RDD
 
 object WeatherMetric {
 
-  val weatherMappingService = new WeatherMappingService
+  val dayPeriodService = new DayPeriodService
 
   def countHours(accidentsWithWeather: RDD[MergedData]): RDD[(Int, Double)] = {
     val filteredData = accidentsWithWeather
@@ -49,7 +49,7 @@ object WeatherMetric {
       .map(_.accident.dateTime.get)
     val length = filteredData.count
     val groupedData = filteredData
-      .map(weatherMappingService.defineLighting)
+      .map(dayPeriodService.defineLighting)
       .groupBy(identity)
     Metrics.calculatePercentage(groupedData, length)
   }
