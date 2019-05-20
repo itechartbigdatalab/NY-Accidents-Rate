@@ -20,3 +20,8 @@ case class Accident(dateTime: Option[Date],
                     motoristKilled: Option[Int],
                     contributingFactors: List[Option[String]],
                     vehicleType: List[Option[String]])
+
+case class ReportAccident(dateTime: Option[Date],
+                          dateTimeMillis: Option[Long],
+                          latitude: Option[Double],
+                          longitude: Option[Double])
