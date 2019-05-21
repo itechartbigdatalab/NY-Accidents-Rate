@@ -1,7 +1,7 @@
 package com.itechart.ny_accidents.service
 
 import com.itechart.ny_accidents.database.DistrictsStorage
-import com.itechart.ny_accidents.database.dao.MergedDataCacheDAO
+import com.itechart.ny_accidents.database.dao.cache.{EhCacheDAO, MergedDataCacheDAO, RedisCacheDAO}
 import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
 import com.itechart.ny_accidents.spark.Spark
 import org.apache.spark.rdd.RDD
@@ -17,24 +17,25 @@ object MergeService {
   private var counter = 0
   private val ds = new DistrictsService
   private val service = new WeatherMappingService()
-//  private val cache = new MergedDataCacheDAO
 
-
-  def mergeAccidentsWithWeatherAndDistricts[A,B](accidents: RDD[A], fun: A => B)(implicit tag: ClassTag[B]): RDD[B] = {
+  def mergeAccidentsWithWeatherAndDistricts[A,B](accidents: RDD[A], fun: A => B)
+                                                (implicit tag: ClassTag[B]): RDD[B] = {
     accidents.map(obj => fun(obj))
   }
 
+  // TODO remove counter
   def mapper(value: Accident): MergedData = {
     logger.debug("Accident: " + value)
     println("COUNTER: " + counter)
     counter += 1
+
     value.uniqueKey match {
       case Some(pk) =>
-        MergedDataCacheDAO.readFromCache(pk) match {
+        EhCacheDAO.readMergedDataFromCache(pk) match {
           case Some(data) => data
           case None =>
             val data = createMergedData(value)
-            MergedDataCacheDAO.cacheData(data)
+            EhCacheDAO.cacheMergedData(data)
             data
         }
       case None => createMergedData(value)
@@ -56,11 +57,7 @@ object MergeService {
     }
   }
 
-  // todo remove counter!
   def splitDataMapper(value: ReportAccident): ReportMergedData = {
-    println("COUNTER: " + counter)
-    counter += 1
-
     (value.latitude, value.longitude) match {
       case (Some(latitude), Some(longitude)) =>
         val district = ds.getDistrict(latitude, longitude, DistrictsStorage.districts)

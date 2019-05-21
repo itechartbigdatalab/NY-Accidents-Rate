@@ -3,6 +3,9 @@ package com.itechart.ny_accidents.utils
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, ObjectOutputStream}
 import java.util.Base64
 
+import com.itechart.ny_accidents.entity.MergedData
+import play.api.libs.json.Json
+
 object SerializationUtil {
   private final val ENCODING = "UTF-8"
 
