@@ -1,5 +1,6 @@
 package com.itechart.ny_accidents.database.dao
 
+import com.google.inject.Singleton
 import com.itechart.ny_accidents.database.ExtendedPostgresDriver.api._
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherStation}
 import com.vividsolutions.jts.geom.Point
@@ -7,8 +8,10 @@ import slick.dbio.Effect
 import slick.jdbc.{JdbcProfile, PostgresProfile}
 import slick.sql.FixedSqlAction
 
+@Singleton
+class WeatherDAO () {
 
-class WeatherDAO(val profile: JdbcProfile = PostgresProfile) {
+  val profile: JdbcProfile = PostgresProfile
 
   private lazy val WEATHER_TABLE_NAME = "weather"
   private lazy val STATION_TABLE_NAME = "station"
@@ -47,6 +50,5 @@ class WeatherDAO(val profile: JdbcProfile = PostgresProfile) {
   def insert(weathers: Seq[WeatherEntity]): FixedSqlAction[Option[Int], NoStream, Effect.Write] = weatherQuery ++= weathers
 
   def insert(station: WeatherStation): DBIO[Int] = stationQuery += station
-
 
 }

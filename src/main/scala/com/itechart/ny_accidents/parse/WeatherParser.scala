@@ -1,18 +1,14 @@
 package com.itechart.ny_accidents.parse
 
-import java.util.Date
-
+import com.google.inject.Singleton
 import com.itechart.ny_accidents.constants.GeneralConstants
-import com.itechart.ny_accidents.constants.GeneralConstants.{DATE_SUNRISES_FORMAT, DATE_TIME_SUNRISES_FORMAT}
 import com.itechart.ny_accidents.entity.WeatherEntity
 import com.itechart.ny_accidents.utils.DateUtils
-import net.ruippeixotog.scalascraper.browser.JsoupBrowser
-import net.ruippeixotog.scalascraper.dsl.DSL._
-import net.ruippeixotog.scalascraper.scraper.ContentExtractors.{attr, elementList, texts}
 
 import scala.io.Source
 import scala.util.control.Exception
 
+@Singleton
 class WeatherParser {
 
   // TODO rewrite denamic update

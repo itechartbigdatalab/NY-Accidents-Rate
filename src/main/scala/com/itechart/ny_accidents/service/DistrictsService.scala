@@ -1,5 +1,6 @@
 package com.itechart.ny_accidents.service
 
+import com.google.inject.Singleton
 import com.itechart.ny_accidents.entity.{District, DistrictMongo}
 import com.itechart.ny_accidents.utils.PostgisUtils
 import com.mongodb.client.model.geojson.Position
@@ -7,6 +8,7 @@ import com.itechart.ny_accidents.database.dao.MongoDistrictsDAO
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 
+@Singleton
 class DistrictsService {
   private implicit val ec: ExecutionContextExecutor = ExecutionContext.global
 

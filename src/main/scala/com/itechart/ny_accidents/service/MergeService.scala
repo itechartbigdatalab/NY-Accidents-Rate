@@ -1,31 +1,30 @@
 package com.itechart.ny_accidents.service
 
+import com.google.inject.{Inject, Singleton}
 import com.itechart.ny_accidents.database.DistrictsStorage
 import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
 import org.apache.spark.rdd.RDD
 
 import scala.reflect.ClassTag
 
-object MergeService {
+@Singleton
+class MergeService @Inject()(weatherService: WeatherMappingService,
+                             districtsService: DistrictsService,
+                             districtsStorage: DistrictsStorage) {
   private var counter = 0
-  private val ds = new DistrictsService
-  private val service = new WeatherMappingService()
 
-  def mergeAccidentsWithWeatherAndDistricts[A,B](accidents: RDD[A], fun: A => B)(implicit tag: ClassTag[B]): RDD[B] = {
-    accidents.map(obj => {
-
-      fun(obj)
-    })
+  def mergeAccidentsWithWeatherAndDistricts[A, B](accidents: RDD[A], fun: A => B)(implicit tag: ClassTag[B]): RDD[B] = {
+    accidents.map(fun)
   }
 
   def mapper(value: Accident): MergedData = {
 
     (value.latitude, value.longitude) match {
       case (Some(latitude), Some(longitude)) =>
-        val district = ds.getDistrict(latitude, longitude, DistrictsStorage.districts)
+        val district = districtsService.getDistrict(latitude, longitude, districtsStorage.districts)
         value.dateTimeMillis match {
           case Some(mills) =>
-            val weather = service.findWeatherByTimeAndCoordinates(mills, latitude, longitude)
+            val weather = weatherService.findWeatherByTimeAndCoordinates(mills, latitude, longitude)
             MergedData(value, district, weather)
           case _ => MergedData(value, district, None)
         }
@@ -46,10 +45,10 @@ object MergeService {
 
     (value.latitude, value.longitude) match {
       case (Some(latitude), Some(longitude)) =>
-        val district = ds.getDistrict(latitude, longitude, DistrictsStorage.districts)
+        val district = districtsService.getDistrict(latitude, longitude, districtsStorage.districts)
         value.dateTimeMillis match {
           case Some(mills) =>
-            val weather = service.findWeatherByTimeAndCoordinates(mills, latitude, longitude)
+            val weather = weatherService.findWeatherByTimeAndCoordinates(mills, latitude, longitude)
             ReportMergedData(value, district, weather)
           case _ => ReportMergedData(value, district, None)
         }
