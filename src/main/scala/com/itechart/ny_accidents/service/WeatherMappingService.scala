@@ -1,5 +1,6 @@
 package com.itechart.ny_accidents.service
 
+import com.google.inject.{Inject, Singleton}
 import com.itechart.ny_accidents.database.NYDataDatabase
 import com.itechart.ny_accidents.database.dao.WeatherDAO
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherForAccident}
@@ -10,10 +11,8 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 import scala.util.Try
 
-class WeatherMappingService {
-
-  private val weatherDAO = new WeatherDAO
-  private val weatherParser = new WeatherParser
+@Singleton
+class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: WeatherParser) {
 
   private val allStations = Await.result(NYDataDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
   // map under have such structure -> Map[stationId, Map[TimeHash, Seq[WeatherEntity]]]
@@ -30,7 +29,6 @@ class WeatherMappingService {
 
   def findWeatherByTimeAndCoordinates(accidentTime: Long, lat: Double, lon: Double): Option[WeatherForAccident] = {
     val stationId = getNearestStationId(lat, lon)
-
     // we take weather for current hour, for future one and for previous, because if we have got 10:58 accident and
     // weather time for 10 o'clock is 10:05, and the next weather is 11:05, it's will be more accurately to take 11:05 weather
     Seq(
@@ -42,7 +40,6 @@ class WeatherMappingService {
       case _ => None
     }
   }
-
 
   private def findBestMatchWeather(hashedWeatherForPeriod: Seq[WeatherEntity], accidentTime: Long): WeatherForAccident = {
     val farWeather = Try(

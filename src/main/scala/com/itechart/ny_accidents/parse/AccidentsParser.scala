@@ -1,13 +1,11 @@
 package com.itechart.ny_accidents.parse
 
-import java.text.SimpleDateFormat
-import java.time.{LocalDate, LocalTime}
 import java.util.Date
 
-import com.itechart.ny_accidents.constants.GeneralConstants._
-import com.itechart.ny_accidents.entity.Accident
+import com.google.inject.Singleton
 import com.itechart.ny_accidents.constants.AccidentsHeader._
 import com.itechart.ny_accidents.constants.GeneralConstants
+import com.itechart.ny_accidents.entity.Accident
 import com.itechart.ny_accidents.spark.Spark
 import com.itechart.ny_accidents.utils.DateUtils
 import org.apache.spark.rdd.RDD
@@ -15,6 +13,7 @@ import org.apache.spark.sql.Row
 
 import scala.util.Try
 
+@Singleton
 class AccidentsParser {
 
   def readData(fileName: String): RDD[Accident] = {

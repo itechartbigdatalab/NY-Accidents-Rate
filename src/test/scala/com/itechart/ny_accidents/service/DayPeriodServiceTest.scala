@@ -6,7 +6,7 @@ import org.scalatest.FunSpec
 
 class DayPeriodServiceTest extends FunSpec {
 
-  val testSubject = new DayPeriodService
+  private val testSubject = DayPeriodService
 
     describe("Reports") {
       it("should return correct day phase") {

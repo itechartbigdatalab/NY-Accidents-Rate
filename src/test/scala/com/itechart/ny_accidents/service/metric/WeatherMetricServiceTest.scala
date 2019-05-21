@@ -1,6 +1,7 @@
 package com.itechart.ny_accidents.service.metric
 
-import com.itechart.ny_accidents.TestSparkApi
+import com.google.inject.Guice
+import com.itechart.ny_accidents.{GuiceModule, TestSparkApi}
 import com.itechart.ny_accidents.entity.{District, MergedData, ReportMergedData, WeatherForAccident}
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.rdd.RDD
@@ -9,7 +10,12 @@ import org.scalatest.FunSpec
 import scala.collection.immutable
 
 
-class MetricsTest extends FunSpec {
+class WeatherMetricServiceTest extends FunSpec {
+
+
+  private val injector = Guice.createInjector(new GuiceModule)
+  private val weatherMetricService = injector.getInstance(classOf[WeatherMetricService])
+
   describe("Reports") {
     it("should return correct map of values grouping by phenomenon") {
       val data: RDD[ReportMergedData] = TestSparkApi.spark.parallelize(Seq(
@@ -24,7 +30,7 @@ class MetricsTest extends FunSpec {
         "B" -> 25.0,
         "C" ->  25.0,
         "D" -> 25.0)
-      val result: Map[String, Double] = Metrics.getPhenomenonPercentage(data).collect().toMap
+      val result: Map[String, Double] = weatherMetricService.getPhenomenonPercentage(data).collect().toMap
       assert(result == expectedResult)
     }
 
@@ -41,7 +47,7 @@ class MetricsTest extends FunSpec {
         "b" -> 25.0,
         "c" -> 25.0,
         "d" -> 25.0)
-      val result = Metrics.getDistrictsPercentage(data).collect().toMap
+      val result = DistrictMetricService.getDistrictsPercentage(data).collect().toMap
 
       assert(result == expectedResult)
     }
@@ -59,7 +65,7 @@ class MetricsTest extends FunSpec {
         "C" -> 25.0,
         "D" -> 25.0
       )
-      val result = Metrics.getBoroughPercentage(data).collect().toMap
+      val result = DistrictMetricService.getBoroughPercentage(data).collect().toMap
 
       assert(result == expectedResult)
     }

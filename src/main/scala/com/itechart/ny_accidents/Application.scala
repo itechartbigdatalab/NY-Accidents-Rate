@@ -1,44 +1,47 @@
 package com.itechart.ny_accidents
 
+import com.google.inject.Guice
 import com.itechart.ny_accidents.entity.{ReportAccident, ReportMergedData}
 import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.service.MergeService
-import com.itechart.ny_accidents.service.metric.{Metrics, WeatherMetric}
+import com.itechart.ny_accidents.service.metric.{DistrictMetricService, TimeMetricService, WeatherMetricService}
 import com.itechart.ny_accidents.utils.FileWriterUtils
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.rdd.RDD
-import org.apache.spark.storage.StorageLevel
 
 object Application extends App {
   val filesConfig = ConfigFactory.load("app.conf")
   val pathToDataFolder = filesConfig.getString("file.inputPath")
   val inputFileAccidents = pathToDataFolder + filesConfig.getString("file.input.inputFileNYAccidents")
-  val accidentsParser = new AccidentsParser
 
+  val injector = Guice.createInjector(new GuiceModule)
+  val accidentsParser = injector.getInstance(classOf[AccidentsParser])
+  val mergeService = injector.getInstance(classOf[MergeService])
+  val weatherMetricService = injector.getInstance(classOf[WeatherMetricService])
 
   val raws = accidentsParser.readData(inputFileAccidents).cache()
   println("RAWS DATA READ")
-  val splitData = MergeService.splitData(raws).cache()
+  val splitData = mergeService.splitData(raws).cache()
   println("Split data: " + splitData.count())
-  val mergeData: RDD[ReportMergedData] = MergeService
-    .mergeAccidentsWithWeatherAndDistricts[ReportAccident, ReportMergedData](splitData, MergeService.splitDataMapper).cache()
+  val mergeData: RDD[ReportMergedData] = mergeService
+    .mergeAccidentsWithWeatherAndDistricts[ReportAccident, ReportMergedData](splitData, mergeService.splitDataMapper).cache()
   println("Merged data size: " + mergeData.count())
 
-  val dayOfWeek: RDD[(String, Double)] = WeatherMetric.countDayOfWeek(mergeData)
-  val hourOfDay: RDD[(Int, Double)] = WeatherMetric.countHours(mergeData)
-  val period: RDD[(String, Double)] = WeatherMetric.definePeriod(mergeData)
-  val weatherPhenomenon: RDD[(String, Double)] = Metrics.getPhenomenonPercentage(mergeData)
-  val boroughPercentage: RDD[(String, Double)] = Metrics.getBoroughPercentage(mergeData)
-  val districtsPercentage: RDD[(String, Double)] = Metrics.getDistrictsPercentage(mergeData)
-//  val districtsByBorough: RDD[(String, Map[String, Double])] = Metrics.getDistrictsPercentageByBorough(mergeData)
+  val dayOfWeek: RDD[(String, Double)] = TimeMetricService.countDayOfWeek(mergeData)
+  val hourOfDay: RDD[(Int, Double)] = TimeMetricService.countHours(mergeData)
+  val period: RDD[(String, Double)] = weatherMetricService.definePeriod(mergeData)
+  val weatherPhenomenon: RDD[(String, Double)] = weatherMetricService.getPhenomenonPercentage(mergeData)
+  val boroughPercentage: RDD[(String, Double)] = DistrictMetricService.getBoroughPercentage(mergeData)
+  val districtsPercentage: RDD[(String, Double)] = DistrictMetricService.getDistrictsPercentage(mergeData)
+  //    val districtsByBorough: RDD[(String, Map[String, Double])] = DistrictMetricService.getDistrictsPercentageByBorough(mergeData)
 
-  val report = new Reports()
-  val dayOfWeekReport = report.generateReportString[String,Double](dayOfWeek)
+  val report = injector.getInstance(classOf[Reports])
+  val dayOfWeekReport = report.generateReportString[String, Double](dayOfWeek)
   val hourOfDayReport = report.generateReportString[Int, Double](hourOfDay)
   val periodReport = report.generateReportString[String, Double](period)
-  val weatherReport = report.generateReportString[String,Double](weatherPhenomenon)
-  val boroughReport = report.generateReportString[String,Double](boroughPercentage)
+  val weatherReport = report.generateReportString[String, Double](weatherPhenomenon)
+  val boroughReport = report.generateReportString[String, Double](boroughPercentage)
   val districtsReport = report.generateReportString[String, Double](districtsPercentage)
 
 

@@ -1,6 +1,7 @@
 package com.itechart.ny_accidents.parse
 
 
+import com.google.inject.Singleton
 import com.itechart.ny_accidents.entity.District
 import com.itechart.ny_accidents.utils.PostgisUtils
 import org.apache.spark.sql.{Row, SparkSession}
@@ -8,6 +9,7 @@ import org.slf4j.LoggerFactory
 
 import scala.util.control.Exception
 
+@Singleton
 class DistrictsParser {
   private lazy val logger = LoggerFactory.getLogger(getClass)
 

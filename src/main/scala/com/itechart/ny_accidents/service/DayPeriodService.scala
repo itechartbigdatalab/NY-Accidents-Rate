@@ -2,12 +2,13 @@ package com.itechart.ny_accidents.service
 
 import java.util.{Calendar, Date}
 
+import com.google.inject.Singleton
 import com.itechart.ny_accidents.constants.GeneralConstants._
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.scraper.ContentExtractors.{attr, elementList, texts}
 
-class DayPeriodService {
+object DayPeriodService extends {
 
   private val sunrisesSunsets: Map[Date, Seq[Date]] = parseSunrisesSunsets
 
@@ -29,7 +30,7 @@ class DayPeriodService {
       }).toMap
   }
 
-  def defineLighting(dateTime: Date): String = {
+  val defineLighting: Date => String = dateTime => {
     val hashDateCalendar = Calendar.getInstance()
     hashDateCalendar.setTime(dateTime)
     hashDateCalendar.set(Calendar.HOUR_OF_DAY, 0)

@@ -6,7 +6,10 @@ import slick.jdbc.{JdbcProfile, PostgresProfile}
 import slick.lifted
 
 @Deprecated
-class DistrictsDAO(val profile: JdbcProfile = PostgresProfile) {
+class DistrictsDAO() {
+
+  val profile: JdbcProfile = PostgresProfile
+
   private lazy val TABLE_NAME = "district"
   private lazy val query = lifted.TableQuery[DistrictsTable]
 
