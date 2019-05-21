@@ -4,7 +4,7 @@ import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.{Calendar, Locale}
 
-import com.itechart.ny_accidents.entity.ReportMergedData
+import com.itechart.ny_accidents.entity.{MergedData, ReportMergedData}
 import com.itechart.ny_accidents.service.DayPeriodService
 import org.apache.spark.rdd.RDD
 
@@ -12,7 +12,7 @@ object WeatherMetric {
 
   val dayPeriodService = new DayPeriodService
 
-  def countHours(accidentsWithWeather: RDD[ReportMergedData]): RDD[(Int, Double)] = {
+  def countHours(accidentsWithWeather: RDD[MergedData]): RDD[(Int, Double)] = {
     val filteredData = accidentsWithWeather
       .filter(_.accident.dateTime.isDefined)
       .map(_.accident.dateTime.get)
@@ -27,7 +27,7 @@ object WeatherMetric {
     Metrics.calculatePercentage(groupedData, length)
   }
 
-  def countDayOfWeek(accidentsWithWeather: RDD[ReportMergedData]): RDD[(String, Double)] = {
+  def countDayOfWeek(accidentsWithWeather: RDD[MergedData]): RDD[(String, Double)] = {
     val filteredData = accidentsWithWeather
       .filter(_.accident.dateTime.isDefined)
       .map(_.accident.dateTime.get)
@@ -43,7 +43,7 @@ object WeatherMetric {
     Metrics.calculatePercentage(groupedData, length)
   }
 
-  def definePeriod(accidentsWithWeather: RDD[ReportMergedData]): RDD[(String, Double)] = {
+  def definePeriod(accidentsWithWeather: RDD[MergedData]): RDD[(String, Double)] = {
     val filteredData = accidentsWithWeather
       .filter(_.accident.dateTime.isDefined)
       .map(_.accident.dateTime.get)

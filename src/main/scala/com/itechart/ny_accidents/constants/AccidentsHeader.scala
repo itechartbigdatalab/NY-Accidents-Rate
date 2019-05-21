@@ -37,6 +37,7 @@ object AccidentsHeader {
   val CYCLIST_KILLED = 15
   val MOTORIST_INJURED = 16
   val MOTORIST_KILLED = 17
+  val UNIQUE_NUMBER = 23
 
   // TODO refactor arrays
   val CONTRIBUTING_FACTOR_VEHICLE_1_C = 18

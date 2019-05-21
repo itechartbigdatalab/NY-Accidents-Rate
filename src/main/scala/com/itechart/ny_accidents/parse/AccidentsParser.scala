@@ -1,13 +1,10 @@
 package com.itechart.ny_accidents.parse
 
-import java.text.SimpleDateFormat
-import java.time.{LocalDate, LocalTime}
 import java.util.Date
 
-import com.itechart.ny_accidents.constants.GeneralConstants._
-import com.itechart.ny_accidents.entity.Accident
 import com.itechart.ny_accidents.constants.AccidentsHeader._
 import com.itechart.ny_accidents.constants.GeneralConstants
+import com.itechart.ny_accidents.entity.Accident
 import com.itechart.ny_accidents.spark.Spark
 import com.itechart.ny_accidents.utils.DateUtils
 import org.apache.spark.rdd.RDD
@@ -17,20 +14,19 @@ import scala.util.Try
 
 class AccidentsParser {
 
-  def readData(fileName: String): RDD[Accident] = {
-
+  def readData(fileName: String): Array[Accident] = {
     val csvAccidentsData: Array[Row] = Spark.sparkSql.read
       .option("header", "true")
       .option("mode", "DROPMALFORMED")
       .csv(fileName)
       .collect()
 
-    Spark.sc.parallelize(csvAccidentsData.map(accidentsMapper))
+    csvAccidentsData.map(accidentsMapper)
   }
 
   def accidentsMapper(accident: Row): Accident = {
-
     Accident(
+      toLong(accident, UNIQUE_NUMBER),
       toDate(accident.getString(DATE_C), accident.getString(TIME_C)),
       toMillis(accident, DATE_C, TIME_C),
       toString(accident, BOROUGH_C),
@@ -77,6 +73,10 @@ class AccidentsParser {
     columns
       .map(toString(row, _))
       .toList
+  }
+
+  private def toLong(accident: Row, column: Int): Option[Long] = {
+    Try(accident.getString(column).toLong).toOption
   }
 
 }
