@@ -1,12 +1,12 @@
 package com.itechart.ny_accidents.service.metric
 
-import com.itechart.ny_accidents.entity.{ReportMergedData, WeatherForAccident}
+import com.itechart.ny_accidents.entity.{MergedData, ReportMergedData, WeatherForAccident}
 import com.itechart.ny_accidents.service.DayPeriodService
 import org.apache.spark.rdd.RDD
 
 class WeatherMetricService extends PercentageMetricService {
 
-  def getPhenomenonPercentage(data: RDD[ReportMergedData]): RDD[(String, Double)] = {
+  def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Double)] = {
     val filteredData = data.filter(_.weather.isDefined).map(_.weather.get)
     val length = filteredData.count()
     val groupedData = filteredData.groupBy(_.phenomenon)
@@ -20,7 +20,7 @@ class WeatherMetricService extends PercentageMetricService {
     })
   }
 
-  val definePeriod: RDD[ReportMergedData] => RDD[(String, Double)] = accidentsWithWeather => {
+  val definePeriod: RDD[MergedData] => RDD[(String, Double)] = accidentsWithWeather => {
     val filteredData = accidentsWithWeather
       .filter(_.accident.dateTime.isDefined)
       .map(_.accident.dateTime.get)

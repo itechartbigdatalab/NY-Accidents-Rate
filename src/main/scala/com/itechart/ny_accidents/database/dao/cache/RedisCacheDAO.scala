@@ -1,5 +1,6 @@
 package com.itechart.ny_accidents.database.dao.cache
 
+import com.google.inject.Singleton
 import com.itechart.ny_accidents.entity.MergedData
 import com.itechart.ny_accidents.utils.SerializationUtil
 import org.slf4j.LoggerFactory
@@ -7,7 +8,8 @@ import redis.clients.jedis.{JedisPool, JedisPoolConfig}
 
 import scala.util.Try
 
-object RedisCacheDAO extends MergedDataCacheDAO {
+@Singleton
+class RedisCacheDAO extends MergedDataCacheDAO {
   private lazy val logger = LoggerFactory.getLogger(getClass)
 
   private val REDIS_HOST: String = "127.0.0.1"

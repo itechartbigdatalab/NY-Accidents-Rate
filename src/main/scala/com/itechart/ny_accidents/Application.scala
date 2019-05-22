@@ -1,6 +1,7 @@
 package com.itechart.ny_accidents
 
 import com.google.inject.Guice
+import com.itechart.ny_accidents.database.dao.cache.EhCacheDAO
 import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
 import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
@@ -19,6 +20,7 @@ object Application extends App {
   val accidentsParser = injector.getInstance(classOf[AccidentsParser])
   val mergeService = injector.getInstance(classOf[MergeService])
   val weatherMetricService = injector.getInstance(classOf[WeatherMetricService])
+  val cacheService = injector.getInstance(classOf[EhCacheDAO])
 
   val raws = accidentsParser.readData(inputFileAccidents).cache()
   println("RAWS DATA READ")

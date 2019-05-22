@@ -9,7 +9,7 @@ import org.scalatest.FunSpec
 
 import scala.collection.immutable
 
-
+/*
 class WeatherMetricServiceTest extends FunSpec {
 
 
@@ -71,4 +71,4 @@ class WeatherMetricServiceTest extends FunSpec {
     }
   }
 }
-
+*/

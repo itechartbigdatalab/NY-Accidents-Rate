@@ -2,7 +2,7 @@ package com.itechart.ny_accidents.service
 
 import com.google.inject.{Inject, Singleton}
 import com.itechart.ny_accidents.database.DistrictsStorage
-import com.itechart.ny_accidents.database.dao.cache.EhCacheDAO
+import com.itechart.ny_accidents.database.dao.cache.{EhCacheDAO, MergedDataCacheDAO}
 import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
 import org.apache.spark.rdd.RDD
 
@@ -11,28 +11,29 @@ import scala.reflect.ClassTag
 @Singleton
 class MergeService @Inject()(weatherService: WeatherMappingService,
                              districtsService: DistrictsService,
-                             districtsStorage: DistrictsStorage) {
+                             districtsStorage: DistrictsStorage,
+                             cacheService: MergedDataCacheDAO) {
   private var counter = 0
 
   def mergeAccidentsWithWeatherAndDistricts[A, B](accidents: RDD[A], fun: A => B)(implicit tag: ClassTag[B]): RDD[B] = {
     accidents.map(fun)
   }
 
-  def mapper(value: Accident): (MergedData, Boolean) = {
+  def mapper(value: Accident): MergedData = {
     if(counter % 1000 == 0)
       println("COUNTER: " + counter)
     counter += 1
 
     value.uniqueKey match {
       case Some(pk) =>
-        EhCacheDAO.readMergedDataFromCache(pk) match {
-          case Some(data) => (data, true)
+        cacheService.readMergedDataFromCache(pk) match {
+          case Some(data) => data
           case None =>
             val data = createMergedData(value)
-            EhCacheDAO.cacheMergedData(data)
-            (data, false)
+            cacheService.cacheMergedData(data)
+            data
         }
-      case None => (createMergedData(value), false)
+      case None => createMergedData(value)
     }
 
   }

@@ -3,6 +3,7 @@ package com.itechart.ny_accidents.database.dao.cache
 
 import java.io.File
 
+import com.google.inject.Singleton
 import com.itechart.ny_accidents.constants.Configuration
 import com.itechart.ny_accidents.entity.MergedData
 import org.ehcache.config.ResourceUnit
@@ -11,7 +12,8 @@ import org.ehcache.config.units.{EntryUnit, MemoryUnit}
 
 import scala.util.Try
 
-object EhCacheDAO extends MergedDataCacheDAO {
+@Singleton
+class EhCacheDAO extends MergedDataCacheDAO {
   private lazy val manager = CacheManagerBuilder.newCacheManagerBuilder()
     .`with`(CacheManagerBuilder.persistence(new File(Configuration.CACHE_PATH)))
     .withCache(Configuration.CACHE_NAME,
