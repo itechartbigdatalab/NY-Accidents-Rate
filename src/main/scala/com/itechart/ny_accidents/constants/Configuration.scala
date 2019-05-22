@@ -3,13 +3,12 @@ package com.itechart.ny_accidents.constants
 import com.typesafe.config.ConfigFactory
 
 object Configuration {
-  private lazy val appConf = ConfigFactory.load("conf/app.conf")
+  private lazy val appConf = ConfigFactory.load("conf/application.conf")
   private lazy val cacheConf = ConfigFactory.load("conf/cache.conf")
   private lazy val databaseConf = ConfigFactory.load("conf/ny_data_database.conf")
 
   lazy val CACHE_NAME: String = cacheConf.getString("cache.name")
-  lazy val CACHE_PATH: String = "/home/" +
-    System.getProperty("user.name") + "/" + CACHE_NAME
+  lazy val CACHE_PATH: String = s"/home/${System.getProperty("user.name")}/${CACHE_NAME}"
   lazy val CACHE_DISK_SIZE: Int = cacheConf.getInt("cache.disk_size_gb")
   lazy val CACHE_HEAP_SIZE: Int = cacheConf.getInt("cache.heap_size_units")
   lazy val CACHE_OFF_HEAP_SIZE: Int = cacheConf.getInt("cache.off_head_size_gb")
