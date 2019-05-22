@@ -1,8 +1,12 @@
 package com.itechart.ny_accidents.utils
 
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
 import java.util.Date
+
+import org.apache.commons.lang.time.DateFormatUtils
+import org.joda.time.DateTime
 
 import scala.util.Try
 
@@ -35,7 +39,6 @@ object DateUtils {
   }
 
   def getStringFromDate(date: Date, format: String): String = {
-    val dateFormat = new SimpleDateFormat(format)
-    dateFormat.format(date)
+    DateFormatUtils.format(date, format)
   }
 }
