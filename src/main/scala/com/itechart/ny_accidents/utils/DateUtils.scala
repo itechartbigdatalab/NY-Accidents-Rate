@@ -38,7 +38,9 @@ object DateUtils {
       .withMinute(0).toInstant(ZoneOffset.UTC).toEpochMilli
   }
 
-  def getStringFromDate(date: Date, format: String): String = {
-    DateFormatUtils.format(date, format)
+  def getStringFromDate(date: Date, format: DateTimeFormatter): String = {
+    date.toInstant
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate.format(format)
   }
 }
