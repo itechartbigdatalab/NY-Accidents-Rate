@@ -2,7 +2,7 @@ package com.itechart.ny_accidents.database.dao.cache
 
 import com.google.inject.Singleton
 import com.itechart.ny_accidents.entity.MergedData
-import com.itechart.ny_accidents.utils.SerializationUtil
+import com.itechart.ny_accidents.utils.SerializationUtils
 import org.slf4j.LoggerFactory
 import redis.clients.jedis.{JedisPool, JedisPoolConfig}
 
@@ -24,7 +24,7 @@ class RedisCacheDAO extends MergedDataCacheDAO {
     userData.accident.uniqueKey match {
       case Some(pk) =>
         val redisClient = redis.getResource
-        redisClient.set(QUERY_PREFIX + pk, SerializationUtil.serialize(userData))
+        redisClient.set(QUERY_PREFIX + pk, SerializationUtils.serialize(userData))
         redisClient.close()
     }
   }
@@ -34,7 +34,7 @@ class RedisCacheDAO extends MergedDataCacheDAO {
     val objectString: String = redisClient.get(QUERY_PREFIX + key)
     redisClient.close()
 
-    Try(SerializationUtil.deserialize[MergedData](objectString)).toOption
+    Try(SerializationUtils.deserialize[MergedData](objectString)).toOption
   }
 
   def close = logger.debug("Redis cache close")

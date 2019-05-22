@@ -6,6 +6,8 @@ object Configuration {
   private val appConf = ConfigFactory.load("app.conf")
   private val cacheConf = ConfigFactory.load("conf/cache.conf")
 
+  val POPULATION_DATASET_PATH = appConf.getString("file.population_dataset")
+
   val CACHE_NAME: String = cacheConf.getString("cache.name")
   val CACHE_PATH: String = "/home/" +
     System.getProperty("user.name") + "/" + CACHE_NAME
