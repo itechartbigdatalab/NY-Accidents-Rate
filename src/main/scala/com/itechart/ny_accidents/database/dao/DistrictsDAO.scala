@@ -5,9 +5,7 @@ import com.vividsolutions.jts.geom.{Geometry, Point}
 import slick.jdbc.{JdbcProfile, PostgresProfile}
 import slick.lifted
 
-@Deprecated
 class DistrictsDAO() {
-
   val profile: JdbcProfile = PostgresProfile
 
   private lazy val TABLE_NAME = "district"

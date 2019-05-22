@@ -10,9 +10,6 @@ import scala.concurrent.duration.Duration
 
 @Singleton
 class DistrictsStorage @Inject()(districtsDAO: DistrictsDAO) {
-
-  private lazy val pathToDataFolder = ConfigFactory.load("app.conf")
-    .getString("file.nynta_path")
-
-  lazy val districts: Seq[District] = Await.result(NYDataDatabase.database.run(districtsDAO.all()), Duration.Inf)
+  lazy val districts: Seq[District] = Await.result(
+    NYDataDatabase.database.run(districtsDAO.all()), Duration.Inf)
 }

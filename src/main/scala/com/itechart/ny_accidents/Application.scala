@@ -3,8 +3,9 @@ package com.itechart.ny_accidents
 import java.util.Date
 
 import com.google.inject.Guice
-import com.itechart.ny_accidents.database.dao.cache.MergedDataCacheDAO
-import com.itechart.ny_accidents.entity.{Accident, MergedData}
+import com.itechart.ny_accidents.constants.Configuration
+import com.itechart.ny_accidents.database.dao.cache.{EhCacheDAO, MergedDataCacheDAO}
+import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
 import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.service.MergeService
@@ -14,10 +15,6 @@ import com.typesafe.config.ConfigFactory
 import org.apache.spark.rdd.RDD
 
 object Application extends App {
-  val filesConfig = ConfigFactory.load("app.conf")
-  val pathToDataFolder = filesConfig.getString("file.inputPath")
-  val inputFileAccidents = pathToDataFolder + filesConfig.getString("file.input.inputFileNYAccidents")
-
   val injector = Guice.createInjector(new GuiceModule)
   val accidentsParser = injector.getInstance(classOf[AccidentsParser])
   val mergeService = injector.getInstance(classOf[MergeService])
@@ -25,7 +22,7 @@ object Application extends App {
   val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
   sys.addShutdownHook(cacheService.close)
 
-  val raws = accidentsParser.readData(inputFileAccidents).cache()
+  val raws = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
   println("RAWS DATA READ")
 
   val mergeData: RDD[MergedData] = mergeService
