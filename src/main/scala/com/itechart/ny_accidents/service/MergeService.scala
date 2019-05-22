@@ -24,21 +24,21 @@ object MergeService {
   }
 
   // TODO remove counter
-  def mapper(value: Accident): MergedData = {
-    logger.debug("Accident: " + value)
-    println("COUNTER: " + counter)
+  def mapper(value: Accident): (MergedData, Boolean) = {
+    if(counter % 1000 == 0)
+      println("COUNTER: " + counter)
     counter += 1
 
     value.uniqueKey match {
       case Some(pk) =>
         EhCacheDAO.readMergedDataFromCache(pk) match {
-          case Some(data) => data
+          case Some(data) => (data, true)
           case None =>
             val data = createMergedData(value)
             EhCacheDAO.cacheMergedData(data)
-            data
+            (data, false)
         }
-      case None => createMergedData(value)
+      case None => (createMergedData(value), false)
     }
 
   }
