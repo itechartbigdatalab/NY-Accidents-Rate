@@ -36,5 +36,5 @@ class EhCacheDAO extends MergedDataCacheDAO {
     }
   }
 
-  def close(): Unit = manager.close()
+  def close: Unit = manager.close()
 }

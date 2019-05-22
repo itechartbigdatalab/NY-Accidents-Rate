@@ -1,13 +1,15 @@
 package com.itechart.ny_accidents
 
+import java.util.Date
+
 import com.google.inject.Guice
-import com.itechart.ny_accidents.database.dao.cache.{EhCacheDAO, MergedDataCacheDAO}
-import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
+import com.itechart.ny_accidents.database.dao.cache.MergedDataCacheDAO
+import com.itechart.ny_accidents.entity.{Accident, MergedData}
 import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.service.MergeService
 import com.itechart.ny_accidents.service.metric.{DistrictMetricService, TimeMetricService, WeatherMetricService}
-import com.itechart.ny_accidents.utils.FileWriterUtils
+import com.itechart.ny_accidents.utils.{DateUtils, FileWriterUtils}
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.rdd.RDD
 
@@ -21,6 +23,7 @@ object Application extends App {
   val mergeService = injector.getInstance(classOf[MergeService])
   val weatherMetricService = injector.getInstance(classOf[WeatherMetricService])
   val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
+  sys.addShutdownHook(cacheService.close)
 
   val raws = accidentsParser.readData(inputFileAccidents).cache()
   println("RAWS DATA READ")

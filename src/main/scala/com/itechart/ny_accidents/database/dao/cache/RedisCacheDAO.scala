@@ -36,4 +36,6 @@ class RedisCacheDAO extends MergedDataCacheDAO {
 
     Try(SerializationUtil.deserialize[MergedData](objectString)).toOption
   }
+
+  def close = logger.debug("Redis cache close")
 }

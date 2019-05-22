@@ -33,4 +33,9 @@ object DateUtils {
     fromLongToLocalDateTime(localDateTimeMillis)
       .withMinute(0).toInstant(ZoneOffset.UTC).toEpochMilli
   }
+
+  def getStringFromDate(date: Date, format: String): String = {
+    val dateFormat = new SimpleDateFormat(format)
+    dateFormat.format(date)
+  }
 }
