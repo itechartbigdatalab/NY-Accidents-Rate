@@ -29,13 +29,17 @@ class PopulationParser @Inject()(districtsService: DistrictsService,
   }
 
   def mapper(row: Row): Option[Population] = {
-    Exception.allCatch.opt (
+    Exception.allCatch.opt {
+      val districtName = row(PopulationsHeader.NTA_NAME).toString
+      val district = districtsService.getDistrict(districtName.toLowerCase,
+        districtsStorage.districts).get
+
       Population(
         row(PopulationsHeader.YEAR_COL).toString.toInt,
-        districtsService.getDistrict(row(PopulationsHeader.NTA_NAME)
-          .toString.toLowerCase, districtsStorage.districts).get,
-        row(PopulationsHeader.POPULATION).toString.toInt
+        district,
+        row(PopulationsHeader.POPULATION).toString.toInt,
+        district.geometry.getArea
       )
-    )
+    }
   }
 }
