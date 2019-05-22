@@ -11,7 +11,7 @@ import scala.util.control.Exception
 @Singleton
 class WeatherParser {
 
-  // TODO rewrite denamic update
+  // TODO rewrite dynamic update
   def parseCsv(path: String): Seq[WeatherEntity] = {
     val bufferedSource = Source.fromFile(path)
     bufferedSource.getLines()
@@ -28,7 +28,7 @@ class WeatherParser {
     paths.map(parseCsv).reduce(_ ++ _)
   }
 
-  // TODO rewrite to denamic update
+  // TODO rewrite to dynamic update
   def parseWeatherLine(columns: List[String]): Option[WeatherEntity] = {
     Exception.allCatch.opt(WeatherEntity(
       0,

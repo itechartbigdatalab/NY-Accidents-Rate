@@ -1,8 +1,12 @@
 package com.itechart.ny_accidents.utils
 
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
 import java.util.Date
+
+import org.apache.commons.lang.time.DateFormatUtils
+import org.joda.time.DateTime
 
 import scala.util.Try
 
@@ -32,5 +36,11 @@ object DateUtils {
   def hashByDate(localDateTimeMillis: Long): Long = {
     fromLongToLocalDateTime(localDateTimeMillis)
       .withMinute(0).toInstant(ZoneOffset.UTC).toEpochMilli
+  }
+
+  def getStringFromDate(date: Date, format: DateTimeFormatter): String = {
+    date.toInstant
+      .atZone(ZoneId.systemDefault())
+      .toLocalDate.format(format)
   }
 }
