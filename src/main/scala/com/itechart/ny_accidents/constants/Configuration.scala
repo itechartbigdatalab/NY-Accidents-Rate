@@ -30,4 +30,5 @@ object Configuration {
   lazy val REDIS_POOL_SIZE: Int = 128
 
   lazy val MONGO_HOST: String = "mongodb://localhost:27017"
+  lazy val WAIT_QUEUE_SIZE_MONGO: Int = 100
 }

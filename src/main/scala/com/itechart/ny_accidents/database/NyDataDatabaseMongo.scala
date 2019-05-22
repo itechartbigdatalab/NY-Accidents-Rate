@@ -8,7 +8,7 @@ object NyDataDatabaseMongo {
   private final val DATABASE = "ny_data"
 
   private lazy val client: MongoClient = MongoClient(Configuration.MONGO_HOST
-    + "/?waitQueueMultiple=100")
+    + "/?waitQueueMultiple=" + Configuration.WAIT_QUEUE_SIZE_MONGO)
 
   lazy val database: MongoDatabase = client.getDatabase(DATABASE)
 }
