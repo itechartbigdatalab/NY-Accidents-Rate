@@ -1,7 +1,7 @@
 package com.itechart.ny_accidents
 
 import com.google.inject.Guice
-import com.itechart.ny_accidents.entity.{ReportAccident, ReportMergedData}
+import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
 import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.service.MergeService
@@ -22,10 +22,9 @@ object Application extends App {
 
   val raws = accidentsParser.readData(inputFileAccidents).cache()
   println("RAWS DATA READ")
-  val splitData = mergeService.splitData(raws).cache()
-  println("Split data: " + splitData.count())
-  val mergeData: RDD[ReportMergedData] = mergeService
-    .mergeAccidentsWithWeatherAndDistricts[ReportAccident, ReportMergedData](splitData, mergeService.splitDataMapper).cache()
+
+  val mergeData: RDD[MergedData] = mergeService
+    .mergeAccidentsWithWeatherAndDistricts[Accident, MergedData](raws, mergeService.mapper).cache()
   println("Merged data size: " + mergeData.count())
 
   val dayOfWeek: RDD[(String, Double)] = TimeMetricService.countDayOfWeek(mergeData)

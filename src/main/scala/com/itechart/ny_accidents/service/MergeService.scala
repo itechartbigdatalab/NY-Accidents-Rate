@@ -2,6 +2,7 @@ package com.itechart.ny_accidents.service
 
 import com.google.inject.{Inject, Singleton}
 import com.itechart.ny_accidents.database.DistrictsStorage
+import com.itechart.ny_accidents.database.dao.cache.EhCacheDAO
 import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
 import org.apache.spark.rdd.RDD
 
@@ -17,8 +18,26 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
     accidents.map(fun)
   }
 
-  def mapper(value: Accident): MergedData = {
+  def mapper(value: Accident): (MergedData, Boolean) = {
+    if(counter % 1000 == 0)
+      println("COUNTER: " + counter)
+    counter += 1
 
+    value.uniqueKey match {
+      case Some(pk) =>
+        EhCacheDAO.readMergedDataFromCache(pk) match {
+          case Some(data) => (data, true)
+          case None =>
+            val data = createMergedData(value)
+            EhCacheDAO.cacheMergedData(data)
+            (data, false)
+        }
+      case None => (createMergedData(value), false)
+    }
+
+  }
+
+  private def createMergedData(value: Accident): MergedData = {
     (value.latitude, value.longitude) match {
       case (Some(latitude), Some(longitude)) =>
         val district = districtsService.getDistrict(latitude, longitude, districtsStorage.districts)
