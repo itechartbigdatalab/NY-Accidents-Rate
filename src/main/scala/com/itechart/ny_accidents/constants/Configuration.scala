@@ -3,7 +3,7 @@ package com.itechart.ny_accidents.constants
 import com.typesafe.config.ConfigFactory
 
 object Configuration {
-  private lazy val appConf = ConfigFactory.load("conf/application.conf")
+  private lazy val appConf = ConfigFactory.load("application.conf")
   private lazy val cacheConf = ConfigFactory.load("conf/cache.conf")
   private lazy val databaseConf = ConfigFactory.load("conf/ny_data_database.conf")
 
