@@ -30,6 +30,7 @@ class AccidentsParser {
   def accidentsMapper(accident: Row): Accident = {
 
     Accident(
+      toLong(accident, UNIQUE_NUMBER),
       toDate(accident.getString(DATE_C), accident.getString(TIME_C)),
       toMillis(accident, DATE_C, TIME_C),
       toString(accident, BOROUGH_C),
@@ -48,6 +49,10 @@ class AccidentsParser {
       toInt(accident, MOTORIST_KILLED),
       toStringList(accident, CONTRIBUTING_FACTOR_VEHICLE_COLUMNS),
       toStringList(accident, VEHICLE_TYPE_CODE_COLUMNS))
+  }
+
+  private def toLong(accident: Row, column: Int): Option[Long] = {
+    Try(accident.getString(column).toLong).toOption
   }
 
   private def toDate(dateStr: String, timeStr: String): Option[Date] = {

@@ -2,7 +2,8 @@ package com.itechart.ny_accidents.entity
 
 import java.util.Date
 
-case class Accident(dateTime: Option[Date],
+case class Accident(uniqueKey: Option[Long],
+                     dateTime: Option[Date],
                     dateTimeMillis: Option[Long],
                     borough: Option[String],
                     latitude: Option[Double],
