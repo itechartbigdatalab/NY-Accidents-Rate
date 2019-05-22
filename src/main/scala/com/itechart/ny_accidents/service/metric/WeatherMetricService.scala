@@ -6,7 +6,7 @@ import org.apache.spark.rdd.RDD
 
 class WeatherMetricService extends PercentageMetricService {
 
-  def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Double)] = {
+  def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Int, Double)] = {
     val filteredData = data.filter(_.weather.isDefined).map(_.weather.get)
     val length = filteredData.count()
     val groupedData = filteredData.groupBy(_.phenomenon)
@@ -14,13 +14,13 @@ class WeatherMetricService extends PercentageMetricService {
     // TODO Need rewrite
     calculatePercentage[WeatherForAccident, String](groupedData, length).map(metric => {
       metric._1.isEmpty match {
-        case true => ("Clear", metric._2)
+        case true => ("Clear", metric._2, metric._3)
         case false => metric
       }
     })
   }
 
-  val definePeriod: RDD[MergedData] => RDD[(String, Double)] = accidentsWithWeather => {
+  val definePeriod: RDD[MergedData] => RDD[(String, Int, Double)] = accidentsWithWeather => {
     val filteredData = accidentsWithWeather
       .filter(_.accident.dateTime.isDefined)
       .map(_.accident.dateTime.get)

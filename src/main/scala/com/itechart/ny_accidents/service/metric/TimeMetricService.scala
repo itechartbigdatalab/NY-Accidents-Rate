@@ -10,7 +10,7 @@ import org.apache.spark.rdd.RDD
 
 object TimeMetricService extends PercentageMetricService {
 
-  def countHours(accidentsWithWeather: RDD[MergedData]): RDD[(Int, Double)] = {
+  def countHours(accidentsWithWeather: RDD[MergedData]): RDD[(Int, Int, Double)] = {
     val filteredData = accidentsWithWeather
       .filter(_.accident.dateTime.isDefined)
       .map(_.accident.dateTime.get)
@@ -25,7 +25,7 @@ object TimeMetricService extends PercentageMetricService {
     calculatePercentage(groupedData, length)
   }
 
-  def countDayOfWeek(accidentsWithWeather: RDD[MergedData]): RDD[(String, Double)] = {
+  def countDayOfWeek(accidentsWithWeather: RDD[MergedData]): RDD[(String, Int, Double)] = {
     val filteredData = accidentsWithWeather
       .filter(_.accident.dateTime.isDefined)
       .map(_.accident.dateTime.get)
