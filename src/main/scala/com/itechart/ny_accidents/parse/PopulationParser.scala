@@ -48,3 +48,4 @@ class PopulationParser @Inject()(districtsService: DistrictsService,
     }
   }
 }
+
