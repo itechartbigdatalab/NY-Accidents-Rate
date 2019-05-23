@@ -2,7 +2,7 @@ package com.itechart.ny_accidents.service
 
 import com.google.inject.Singleton
 import com.itechart.ny_accidents.entity.{District, DistrictMongo}
-import com.itechart.ny_accidents.utils.PostgisUtils
+import com.itechart.ny_accidents.utils.{PostgisUtils, StringUtils}
 import com.mongodb.client.model.geojson.Position
 import com.itechart.ny_accidents.database.dao.MongoDistrictsDAO
 
@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 @Singleton
 class DistrictsService {
   private implicit val ec: ExecutionContextExecutor = ExecutionContext.global
+  private lazy val MINIMUM_ACCEPTABLE_VALUE = 70.0
 
   @Deprecated
   // Will be deleted, do not use it!
@@ -30,5 +31,17 @@ class DistrictsService {
   def getDistrict(latitude: Double, longitude: Double, districts: Seq[District]): Option[District] = {
     val point = PostgisUtils.createPoint(latitude, longitude)
     districts.find(_.geometry.contains(point))
+  }
+
+  def getDistrict(districtName: String, districts: Seq[District]): Option[District] = {
+    districts.find(_.districtName.equalsIgnoreCase(districtName)) match {
+      case Some(value) => Some(value)
+      case None =>
+        districts.find(dist =>
+        StringUtils.getLineMatchPercentage(
+          dist.districtName.toLowerCase.replaceAll(" ", "_"),
+          districtName.toLowerCase().replaceAll(" ", "_")
+        ) > MINIMUM_ACCEPTABLE_VALUE)
+    }
   }
 }

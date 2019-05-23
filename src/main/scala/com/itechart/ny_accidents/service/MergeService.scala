@@ -20,7 +20,7 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
   }
 
   def mapper(value: Accident): MergedData = {
-    if(counter % 1000 == 0)
+    if (counter % 100 == 0)
       println("COUNTER: " + counter)
     counter += 1
 
@@ -29,6 +29,7 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
         cacheService.readMergedDataFromCache(pk) match {
           case Some(data) => data
           case None =>
+            println("Not in cache")
             val data = createMergedData(value)
             cacheService.cacheMergedData(data)
             data
