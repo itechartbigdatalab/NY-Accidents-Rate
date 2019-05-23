@@ -16,6 +16,7 @@ import com.typesafe.config.ConfigFactory
 import org.apache.spark.rdd.RDD
 
 object Application extends App {
+
   println("POPPATH: " + Configuration.POPULATION_FILE_PATH)
   println(PopulationStorage.populationMap.get(0))
 
