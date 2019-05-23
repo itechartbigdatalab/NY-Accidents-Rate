@@ -16,6 +16,8 @@ import scala.util.control.Exception
 class PopulationParser @Inject()(districtsService: DistrictsService,
                                  districtsStorage: DistrictsStorage) {
   private lazy val logger = LoggerFactory.getLogger(getClass)
+  private lazy val POPULATION_YEAR = 2010
+
 
   def readData(fileName: String): RDD[Population] = {
 
@@ -25,7 +27,10 @@ class PopulationParser @Inject()(districtsService: DistrictsService,
       .csv(fileName)
       .collect()
 
-    Spark.sc.parallelize(csvData.map(mapper).filter(_.isDefined).map(_.get))
+    Spark.sc.parallelize(csvData.map(mapper)
+      .filter(_.isDefined)
+      .map(_.get)
+      .filter(_.year == 2010))
   }
 
   def mapper(row: Row): Option[Population] = {
