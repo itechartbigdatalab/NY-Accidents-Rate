@@ -1,9 +1,11 @@
 package com.itechart.ny_accidents.utils
 
-import scala.collection.immutable
+import info.debatty.java.stringsimilarity.NormalizedLevenshtein
+
 import scala.util.{Failure, Success, Try}
 
 object StringUtils {
+  private val levenshtein = new NormalizedLevenshtein()
 
   def windStringToDoubleParse(windStr: String): Option[Double] = {
     Try(windStr.filter(_.isDigit).mkString("").toDouble) match {
@@ -13,15 +15,6 @@ object StringUtils {
   }
 
   def getLineMatchPercentage(firstString: String, secondString: String): Double = {
-    val coincidenceNumber: Int = firstString.map(char => {
-      secondString.contains(char) match {
-        case true => 1
-        case false => 0
-      }
-    }).sum
-
-    coincidenceNumber.toDouble /
-      (secondString.length.toDouble + secondString.length.toDouble
-        - coincidenceNumber.toDouble) * 100
+    levenshtein.similarity(firstString, secondString)
   }
 }

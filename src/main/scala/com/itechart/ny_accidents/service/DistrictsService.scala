@@ -7,6 +7,7 @@ import com.mongodb.client.model.geojson.Position
 import com.itechart.ny_accidents.database.dao.MongoDistrictsDAO
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
+import scala.util.Try
 
 @Singleton
 class DistrictsService {
@@ -37,11 +38,11 @@ class DistrictsService {
     districts.find(_.districtName.equalsIgnoreCase(districtName)) match {
       case Some(value) => Some(value)
       case None =>
-        districts.find(dist =>
-        StringUtils.getLineMatchPercentage(
-          dist.districtName.toLowerCase.replaceAll(" ", "_"),
-          districtName.toLowerCase().replaceAll(" ", "_")
-        ) > MINIMUM_ACCEPTABLE_VALUE)
+        Try(districts.map(dist =>
+          (dist,
+            StringUtils.getLineMatchPercentage(
+              dist.districtName, districtName
+            ))).maxBy(_._2)._1).toOption
     }
   }
 }
