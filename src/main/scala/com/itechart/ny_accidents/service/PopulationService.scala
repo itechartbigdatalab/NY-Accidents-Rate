@@ -1,7 +1,7 @@
 package com.itechart.ny_accidents.service
 
 import com.google.inject.Singleton
-import com.itechart.ny_accidents.entity.{Accident, MergedData, Population}
+import com.itechart.ny_accidents.entity.{MergedData, Population}
 import org.apache.spark.rdd.RDD
 
 import scala.util.Try
