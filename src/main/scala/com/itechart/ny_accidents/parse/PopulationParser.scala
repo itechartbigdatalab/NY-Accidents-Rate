@@ -10,6 +10,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.slf4j.LoggerFactory
 
+import scala.util.Try
 import scala.util.control.Exception
 
 @Singleton
@@ -19,18 +20,24 @@ class PopulationParser @Inject()(districtsService: DistrictsService,
   private lazy val POPULATION_YEAR = 2010
 
 
-  def readData(fileName: String): RDD[Population] = {
-
+  def readData(fileName: String): Map[Int, Population] = {
     val csvData: Array[Row] = Spark.sparkSql.read
       .option("header", "true")
       .option("mode", "DROPMALFORMED")
       .csv(fileName)
       .collect()
 
-    Spark.sc.parallelize(csvData.map(mapper)
-      .filter(_.isDefined)
-      .map(_.get)
-      .filter(_.year == 2010))
+    csvData.map(hashMapMapper).filter(_._2.isDefined)
+      .map(tuple => (tuple._1.get, tuple._2.get))
+      .filter(_._2.year == POPULATION_YEAR)
+      .toMap
+  }
+
+  def hashMapMapper(row: Row): (Option[Int], Option[Population]) = {
+    val population = mapper(row)
+    val hashCode: Option[Int] = Try(population.get.district.hashCode()).toOption
+
+    (hashCode, population)
   }
 
   def mapper(row: Row): Option[Population] = {
@@ -48,5 +55,3 @@ class PopulationParser @Inject()(districtsService: DistrictsService,
     }
   }
 }
-
-

@@ -14,6 +14,8 @@ object Configuration {
   lazy val CACHE_OFF_HEAP_SIZE: Int = cacheConf.getInt("cache.off_head_size_gb")
   lazy val DATA_FILE_PATH: String = s"${appConf.getString("file.inputPath")}${appConf.getString("file.input.inputFileNYAccidents")}"
 
+  lazy val POPULATION_FILE_PATH: String = appConf.getString("file.population_path")
+
   lazy val NY_DATA_DATABASE_URL: String = databaseConf.getString("postgreConf.url")
   lazy val NY_DATA_DATABASE_DRIVER: String = databaseConf.getString("postgreConf.driver")
   lazy val NY_DATA_DATABASE_USER: String = databaseConf.getString("postgreConf.user")
