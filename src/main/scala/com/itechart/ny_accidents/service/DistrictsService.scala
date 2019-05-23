@@ -11,6 +11,7 @@ import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 @Singleton
 class DistrictsService {
   private implicit val ec: ExecutionContextExecutor = ExecutionContext.global
+  private lazy val MINIMUM_ACCEPTABLE_VALUE = 70.0
 
   @Deprecated
   // Will be deleted, do not use it!
@@ -40,7 +41,7 @@ class DistrictsService {
         StringUtils.getLineMatchPercentage(
           dist.districtName.toLowerCase.replaceAll(" ", "_"),
           districtName.toLowerCase().replaceAll(" ", "_")
-        ) > 90.0)
+        ) > MINIMUM_ACCEPTABLE_VALUE)
     }
   }
 }

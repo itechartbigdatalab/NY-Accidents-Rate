@@ -18,6 +18,7 @@ object Application extends App {
   val pathToDataFolder = filesConfig.getString("file.inputPath")
   val inputFileAccidents = pathToDataFolder + filesConfig.getString("file.input.inputFileNYAccidents")
 
+//  val inputFileAccidents = "/home/uladzimir/Downloads/NYPD_Motor_Vehicle_Collisions.csv"
   val injector = Guice.createInjector(new GuiceModule)
   val accidentsParser = injector.getInstance(classOf[AccidentsParser])
   val mergeService = injector.getInstance(classOf[MergeService])
