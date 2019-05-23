@@ -2,7 +2,6 @@ package com.itechart.ny_accidents.service
 
 import java.util.{Calendar, Date}
 
-import com.google.inject.Singleton
 import com.itechart.ny_accidents.constants.GeneralConstants._
 import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL._
@@ -10,7 +9,7 @@ import net.ruippeixotog.scalascraper.scraper.ContentExtractors.{attr, elementLis
 
 object DayPeriodService extends {
 
-  private val sunrisesSunsets: Map[Date, Seq[Date]] = parseSunrisesSunsets
+  val sunrisesSunsets: Map[Date, Seq[Date]] = parseSunrisesSunsets
 
   private def parseSunrisesSunsets: Map[Date, Seq[Date]] = {
     val browser = JsoupBrowser()
