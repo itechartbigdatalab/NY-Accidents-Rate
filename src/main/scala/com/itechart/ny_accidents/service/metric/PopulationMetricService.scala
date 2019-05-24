@@ -10,15 +10,16 @@ import org.apache.spark.rdd.RDD
 @Singleton
 class PopulationMetricService @Inject()(populationStorage: PopulationStorage) {
 
-  def getPopulationToNumberOfAccidentsRatio(data: RDD[MergedData]): RDD[(String, Double)] = {
+  def getPopulationToNumberOfAccidentsRatio(data: RDD[MergedData]): RDD[(String, Double, Double, Int)] = {
     val populationMap = populationStorage.populationMap
     data.filter(_.district.isDefined).groupBy(_.district.get).map{case (district, mergedData) => {
       val districtHash = district.hashCode()
       val accidentsNumber = mergedData.size
       populationMap.get(districtHash) match {
         case Some(value) =>
-          val ration = accidentsNumber / PopulationService.calculateDensity(value)
-          Some(district.districtName, ration)
+          val density = PopulationService.calculateDensity(value)
+          val ration = accidentsNumber / density
+          Some(district.districtName, ration, density, accidentsNumber)
         case _ => None
       }
     }}.filter(_.isDefined).map(_.get)

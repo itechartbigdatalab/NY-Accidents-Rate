@@ -6,8 +6,8 @@ import org.apache.spark.rdd.RDD
 @Singleton
 class Reports {
 
-  def generateReportForTupleRDD[A <: Product](data: RDD[A]): Seq[Seq[String]] = {
-    data.collect().map(obj => obj.productIterator.toSeq.map(_.toString))
+  def generateReportForTupleRDD[A <: Product](data: RDD[A], header: Seq[String]): Seq[Seq[String]] = {
+    header +: data.collect().map(obj => obj.productIterator.toSeq.map(_.toString))
   }
 
 }

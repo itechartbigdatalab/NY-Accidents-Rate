@@ -2,6 +2,7 @@ package com.itechart.ny_accidents
 
 import com.google.inject.Guice
 import com.itechart.ny_accidents.constants.Configuration
+import com.itechart.ny_accidents.constants.GeneralConstants._
 import com.itechart.ny_accidents.database.dao.PopulationStorage
 import com.itechart.ny_accidents.database.dao.cache.MergedDataCacheDAO
 import com.itechart.ny_accidents.entity.{Accident, MergedData}
@@ -44,7 +45,7 @@ object Application extends App {
   logger.info("Borough percentage calculated")
   val districtsPercentage: RDD[(String, Int, Double)] = DistrictMetricService.getDistrictsPercentage(mergeData)
   logger.info("Districts percentage calculated")
-  val populationToNumberOfAccidents: RDD[(String, Double)] = populationService
+  val populationToNumberOfAccidents: RDD[(String, Double, Double, Int)] = populationService
     .getPopulationToNumberOfAccidentsRatio(mergeData)
   logger.info("Population to number of accidents calculated")
   val accidentCountDuringPhenomenonPerHour: RDD[(String, Int, Double, Double)] =
@@ -53,39 +54,39 @@ object Application extends App {
 
 
   val report = injector.getInstance(classOf[Reports])
-  val dayOfWeekReport = report.generateReportForTupleRDD[(String, Int, Double)](dayOfWeek)
+  val dayOfWeekReport = report.generateReportForTupleRDD[(String, Int, Double)](dayOfWeek, DAY_OF_WEEK_REPORT_HEADER)
 
   FileWriterUtils.writeToCsv(dayOfWeekReport, "reports/day_of_week.csv")
   logger.info("Day of week report created")
 
-  val hourOfDayReport = report.generateReportForTupleRDD[(Int, Int, Double)](hourOfDay)
+  val hourOfDayReport = report.generateReportForTupleRDD[(Int, Int, Double)](hourOfDay, HOUR_OF_DAY_REPORT_HEADER)
   FileWriterUtils.writeToCsv(hourOfDayReport, "reports/hour_of_day.csv")
   logger.info("Hour of day report created")
 
-  val periodReport = report.generateReportForTupleRDD[(String, Int, Double)](period)
+  val periodReport = report.generateReportForTupleRDD[(String, Int, Double)](period, DAY_OF_WEEK_REPORT_HEADER)
   FileWriterUtils.writeToCsv(periodReport, "reports/period.csv")
   logger.info("Period report created")
 
-  val weatherReport = report.generateReportForTupleRDD[(String, Int, Double)](weatherPhenomenon)
+  val weatherReport = report.generateReportForTupleRDD[(String, Int, Double)](weatherPhenomenon, PHENOMENON_REPORT_HEADER)
   FileWriterUtils.writeToCsv(weatherReport, "reports/weather_phenomenon.csv")
   logger.info("Weather report created")
 
-  val boroughReport = report.generateReportForTupleRDD[(String, Int, Double)](boroughPercentage)
+  val boroughReport = report.generateReportForTupleRDD[(String, Int, Double)](boroughPercentage, BOROUGH_REPORT_HEADER)
   FileWriterUtils.writeToCsv(boroughReport, "reports/borough.csv")
   logger.info("Borough report created")
 
-  val districtsReport = report.generateReportForTupleRDD[(String, Int, Double)](districtsPercentage)
+  val districtsReport = report.generateReportForTupleRDD[(String, Int, Double)](districtsPercentage, DISTRICT_REPORT_HEADER)
   FileWriterUtils.writeToCsv(districtsReport, "reports/districts.csv")
   logger.info("Districts report created")
 
   val populationToNumberOfAccidentsReport = report
-    .generateReportForTupleRDD[(String, Double)](populationToNumberOfAccidents)
+    .generateReportForTupleRDD[(String, Double, Double, Int)](populationToNumberOfAccidents, POPULATION_TO_ACCIDENTS_REPORT_HEADER)
   FileWriterUtils.writeToCsv(populationToNumberOfAccidentsReport,
     "reports/population_to_number_of_accidents_report.csv")
   logger.info("Population to number of accidents report created")
 
   val accidentCountDuringPhenomenonPerHourReport = report
-    .generateReportForTupleRDD[(String, Int, Double, Double)](accidentCountDuringPhenomenonPerHour)
+    .generateReportForTupleRDD[(String, Int, Double, Double)](accidentCountDuringPhenomenonPerHour, ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_HEADER)
   FileWriterUtils.writeToCsv(accidentCountDuringPhenomenonPerHourReport,
     "reports/accidents_count_phenomenon_per_hour.csv")
   logger.info("Accidents count per hour for each phenomenon report created")
