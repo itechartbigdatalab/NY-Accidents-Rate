@@ -38,4 +38,9 @@ object GeneralConstants {
   val HTML_ELEMENT_DAY_SELECTOR = ".day"
   val HTML_ELEMENT_DATE_ATTRIBUTE = "rel"
   val HTML_ELEMENT_TD = "td"
+
+  val HASH_DIFFERENCE: Long = MILLIS_IN_HOUR
+  val FIRST_STATION_ID = 1 // In NY we always have only 3 weather stations with hand write id's 1, 2, 3
+  val LAST_STATION_ID = 3
+
 }

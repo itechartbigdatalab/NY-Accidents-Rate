@@ -1,6 +1,8 @@
 package com.itechart.ny_accidents.service
 
 import com.google.inject.{Inject, Singleton}
+import com.itechart.ny_accidents.constants.GeneralConstants
+import com.itechart.ny_accidents.constants.GeneralConstants.{FIRST_STATION_ID, LAST_STATION_ID}
 import com.itechart.ny_accidents.database.NYDataDatabase
 import com.itechart.ny_accidents.database.dao.WeatherDAO
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherForAccident}
@@ -39,6 +41,23 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
       case Some(value) => Some(findBestMatchWeather(value, accidentTime))
       case _ => None
     }
+  }
+
+  def getWeatherByStationsBetweenDates(earlyDate: Long, laterDate: Long): Map[Int, Seq[WeatherEntity]] = {
+    val earlyDateHash = DateUtils.hashByDate(earlyDate)
+    val laterDateHash = DateUtils.hashByDate(laterDate)
+    val intermediateDatesHashes = earlyDateHash to laterDateHash by GeneralConstants.HASH_DIFFERENCE
+
+    (FIRST_STATION_ID to LAST_STATION_ID)
+      .map(stationId => {
+        val weatherMap = intermediateDatesHashes
+          .map(allWeather(stationId).get)
+          .filter(_.isDefined)
+          .flatMap(_.get)
+          .sortBy(_.dateTime)
+        (stationId, weatherMap)
+      })
+      .toMap
   }
 
   private def findBestMatchWeather(hashedWeatherForPeriod: Seq[WeatherEntity], accidentTime: Long): WeatherForAccident = {

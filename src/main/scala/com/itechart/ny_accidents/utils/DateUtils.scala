@@ -3,15 +3,13 @@ package com.itechart.ny_accidents.utils
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
-import java.util.Date
+import java.util.{Calendar, Date}
 
-import org.apache.commons.lang.time.DateFormatUtils
-import org.joda.time.DateTime
+import com.itechart.ny_accidents.constants.GeneralConstants.MILLIS_IN_HOUR
 
 import scala.util.Try
 
 object DateUtils {
-  final val MILLIS_IN_HOUR = 3600000
 
   def subtractHour(dateTimeMillis: Long): Long = {
     dateTimeMillis - MILLIS_IN_HOUR
@@ -33,8 +31,8 @@ object DateUtils {
     LocalDateTime.ofInstant(Instant.ofEpochMilli(localDateTimeMillis), ZoneId.systemDefault())
   }
 
-  def hashByDate(localDateTimeMillis: Long): Long = {
-    fromLongToLocalDateTime(localDateTimeMillis)
+  def hashByDate(dateTimeMillis: Long): Long = {
+    fromLongToLocalDateTime(dateTimeMillis)
       .withMinute(0).toInstant(ZoneOffset.UTC).toEpochMilli
   }
 
