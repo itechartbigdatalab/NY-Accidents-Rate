@@ -32,7 +32,7 @@ dependencyOverrides ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7.1"
 )
 
-
+enablePlugins(ScoverageSbtPlugin)
 enablePlugins(FlywayPlugin)
 flywayDriver := "org.postgresql.Driver"
 flywayUrl := "jdbc:postgresql://localhost:5432/ny_data"
