@@ -23,7 +23,8 @@ libraryDependencies ++= Seq(
   "redis.clients" % "jedis" % "2.9.0",
   "org.ehcache" % "ehcache" % "3.7.1",
   "javax.cache" % "cache-api" % "1.0.0",
-  "com.typesafe.play" %% "play-json" % "2.7.3"
+  "com.typesafe.play" %% "play-json" % "2.7.3",
+  "info.debatty" % "java-string-similarity" % "1.2.1"
 )
 dependencyOverrides ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7.1"
