@@ -15,15 +15,15 @@ import org.slf4j.LoggerFactory
 
 object Application extends App {
   lazy val logger = LoggerFactory.getLogger(getClass)
-  logger.debug(PopulationStorage.populationMap.get(0).toString)
 
   val injector = Guice.createInjector(new GuiceModule)
   val accidentsParser = injector.getInstance(classOf[AccidentsParser])
   val mergeService = injector.getInstance(classOf[MergeService])
   val weatherMetricService = WeatherMetricService
   val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
+  val populationService = injector.getInstance(classOf[PopulationMetricService])
+  val populationStorage = injector.getInstance(classOf[PopulationStorage])
   sys.addShutdownHook(cacheService.close)
-
 
   val raws = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
   logger.info("Raw data read")
@@ -44,7 +44,7 @@ object Application extends App {
   logger.info("Borough percentage calculated")
   val districtsPercentage: RDD[(String, Int, Double)] = DistrictMetricService.getDistrictsPercentage(mergeData)
   logger.info("Districts percentage calculated")
-  val populationToNumberOfAccidents: RDD[(String, Double)] = PopulationMetricService
+  val populationToNumberOfAccidents: RDD[(String, Double)] = populationService
     .getPopulationToNumberOfAccidentsRatio(mergeData)
   logger.info("Population to number of accidents calculated")
   val accidentCountDuringPhenomenonPerHour: RDD[(String, Int, Double, Double)] =
@@ -89,6 +89,5 @@ object Application extends App {
   FileWriterUtils.writeToCsv(accidentCountDuringPhenomenonPerHourReport,
     "reports/accidents_count_phenomenon_per_hour.csv")
   logger.info("Accidents count per hour for each phenomenon report created")
-
 
 }
