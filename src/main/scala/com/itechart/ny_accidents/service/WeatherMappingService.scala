@@ -46,10 +46,11 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
   def getWeatherByStationsBetweenDates(earlyDate: Long, laterDate: Long): Map[Int, Seq[WeatherEntity]] = {
     val earlyDateHash = DateUtils.hashByDate(earlyDate)
     val laterDateHash = DateUtils.hashByDate(laterDate)
+    val intermediateDatesHashes = earlyDateHash to laterDateHash by GeneralConstants.HASH_DIFFERENCE
 
     (FIRST_STATION_ID to LAST_STATION_ID)
       .map(stationId => {
-        val weatherMap = (earlyDateHash to laterDateHash by GeneralConstants.HASH_DIFFERENCE)
+        val weatherMap = intermediateDatesHashes
           .map(allWeather(stationId).get)
           .filter(_.isDefined)
           .flatMap(_.get)
