@@ -51,12 +51,10 @@ object WeatherMetricService extends PercentageMetricService {
       .getWeatherByStationsBetweenDates(firstAccidentDateTime, lastAccidentDateTime)
     val stationCount = weatherByStation.size
 
-    phenomenonCount.map(tuple => {
-      val phenomenonName = tuple._1
-      val accidentCountDuringPhenomenon = tuple._2
+    phenomenonCount.map { case (phenomenonName, accidentCountDuringPhenomenon, _) =>
       val hoursOfPhenomenon = countHoursOfPhenomenon(weatherByStation, stationCount, phenomenonName)
       (phenomenonName, accidentCountDuringPhenomenon, hoursOfPhenomenon, accidentCountDuringPhenomenon / hoursOfPhenomenon)
-    })
+    }
 
   }
 
