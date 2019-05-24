@@ -43,4 +43,12 @@ object GeneralConstants {
   val FIRST_STATION_ID = 1 // In NY we always have only 3 weather stations with hand write id's 1, 2, 3
   val LAST_STATION_ID = 3
 
+  val DAY_OF_WEEK_REPORT_HEADER: Seq[String] = Seq("Day_of_week","Accident_count","Percentage")
+  val HOUR_OF_DAY_REPORT_HEADER: Seq[String] = Seq("Hour_of_day","Accident_count","Percentage")
+  val DAY_PERIOD_REPORT_HEADER: Seq[String] = Seq("Day_period","Accident_count","Percentage")
+  val PHENOMENON_REPORT_HEADER: Seq[String] = Seq("Phenomenon","Accident_count","Percentage")
+  val BOROUGH_REPORT_HEADER: Seq[String] = Seq("Borough","Accident_count","Percentage")
+  val DISTRICT_REPORT_HEADER: Seq[String] = Seq("District","Accident_count","Percentage")
+  val POPULATION_TO_ACCIDENTS_REPORT_HEADER: Seq[String] = Seq("District","Ratio","Density", "Accident_Count")
+  val ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_HEADER: Seq[String] = Seq("Phenomenon","Accident_count","total_phenomenon_hours", "Accident_per_hour")
 }

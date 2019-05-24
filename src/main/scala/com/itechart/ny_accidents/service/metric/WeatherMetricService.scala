@@ -8,9 +8,8 @@ import com.itechart.ny_accidents.service.{DayPeriodService, WeatherMappingServic
 import org.apache.spark.rdd.RDD
 
 object WeatherMetricService extends PercentageMetricService {
-
-  private val injector = Guice.createInjector(new GuiceModule)
-  private val weatherMappingService = injector.getInstance(classOf[WeatherMappingService])
+  private lazy val injector = Guice.createInjector(new GuiceModule)
+  private lazy val weatherMappingService = injector.getInstance(classOf[WeatherMappingService])
 
   def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Int, Double)] = {
     val filteredData = data.filter(_.weather.isDefined).map(_.weather.get)
