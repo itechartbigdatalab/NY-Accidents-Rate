@@ -1,21 +1,23 @@
 package com.itechart.ny_accidents.parse
 
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.{Guice, Injector}
+import com.itechart.ny_accidents.GuiceModule
 import com.itechart.ny_accidents.constants.PopulationsHeader
 import com.itechart.ny_accidents.database.DistrictsStorage
-import com.itechart.ny_accidents.entity.{Accident, District, Population}
+import com.itechart.ny_accidents.entity.Population
 import com.itechart.ny_accidents.service.DistrictsService
 import com.itechart.ny_accidents.spark.Spark
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
 import org.slf4j.LoggerFactory
 
 import scala.util.Try
 import scala.util.control.Exception
 
-@Singleton
-class PopulationParser @Inject()(districtsService: DistrictsService,
-                                 districtsStorage: DistrictsStorage) {
+object PopulationParser {
+  val injector: Injector = Guice.createInjector(new GuiceModule)
+  val districtsService: DistrictsService = injector.getInstance(classOf[DistrictsService])
+  val districtsStorage: DistrictsStorage = injector.getInstance(classOf[DistrictsStorage])
+
   private lazy val logger = LoggerFactory.getLogger(getClass)
   private lazy val POPULATION_YEAR = 2010
 
