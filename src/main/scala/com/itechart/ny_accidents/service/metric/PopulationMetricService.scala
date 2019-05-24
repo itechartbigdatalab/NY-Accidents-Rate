@@ -11,15 +11,15 @@ object PopulationMetricService {
 
   def getPopulationToNumberOfAccidentsRatio(data: RDD[MergedData]): RDD[(String, Double)] = {
 
-    data.filter(_.district.isDefined).groupBy(_.district.get).map(dat => {
-      val districtHash = dat._1.hashCode()
-      val accidentsNumber = dat._2.size
+    data.filter(_.district.isDefined).groupBy(_.district.get).map{case (district, mergedData) => {
+      val districtHash = district.hashCode()
+      val accidentsNumber = mergedData.size
       PopulationStorage.populationMap.get(districtHash) match {
         case Some(value) =>
           val ration = accidentsNumber / PopulationService.calculateDensity(value)
-          Some(dat._1.districtName, ration)
+          Some(district.districtName, ration)
         case _ => None
       }
-    }).filter(_.isDefined).map(_.get)
+    }}.filter(_.isDefined).map(_.get)
   }
 }
