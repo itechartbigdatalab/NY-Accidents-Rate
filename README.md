@@ -1,6 +1,6 @@
 # New-York-accident-rate_v.ananase
-[![Build Status][travis-badge][travis]
-[![Coveralls][coveralls-badge][coveralls]
+[![Build Status][travis-badge]][travis]
+[![Coveralls][coveralls-badge]][coveralls]
 <br/>
 New York accident rate 
 [travis-badge]: https://travis-ci.org/itechartbigdatalab/NY-Accidents-Rate.svg
