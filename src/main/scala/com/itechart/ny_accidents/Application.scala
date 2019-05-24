@@ -33,7 +33,7 @@ object Application extends App {
   val boroughPercentage: RDD[(String, Double)] = DistrictMetricService.getBoroughPercentage(mergeData)
   val districtsPercentage: RDD[(String, Double)] = DistrictMetricService.getDistrictsPercentage(mergeData)
   //    val districtsByBorough: RDD[(String, Map[String, Double])] = DistrictMetricService.getDistrictsPercentageByBorough(mergeData)
-  val dayPeriodHourFrequency = DayPeriodMetricService.getFrequency(mergeData)
+  val dayPeriodHourFrequency:Map[String, Long] = DayPeriodMetricService.getFrequency(mergeData)
 
   val report = injector.getInstance(classOf[Reports])
   val dayOfWeekReport = report.generateReportString[String, Double](dayOfWeek)
@@ -42,6 +42,7 @@ object Application extends App {
   val weatherReport = report.generateReportString[String, Double](weatherPhenomenon)
   val boroughReport = report.generateReportString[String, Double](boroughPercentage)
   val districtsReport = report.generateReportString[String, Double](districtsPercentage)
+  val frequencyReport = report.generateReportString(dayPeriodHourFrequency)
 
 
   FileWriterUtils.writeToCsv(dayOfWeekReport, "reports/day_of_week.csv")
@@ -50,4 +51,5 @@ object Application extends App {
   FileWriterUtils.writeToCsv(weatherReport, "reports/weather_phenomenon.csv")
   FileWriterUtils.writeToCsv(boroughReport, "reports/borough.csv")
   FileWriterUtils.writeToCsv(districtsReport, "reports/districts.csv")
+  FileWriterUtils.writeToCsv(frequencyReport, "reports/frequency.csv")
 }
