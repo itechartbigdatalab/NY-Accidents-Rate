@@ -1,17 +1,14 @@
 package com.itechart.ny_accidents.service.metric
 
-import com.google.inject.Guice
-import com.itechart.ny_accidents.entity.{District, MergedData, ReportMergedData, WeatherForAccident}
-import com.itechart.ny_accidents.{GuiceModule, TestSparkApi}
+import com.itechart.ny_accidents.TestSparkApi
+import com.itechart.ny_accidents.entity.{District, MergedData, WeatherForAccident}
 import org.apache.spark.rdd.RDD
 import org.scalatest.FunSpec
 
 
 class WeatherMetricServiceTest extends FunSpec {
 
-
-  private val injector = Guice.createInjector(new GuiceModule)
-  private val weatherMetricService = injector.getInstance(classOf[WeatherMetricService])
+  private val weatherMetricService = WeatherMetricService
 
   describe("Reports") {
     it("should return correct values grouping by phenomenon") {
