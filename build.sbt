@@ -24,7 +24,9 @@ libraryDependencies ++= Seq(
   "org.ehcache" % "ehcache" % "3.7.1",
   "javax.cache" % "cache-api" % "1.0.0",
   "com.typesafe.play" %% "play-json" % "2.7.3",
-  "info.debatty" % "java-string-similarity" % "1.2.1"
+  "info.debatty" % "java-string-similarity" % "1.2.1",
+  "org.slf4j" % "slf4j-api" % "1.7.26",
+  "org.slf4j" % "slf4j-nop" % "1.7.26" % Test
 )
 dependencyOverrides ++= Seq(
   "com.fasterxml.jackson.core" % "jackson-databind" % "2.6.7.1"
