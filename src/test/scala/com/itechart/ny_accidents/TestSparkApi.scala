@@ -5,11 +5,6 @@ import org.apache.log4j.{Level, LogManager, Logger}
 
 
 object TestSparkApi {
-  Logger.getLogger("org").setLevel(Level.OFF)
-  Logger.getLogger("akka").setLevel(Level.OFF)
-  Logger.getLogger("spark").setLevel(Level.OFF)
-  LogManager.getRootLogger.setLevel(Level.OFF)
-
   lazy val spark: SparkContext = {
     new SparkContext(
       new SparkConf()
@@ -19,8 +14,6 @@ object TestSparkApi {
 //      .set("spark.eventLog.dir", "../tmp/logs")
     )
   }
-
-  spark.setLogLevel("ERROR")
 
 }
 
