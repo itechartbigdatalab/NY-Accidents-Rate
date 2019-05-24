@@ -2,7 +2,7 @@ package com.itechart.ny_accidents.service
 
 import com.google.inject.{Inject, Singleton}
 import com.itechart.ny_accidents.database.DistrictsStorage
-import com.itechart.ny_accidents.database.dao.cache.{EhCacheDAO, MergedDataCacheDAO}
+import com.itechart.ny_accidents.database.dao.cache.MergedDataCacheDAO
 import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
 import org.apache.spark.rdd.RDD
 

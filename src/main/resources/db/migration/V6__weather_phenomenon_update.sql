@@ -1,0 +1,1 @@
+UPDATE weather SET phenomenon = 'Clear' WHERE phenomenon IS NULL OR phenomenon = '';

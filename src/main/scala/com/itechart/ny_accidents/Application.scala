@@ -1,28 +1,25 @@
 package com.itechart.ny_accidents
 
-import java.util.Date
-
 import com.google.inject.Guice
 import com.itechart.ny_accidents.constants.Configuration
-import com.itechart.ny_accidents.database.dao.cache.{EhCacheDAO, MergedDataCacheDAO}
-import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
+import com.itechart.ny_accidents.database.dao.cache.MergedDataCacheDAO
+import com.itechart.ny_accidents.entity.{Accident, MergedData}
 import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.service.MergeService
 import com.itechart.ny_accidents.service.metric.{DistrictMetricService, TimeMetricService, WeatherMetricService}
-import com.itechart.ny_accidents.utils.{DateUtils, FileWriterUtils}
-import com.typesafe.config.ConfigFactory
+import com.itechart.ny_accidents.utils.FileWriterUtils
 import org.apache.spark.rdd.RDD
 
 object Application extends App {
   val injector = Guice.createInjector(new GuiceModule)
   val accidentsParser = injector.getInstance(classOf[AccidentsParser])
   val mergeService = injector.getInstance(classOf[MergeService])
-  val weatherMetricService = injector.getInstance(classOf[WeatherMetricService])
+  val weatherMetricService = WeatherMetricService
   val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
   sys.addShutdownHook(cacheService.close)
 
-  val raws = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
+  val raws: RDD[Accident] = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
   println("RAWS DATA READ")
 
   val mergeData: RDD[MergedData] = mergeService
@@ -35,6 +32,8 @@ object Application extends App {
   val weatherPhenomenon: RDD[(String, Int, Double)] = weatherMetricService.getPhenomenonPercentage(mergeData)
   val boroughPercentage: RDD[(String, Int, Double)] = DistrictMetricService.getBoroughPercentage(mergeData)
   val districtsPercentage: RDD[(String, Int, Double)] = DistrictMetricService.getDistrictsPercentage(mergeData)
+  val accidentCountDuringPhenomenonPerHour: RDD[(String, Int, Double, Double)] =
+    weatherMetricService.calculateAccidentCountDuringPhenomenonPerHour(mergeData, weatherPhenomenon)
   //    val districtsByBorough: RDD[(String, Map[String, Double])] = DistrictMetricService.getDistrictsPercentageByBorough(mergeData)
 
   val report = injector.getInstance(classOf[Reports])
@@ -44,6 +43,7 @@ object Application extends App {
   val weatherReport = report.generateReportStringFor3Fields[String, Int, Double](weatherPhenomenon)
   val boroughReport = report.generateReportStringFor3Fields[String, Int, Double](boroughPercentage)
   val districtsReport = report.generateReportStringFor3Fields[String, Int, Double](districtsPercentage)
+  val accidentsPhenomenonsReport = report.generateReportStringFor4Fields(accidentCountDuringPhenomenonPerHour)
 
 
   FileWriterUtils.writeToCsv(dayOfWeekReport, "reports/day_of_week.csv")
@@ -52,4 +52,5 @@ object Application extends App {
   FileWriterUtils.writeToCsv(weatherReport, "reports/weather_phenomenon.csv")
   FileWriterUtils.writeToCsv(boroughReport, "reports/borough.csv")
   FileWriterUtils.writeToCsv(districtsReport, "reports/districts.csv")
+  FileWriterUtils.writeToCsv(accidentsPhenomenonsReport, "reports/accidents_count_phenomenon_per_hour.csv")
 }
