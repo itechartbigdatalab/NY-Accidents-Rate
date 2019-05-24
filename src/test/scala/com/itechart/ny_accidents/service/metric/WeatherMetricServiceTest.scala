@@ -23,13 +23,13 @@ class WeatherMetricServiceTest extends FunSpec {
       ))
 
       val expectedResult: Seq[(String, Int, Double)] = Seq (
-        ("A", 1, 25.0),
         ("B", 1, 25.0),
+        ("A", 1, 25.0),
         ("C", 1, 25.0),
-        ("D", 1, 25.0)).sortBy(_._1)
+        ("D", 1, 25.0))
 
       val result: Seq[(String, Int, Double)] = weatherMetricService
-        .getPhenomenonPercentage(data).collect().toSeq.sortBy(_._1)
+        .getPhenomenonPercentage(data).collect().toSeq
       assert(result == expectedResult)
     }
 
@@ -42,13 +42,13 @@ class WeatherMetricServiceTest extends FunSpec {
       ))
 
       val expectedResult = Seq(
+        ("d", 1, 25.0),
         ("a", 1, 25.0),
         ("b", 1, 25.0),
-        ("c", 1, 25.0),
-        ("d", 1, 25.0)
-      ).sortBy(_._1)
+        ("c", 1, 25.0)
+      )
       val result: Seq[(String, Int, Double)] = DistrictMetricService
-        .getDistrictsPercentage(data).collect().toSeq.sortBy(_._1)
+        .getDistrictsPercentage(data).collect().toSeq
 
       assert(result == expectedResult)
     }
@@ -61,13 +61,13 @@ class WeatherMetricServiceTest extends FunSpec {
         MergedData(null, Some(District("d", "D", null)), None)
       ))
       val expectedResult: Seq[(String, Int, Double)] = Seq(
-        ("A", 1, 25.0),
         ("B", 1, 25.0),
+        ("A", 1, 25.0),
         ("C", 1, 25.0),
         ("D", 1, 25.0)
-      ).sortBy(_._1)
+      )
       val result: Seq[(String, Int, Double)] = DistrictMetricService
-        .getBoroughPercentage(data).collect().toSeq.sortBy(_._1)
+        .getBoroughPercentage(data).collect().toSeq
 
       assert(result == expectedResult)
     }
