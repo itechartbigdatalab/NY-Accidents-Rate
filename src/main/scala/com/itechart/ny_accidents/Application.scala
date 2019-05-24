@@ -53,39 +53,39 @@ object Application extends App {
 
 
   val report = injector.getInstance(classOf[Reports])
-  val dayOfWeekReport = report.generateReportStringFor3Fields[String, Int, Double](dayOfWeek)
+  val dayOfWeekReport = report.generateReportForTupleRDD[(String, Int, Double)](dayOfWeek)
 
   FileWriterUtils.writeToCsv(dayOfWeekReport, "reports/day_of_week.csv")
   logger.info("Day of week report created")
 
-  val hourOfDayReport = report.generateReportStringFor3Fields[Int, Int, Double](hourOfDay)
+  val hourOfDayReport = report.generateReportForTupleRDD[(Int, Int, Double)](hourOfDay)
   FileWriterUtils.writeToCsv(hourOfDayReport, "reports/hour_of_day.csv")
   logger.info("Hour of day report created")
 
-  val periodReport = report.generateReportStringFor3Fields[String, Int, Double](period)
+  val periodReport = report.generateReportForTupleRDD[(String, Int, Double)](period)
   FileWriterUtils.writeToCsv(periodReport, "reports/period.csv")
   logger.info("Period report created")
 
-  val weatherReport = report.generateReportStringFor3Fields[String, Int, Double](weatherPhenomenon)
+  val weatherReport = report.generateReportForTupleRDD[(String, Int, Double)](weatherPhenomenon)
   FileWriterUtils.writeToCsv(weatherReport, "reports/weather_phenomenon.csv")
   logger.info("Weather report created")
 
-  val boroughReport = report.generateReportStringFor3Fields[String, Int, Double](boroughPercentage)
+  val boroughReport = report.generateReportForTupleRDD[(String, Int, Double)](boroughPercentage)
   FileWriterUtils.writeToCsv(boroughReport, "reports/borough.csv")
   logger.info("Borough report created")
 
-  val districtsReport = report.generateReportStringFor3Fields[String, Int, Double](districtsPercentage)
+  val districtsReport = report.generateReportForTupleRDD[(String, Int, Double)](districtsPercentage)
   FileWriterUtils.writeToCsv(districtsReport, "reports/districts.csv")
   logger.info("Districts report created")
 
   val populationToNumberOfAccidentsReport = report
-    .generateReportStringFor2Fields[String, Double](populationToNumberOfAccidents)
+    .generateReportForTupleRDD[(String, Double)](populationToNumberOfAccidents)
   FileWriterUtils.writeToCsv(populationToNumberOfAccidentsReport,
     "reports/population_to_number_of_accidents_report.csv")
   logger.info("Population to number of accidents report created")
 
   val accidentCountDuringPhenomenonPerHourReport = report
-    .generateReportStringFor4Fields(accidentCountDuringPhenomenonPerHour)
+    .generateReportForTupleRDD[(String, Int, Double, Double)](accidentCountDuringPhenomenonPerHour)
   FileWriterUtils.writeToCsv(accidentCountDuringPhenomenonPerHourReport,
     "reports/accidents_count_phenomenon_per_hour.csv")
   logger.info("Accidents count per hour for each phenomenon report created")
