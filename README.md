@@ -12,5 +12,5 @@ Awesome factory line manager!
 [build-badge]: https://img.shields.io/travis/itechartbigdatalab/NY-Accidents-Rate.svg/master.png?style=flat-square
 [build]: https://travis-ci.org/itechartbigdatalab/NY-Accidents-Rate
 
-[coveralls-badge]: https://img.shields.io/coveralls/itechartbigdatalab/NY-Accidents-Rate.svg/master.png?style=flat-square
+[coveralls-badge]: https://img.shields.io/coveralls/itechartbigdatalab/NY-Accidents-Rate/master.png?style=flat-square
 [coveralls]: https://coveralls.io/github/itechartbigdatalab/NY-Accidents-Rate
