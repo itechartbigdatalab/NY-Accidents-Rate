@@ -60,7 +60,7 @@ object WeatherMetricService extends PercentageMetricService {
 
   }
 
-  def countHoursOfPhenomenon(weatherByStation: Map[Int, Seq[WeatherEntity]], stationCount: Int, a: String): Double = {
+  def countHoursOfPhenomenon(weatherByStation: Map[Int, Seq[WeatherEntity]], stationCount: Int, phenomenonName: String): Double = {
     weatherByStation
       .values
       .map(seqOfWeatherByStation => {
@@ -81,7 +81,7 @@ object WeatherMetricService extends PercentageMetricService {
           .mapValues(_.map(_._2).sum)
       })
       .reduce(combineTwoMaps)
-      .mapValues(_.toDouble / GeneralConstants.MILLIS_IN_HOUR / stationCount.toDouble)(a)
+      .mapValues(_.toDouble / GeneralConstants.MILLIS_IN_HOUR / stationCount.toDouble)(phenomenonName)
   }
 
   // May move to utils, but we already have a lot of UTILS objects
