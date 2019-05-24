@@ -44,7 +44,7 @@ object Application extends App {
   logger.info("Borough percentage calculated")
   val districtsPercentage: RDD[(String, Int, Double)] = DistrictMetricService.getDistrictsPercentage(mergeData)
   logger.info("Districts percentage calculated")
-  val populationToNumberOfAccidents: RDD[(String, Double)] = populationService
+  val populationToNumberOfAccidents: RDD[(String, Double, Double, Int)] = populationService
     .getPopulationToNumberOfAccidentsRatio(mergeData)
   logger.info("Population to number of accidents calculated")
   val accidentCountDuringPhenomenonPerHour: RDD[(String, Int, Double, Double)] =
@@ -79,7 +79,7 @@ object Application extends App {
   logger.info("Districts report created")
 
   val populationToNumberOfAccidentsReport = report
-    .generateReportStringFor2Fields[String, Double](populationToNumberOfAccidents)
+    .generateReportStringFor4Fields[String, Double, Double, Int](populationToNumberOfAccidents)
   FileWriterUtils.writeToCsv(populationToNumberOfAccidentsReport,
     "reports/population_to_number_of_accidents_report.csv")
   logger.info("Population to number of accidents report created")
