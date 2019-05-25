@@ -24,5 +24,18 @@ class StringUtilsTest extends FunSpec {
 
       assert(StringUtils.getLineMatchPercentage(firstString, secondString) == 0.0)
     }
+
+    it("should return wind string to double without dot") {
+      val testString = "1234.56"
+      val expectedValue = 123456
+
+      assert(StringUtils.windStringToDoubleParse(testString).contains(expectedValue))
+    }
+
+    it("should return None if string is empty") {
+      val testString = ""
+
+      assert(StringUtils.windStringToDoubleParse(testString).isEmpty)
+    }
   }
 }
