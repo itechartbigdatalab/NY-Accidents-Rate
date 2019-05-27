@@ -10,3 +10,6 @@
 
 <br/>
 New York accident rate 
+<br/>
+
+<b>Important: </b><i>To add local git hooks you have to execute sbt writeHooks</i>
