@@ -1,8 +1,7 @@
 package com.itechart.ny_accidents.parse
 
-import com.google.inject.{Guice, Injector, Singleton}
-import com.itechart.ny_accidents.GuiceModule
-import com.itechart.ny_accidents.constants.PopulationsHeader
+import com.google.inject.Singleton
+import com.itechart.ny_accidents.constants.{Injector, PopulationsHeader}
 import com.itechart.ny_accidents.database.DistrictsStorage
 import com.itechart.ny_accidents.entity.Population
 import com.itechart.ny_accidents.service.DistrictsService
@@ -15,9 +14,9 @@ import scala.util.control.Exception
 
 @Singleton
 class PopulationParser {
-  val injector: Injector = Guice.createInjector(new GuiceModule)
-  val districtsService: DistrictsService = injector.getInstance(classOf[DistrictsService])
-  val districtsStorage: DistrictsStorage = injector.getInstance(classOf[DistrictsStorage])
+  lazy val injector = Injector.injector
+  lazy val districtsService: DistrictsService = injector.getInstance(classOf[DistrictsService])
+  lazy val districtsStorage: DistrictsStorage = injector.getInstance(classOf[DistrictsStorage])
 
   private lazy val logger = LoggerFactory.getLogger(getClass)
   private lazy val POPULATION_YEAR = 2010

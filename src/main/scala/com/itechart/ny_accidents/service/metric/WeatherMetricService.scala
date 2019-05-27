@@ -2,13 +2,13 @@ package com.itechart.ny_accidents.service.metric
 
 import com.google.inject.Guice
 import com.itechart.ny_accidents.GuiceModule
-import com.itechart.ny_accidents.constants.GeneralConstants
+import com.itechart.ny_accidents.constants.{GeneralConstants, Injector}
 import com.itechart.ny_accidents.entity.{MergedData, WeatherEntity, WeatherForAccident}
 import com.itechart.ny_accidents.service.{DayPeriodService, WeatherMappingService}
 import org.apache.spark.rdd.RDD
 
 object WeatherMetricService extends PercentageMetricService {
-  private lazy val injector = Guice.createInjector(new GuiceModule)
+  private lazy val injector = Injector.injector
   private lazy val weatherMappingService = injector.getInstance(classOf[WeatherMappingService])
 
   def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Int, Double)] = {
