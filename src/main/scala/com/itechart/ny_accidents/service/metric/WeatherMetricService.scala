@@ -6,9 +6,9 @@ import com.itechart.ny_accidents.constants.{GeneralConstants, Injector}
 import com.itechart.ny_accidents.entity.{MergedData, WeatherEntity, WeatherForAccident}
 import com.itechart.ny_accidents.service.{DayPeriodService, WeatherMappingService}
 import org.apache.spark.rdd.RDD
+import com.itechart.ny_accidents.constants.Injector.injector
 
 object WeatherMetricService extends PercentageMetricService {
-  private lazy val injector = Injector.injector
   private lazy val weatherMappingService = injector.getInstance(classOf[WeatherMappingService])
 
   def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Int, Double)] = {

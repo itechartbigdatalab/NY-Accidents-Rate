@@ -6,6 +6,7 @@ import com.itechart.ny_accidents.database.DistrictsStorage
 import com.itechart.ny_accidents.entity.Population
 import com.itechart.ny_accidents.service.DistrictsService
 import com.itechart.ny_accidents.spark.Spark
+import com.itechart.ny_accidents.constants.Injector.injector
 import org.apache.spark.sql.Row
 import org.slf4j.LoggerFactory
 
@@ -14,7 +15,6 @@ import scala.util.control.Exception
 
 @Singleton
 class PopulationParser {
-  lazy val injector = Injector.injector
   lazy val districtsService: DistrictsService = injector.getInstance(classOf[DistrictsService])
   lazy val districtsStorage: DistrictsStorage = injector.getInstance(classOf[DistrictsStorage])
 

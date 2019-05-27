@@ -10,14 +10,15 @@ import com.itechart.ny_accidents.service.metric.PopulationMetricService
 import com.itechart.ny_accidents.utils.FileWriterUtils
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory
+import com.itechart.ny_accidents.constants.Injector.injector
 
 object Application extends App {
   lazy val logger = LoggerFactory.getLogger(getClass)
 
-  val accidentsParser = Injector.injector.getInstance(classOf[AccidentsParser])
-  val mergeService = Injector.injector.getInstance(classOf[MergeService])
-  val cacheService = Injector.injector.getInstance(classOf[MergedDataCacheDAO])
-  val populationService = Injector.injector.getInstance(classOf[PopulationMetricService])
+  val accidentsParser = injector.getInstance(classOf[AccidentsParser])
+  val mergeService = injector.getInstance(classOf[MergeService])
+  val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
+  val populationService = injector.getInstance(classOf[PopulationMetricService])
   sys.addShutdownHook(cacheService.close)
 
   val rawData = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
