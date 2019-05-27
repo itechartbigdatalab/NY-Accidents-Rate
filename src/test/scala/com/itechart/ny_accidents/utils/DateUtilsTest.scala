@@ -5,17 +5,8 @@ import java.time.format.DateTimeFormatter
 import org.scalatest.FunSpec
 
 class DateUtilsTest extends FunSpec {
-  // Will be rewrite. Test failed on different timezone machines
-  // TODO need fix
-  describe("DateUtils") {
-    //    it("should return valid value") {
-    //      val format: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
-    //      val expectedResult = 1558095780000L
-    //      val testValue = "17.05.2019 15:23"
-    //
-    //      assert(DateUtils.parseDateToMillis(testValue, format).contains(expectedResult))
-    //    }
 
+  describe("DateUtils") {
     it("should add one hour to date as long") {
       val testValue = 1558095780000L
       val expectedValue = 1558099380000L

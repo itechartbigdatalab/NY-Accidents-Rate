@@ -8,7 +8,7 @@ import org.apache.spark.rdd.RDD
 import org.scalatest.FunSpec
 
 class TimeMetricServiceTest extends FunSpec {
-  val emptyAccident = Accident(None, None, None, None, None,
+  lazy val emptyAccident = Accident(None, None, None, None, None,
     None, None, None, None, None, None,
     None, None, None, None, None, None, List(), List())
 

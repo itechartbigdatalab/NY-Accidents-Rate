@@ -5,7 +5,7 @@ import org.scalatest.FunSpec
 
 class PostgisUtilsTest extends FunSpec {
   describe("A PostgisUtils") {
-    it("should create postgis Point in correct format") {
+    it("should create postgis Point in format like (longitude, latitude)") {
       val (testDataLatitude, testDataLongitude) = (-70.0, 40.0)
       val geometryFactory = new GeometryFactory
       val expectedValue = geometryFactory.createPoint(new Coordinate(testDataLongitude, testDataLatitude))
