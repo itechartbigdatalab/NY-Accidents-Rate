@@ -19,10 +19,11 @@ class PopulationMetricService @Inject()(populationStorage: PopulationStorage) {
       populationMap.get(districtHash) match {
         case Some(value) =>
           val density = PopulationService.calculateDensity(value)
-          val ratio: Double = accidentsNumber / density
-          NumberUtils.validateDouble(ratio) match {
-            case Some(number) => Some(district.districtName, number, density, accidentsNumber)
-            case None => None
+          density match {
+            case 0 => None
+            case _ =>
+              val ratio: Double = accidentsNumber / density
+              Some(district.districtName, ratio, density, accidentsNumber)
           }
         case _ => None
       }

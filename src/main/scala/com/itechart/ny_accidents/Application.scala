@@ -90,5 +90,4 @@ object Application extends App {
   FileWriterUtils.writeToCsv(accidentCountDuringPhenomenonPerHourReport,
     "reports/accidents_count_phenomenon_per_hour.csv")
   logger.info("Accidents count per hour for each phenomenon report created")
-
 }
