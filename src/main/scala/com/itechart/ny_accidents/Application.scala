@@ -53,9 +53,9 @@ object Application extends App {
   logger.info("Accidents count per hour for each phenomenon metric calculated")
 
 
+
   val report = injector.getInstance(classOf[Reports])
   val dayOfWeekReport = report.generateReportForTupleRDD[(String, Int, Double)](dayOfWeek, DAY_OF_WEEK_REPORT_HEADER)
-
   FileWriterUtils.writeToCsv(dayOfWeekReport, "reports/day_of_week.csv")
   logger.info("Day of week report created")
 
