@@ -18,8 +18,12 @@ class PopulationMetricService @Inject()(populationStorage: PopulationStorage) {
       populationMap.get(districtHash) match {
         case Some(value) =>
           val density = PopulationService.calculateDensity(value)
-          val ration = accidentsNumber / density
-          Some(district.districtName, ration, density, accidentsNumber)
+          val ration: Double = accidentsNumber / density
+          if(ration == Double.PositiveInfinity || ration == Double.NegativeInfinity) {
+            None
+          } else {
+            Some(district.districtName, ration, density, accidentsNumber)
+          }
         case _ => None
       }
     }}.filter(_.isDefined).map(_.get)
