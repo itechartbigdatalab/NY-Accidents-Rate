@@ -1,6 +1,6 @@
 package com.itechart.ny_accidents.parse
 
-import java.util.Date
+import java.time.LocalDateTime
 
 import com.google.inject.Singleton
 import com.itechart.ny_accidents.constants.AccidentsHeader._
@@ -31,7 +31,7 @@ class AccidentsParser {
 
     Accident(
       toLong(accident, UNIQUE_NUMBER),
-      toDate(accident.getString(DATE_C), accident.getString(TIME_C)),
+      toLocalDate(accident.getString(DATE_C), accident.getString(TIME_C)),
       toMillis(accident, DATE_C, TIME_C),
       toString(accident, BOROUGH_C),
       toDouble(accident, LATITUDE_C),
@@ -55,14 +55,14 @@ class AccidentsParser {
     Try(accident.getString(column).toLong).toOption
   }
 
-  private def toDate(dateStr: String, timeStr: String): Option[Date] = {
+  private def toLocalDate(dateStr: String, timeStr: String): Option[LocalDateTime] = {
     val dateTimeStr = dateStr + " " + timeStr
-    DateUtils.parseDate(dateTimeStr, GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
+    DateUtils.parseDate(dateTimeStr, GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
   }
 
   private def toMillis(row: Row, dateColumn: Int, timeColumn: Int): Option[Long] = {
     val dateTime = row.getString(dateColumn) + " " + row.getString(timeColumn)
-    DateUtils.parseDateToMillis(dateTime, GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
+    DateUtils.parseDateToMillis(dateTime, GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
   }
 
   private def toDouble(accident: Row, column: Int): Option[Double] = {
