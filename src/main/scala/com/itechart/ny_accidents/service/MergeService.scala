@@ -20,7 +20,7 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
   }
 
   def fullMergeMapper(value: Accident): MergedData = {
-    if (counter % 100 == 0)
+    if (counter % 1000 == 0)
       println("COUNTER: " + counter)
     counter += 1
 
@@ -39,7 +39,7 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
   }
 
   def withoutWeatherMapper(value: Accident): MergedData = {
-    if (counter % 100 == 0)
+    if (counter % 1000 == 0)
       println("COUNTER: " + counter)
     counter += 1
 
@@ -53,7 +53,7 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
             cacheService.cacheMergedData(data)
             data
         }
-      case None => fullMergeData(value)
+      case None => mergeWithoutWeather(value)
     }
   }
 
