@@ -9,22 +9,45 @@ import com.itechart.ny_accidents.entity.Accident
 import com.itechart.ny_accidents.spark.Spark
 import com.itechart.ny_accidents.utils.DateUtils
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.{DataFrame, RelationalGroupedDataset, Row}
+import org.slf4j.LoggerFactory
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types.StructType
 
 import scala.util.Try
 
 @Singleton
 class AccidentsParser {
+  private lazy val logger = LoggerFactory.getLogger(getClass)
+  private lazy val YEAR_COL = 29
+
+  def readCsv(path: String): DataFrame = {
+    Spark.sparkSql.read
+      .option("header", "true")
+      .option("inferSchema", "true")
+      .csv(path)
+  }
 
   def readData(fileName: String): RDD[Accident] = {
-
-    val csvAccidentsData: Array[Row] = Spark.sparkSql.read
-      .option("header", "true")
-      .option("mode", "DROPMALFORMED")
-      .csv(fileName)
-      .collect()
-
+    val csvAccidentsData = readCsv(fileName).collect()
     Spark.sc.parallelize(csvAccidentsData.map(accidentsMapper))
+  }
+
+  def splitDatasetByYear(path: String): (StructType, Map[Int, Array[Row]]) = {
+    val csvContent: DataFrame = readCsv(path)
+    import Spark.sparkSql.implicits._
+
+    val dfWithSchema = csvContent
+      .filter($"DATE".isNotNull)
+      .filter("DATE != ''")
+      .withColumn("YEAR", year(to_date($"DATE", "MM/dd/yyyy")))
+
+    val schema = dfWithSchema.schema
+    val map = dfWithSchema.collect
+      .groupBy(row => row.getAs[Int](YEAR_COL))
+      .map { case (key, value) => (key, value) }
+
+    (schema, map)
   }
 
   def accidentsMapper(accident: Row): Accident = {

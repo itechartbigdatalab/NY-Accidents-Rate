@@ -23,7 +23,6 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
     if (counter % 100 == 0)
       println("COUNTER: " + counter)
     counter += 1
-
     value.uniqueKey match {
       case Some(pk) =>
         cacheService.readMergedDataFromCache(pk) match {
@@ -36,7 +35,6 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
         }
       case None => createMergedData(value)
     }
-
   }
 
   private def createMergedData(value: Accident): MergedData = {
