@@ -15,4 +15,5 @@ object DatasetSplitApplication extends App {
       s"${Configuration.SPLIT_DATASET_BASE_FOLDER}/${Configuration.CSV_BASE_NAME}_$key.csv",
       value,
       schema)}
+
 }
