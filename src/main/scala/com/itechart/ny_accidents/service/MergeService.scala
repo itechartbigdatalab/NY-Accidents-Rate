@@ -19,7 +19,7 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
     accidents.map(fun)
   }
 
-  def mapper(value: Accident): MergedData = {
+  def fullMergeMapper(value: Accident): MergedData = {
     if (counter % 100 == 0)
       println("COUNTER: " + counter)
     counter += 1
@@ -30,16 +30,43 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
           case Some(data) => data
           case None =>
             println("Not in cache")
-            val data = createMergedData(value)
+            val data = fullMergeData(value)
             cacheService.cacheMergedData(data)
             data
         }
-      case None => createMergedData(value)
+      case None => fullMergeData(value)
     }
-
   }
 
-  private def createMergedData(value: Accident): MergedData = {
+  def withoutWeatherMapper(value: Accident): MergedData = {
+    if (counter % 100 == 0)
+      println("COUNTER: " + counter)
+    counter += 1
+
+    value.uniqueKey match {
+      case Some(pk) =>
+        cacheService.readMergedDataFromCache(pk) match {
+          case Some(data) => data
+          case None =>
+            println("Not in cache")
+            val data = mergeWithoutWeather(value)
+            cacheService.cacheMergedData(data)
+            data
+        }
+      case None => fullMergeData(value)
+    }
+  }
+
+  private def mergeWithoutWeather(value: Accident): MergedData = {
+    (value.latitude, value.longitude) match {
+      case (Some(latitude), Some(longitude)) =>
+        val district = districtsService.getDistrict(latitude, longitude, districtsStorage.districts)
+        MergedData(value, district, None)
+      case _ => MergedData(value, None, None)
+    }
+  }
+
+  private def fullMergeData(value: Accident): MergedData = {
     (value.latitude, value.longitude) match {
       case (Some(latitude), Some(longitude)) =>
         val district = districtsService.getDistrict(latitude, longitude, districtsStorage.districts)

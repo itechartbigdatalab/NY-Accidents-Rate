@@ -13,6 +13,8 @@ object Configuration {
   lazy val CACHE_HEAP_SIZE: Int = cacheConf.getInt("cache.heap_size_units")
   lazy val CACHE_OFF_HEAP_SIZE: Int = cacheConf.getInt("cache.off_head_size_gb")
   lazy val DATA_FILE_PATH: String = s"${appConf.getString("file.inputPath")}${appConf.getString("file.input.inputFileNYAccidents")}"
+  lazy val FIRST_YEAR_FILE_PATH: String = s"${appConf.getString("file.inputPath")}${appConf.getString("file.input.years.first")}"
+  lazy val SECOND_YEAR_FILE_PATH: String = s"${appConf.getString("file.inputPath")}${appConf.getString("file.input.years.second")}"
 
   lazy val POPULATION_FILE_PATH: String = appConf.getString("file.population_path")
 
