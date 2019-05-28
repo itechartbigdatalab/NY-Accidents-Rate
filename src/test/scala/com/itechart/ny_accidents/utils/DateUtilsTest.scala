@@ -1,7 +1,5 @@
 package com.itechart.ny_accidents.utils
 
-import java.time.format.DateTimeFormatter
-
 import org.scalatest.FunSpec
 
 class DateUtilsTest extends FunSpec {
@@ -19,6 +17,13 @@ class DateUtilsTest extends FunSpec {
       val expectedValue = 1558092180000L
 
       assert(DateUtils.subtractHour(testValue) == expectedValue)
+    }
+
+    it("should correctly calculate hash of date") {
+      val testValue = 1558095790000L
+      val expectedValue = 1558094400000L
+
+      assert(DateUtils.hashByDate(testValue) == expectedValue)
     }
   }
 }
