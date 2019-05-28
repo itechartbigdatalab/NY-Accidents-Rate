@@ -27,8 +27,8 @@ object WeatherMetricService extends PercentageMetricService {
 
   val definePeriod: RDD[MergedData] => RDD[(String, Int, Double)] = accidentsWithWeather => {
     val filteredData = accidentsWithWeather
-      .filter(_.accident.dateTime.isDefined)
-      .map(_.accident.dateTime.get)
+      .filter(_.accident.localDateTime.isDefined)
+      .map(_.accident.localDateTime.get)
     val length = filteredData.count
     val groupedData = filteredData
       .map(DayPeriodService.defineLighting)

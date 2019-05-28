@@ -14,16 +14,16 @@ class TimeMetricServiceTest extends FunSpec {
 
   describe("A TimeMetricService") {
     it("should return RDD of tuple with number of accidents for each hour") {
-      val firstDate = DateUtils.parseDate("05/15/2016 14:30", GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
-      val secondDate = DateUtils.parseDate("05/15/2016 15:30", GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
-      val thirdDate = DateUtils.parseDate("05/15/2016 16:30", GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
-      val fourthDate = DateUtils.parseDate("05/15/2016 17:30", GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
+      val firstDate = DateUtils.parseDate("05/15/2016 14:30", GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
+      val secondDate = DateUtils.parseDate("05/15/2016 15:30", GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
+      val thirdDate = DateUtils.parseDate("05/15/2016 16:30", GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
+      val fourthDate = DateUtils.parseDate("05/15/2016 17:30", GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
 
       val testData: RDD[MergedData] = TestSparkApi.spark.parallelize(Seq(
-        MergedData(emptyAccident.copy(dateTime = firstDate), Some(District("a", "A", null)), None),
-        MergedData(emptyAccident.copy(dateTime = secondDate), Some(District("b", "B", null)), None),
-        MergedData(emptyAccident.copy(dateTime = thirdDate), Some(District("c", "C", null)), None),
-        MergedData(emptyAccident.copy(dateTime = fourthDate), Some(District("d", "D", null)), None)
+        MergedData(emptyAccident.copy(localDateTime = firstDate), Some(District("a", "A", null)), None),
+        MergedData(emptyAccident.copy(localDateTime = secondDate), Some(District("b", "B", null)), None),
+        MergedData(emptyAccident.copy(localDateTime = thirdDate), Some(District("c", "C", null)), None),
+        MergedData(emptyAccident.copy(localDateTime = fourthDate), Some(District("d", "D", null)), None)
       ))
 
       val expectedValue = Seq(
@@ -38,16 +38,16 @@ class TimeMetricServiceTest extends FunSpec {
     }
 
     it("should count number and percentage accidents per week day") {
-      val firstDate = DateUtils.parseDate("05/15/2016 14:30", GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
-      val secondDate = DateUtils.parseDate("06/15/2016 15:30", GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
-      val thirdDate = DateUtils.parseDate("07/15/2016 16:30", GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
-      val fourthDate = DateUtils.parseDate("08/15/2016 17:30", GeneralConstants.DATE_TIME_ACCIDENTS_PATTERN)
+      val firstDate = DateUtils.parseDate("05/15/2016 14:30", GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
+      val secondDate = DateUtils.parseDate("06/15/2016 15:30", GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
+      val thirdDate = DateUtils.parseDate("07/15/2016 16:30", GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
+      val fourthDate = DateUtils.parseDate("08/15/2016 17:30", GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
 
       val testData: RDD[MergedData] = TestSparkApi.spark.parallelize(Seq(
-        MergedData(emptyAccident.copy(dateTime = firstDate), Some(District("a", "A", null)), None),
-        MergedData(emptyAccident.copy(dateTime = secondDate), Some(District("b", "B", null)), None),
-        MergedData(emptyAccident.copy(dateTime = thirdDate), Some(District("c", "C", null)), None),
-        MergedData(emptyAccident.copy(dateTime = fourthDate), Some(District("d", "D", null)), None)
+        MergedData(emptyAccident.copy(localDateTime = firstDate), Some(District("a", "A", null)), None),
+        MergedData(emptyAccident.copy(localDateTime = secondDate), Some(District("b", "B", null)), None),
+        MergedData(emptyAccident.copy(localDateTime = thirdDate), Some(District("c", "C", null)), None),
+        MergedData(emptyAccident.copy(localDateTime = fourthDate), Some(District("d", "D", null)), None)
       ))
 
       val expectedValue = Seq(
