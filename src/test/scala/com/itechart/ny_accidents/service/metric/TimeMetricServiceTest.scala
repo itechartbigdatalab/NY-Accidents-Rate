@@ -51,10 +51,10 @@ class TimeMetricServiceTest extends FunSpec {
       ))
 
       val expectedValue = Seq(
-        ("Thu", 1, 25.0),
-        ("Mon", 1, 25.0),
-        ("Sat", 1, 25.0),
-        ("Tue", 1, 25.0)
+        ("1) Mon", 1, 25.0),
+        ("3) Wed", 1, 25.0),
+        ("5) Fri", 1, 25.0),
+        ("7) Sun", 1, 25.0)
       )
       val result = TimeMetricService.countDayOfWeek(testData).collect().toSeq
 
