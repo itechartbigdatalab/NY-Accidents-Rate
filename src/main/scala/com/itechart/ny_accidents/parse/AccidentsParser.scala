@@ -20,6 +20,9 @@ import scala.util.Try
 class AccidentsParser {
   private lazy val logger = LoggerFactory.getLogger(getClass)
   private lazy val YEAR_COL = 29
+  private lazy val DATE_HEADER = "DATE"
+  private lazy val DATE_MASK = "MM/dd/yyyy"
+  private lazy val YEAR_HEADER = "YEAR"
 
   def readCsv(path: String): DataFrame = {
     Spark.sparkSql.read
@@ -38,9 +41,8 @@ class AccidentsParser {
     import Spark.sparkSql.implicits._
 
     val dfWithSchema = csvContent
-      .filter($"DATE".isNotNull)
-      .filter("DATE != ''")
-      .withColumn("YEAR", year(to_date($"DATE", "MM/dd/yyyy")))
+      .filter($"$DATE_HEADER".isNotNull)
+      .withColumn(YEAR_HEADER, year(to_date($"$DATE_HEADER", DATE_MASK)))
 
     val schema = dfWithSchema.schema
     val map = dfWithSchema.collect
