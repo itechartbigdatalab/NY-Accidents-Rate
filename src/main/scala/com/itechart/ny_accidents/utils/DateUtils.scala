@@ -1,17 +1,14 @@
 package com.itechart.ny_accidents.utils
 
-import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
-import java.util.Date
+import java.time.temporal.ChronoUnit
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 
-import org.apache.commons.lang.time.DateFormatUtils
-import org.joda.time.DateTime
+import com.itechart.ny_accidents.constants.GeneralConstants.MILLIS_IN_HOUR
 
 import scala.util.Try
 
 object DateUtils {
-  final val MILLIS_IN_HOUR = 3600000
 
   def subtractHour(dateTimeMillis: Long): Long = {
     dateTimeMillis - MILLIS_IN_HOUR
@@ -21,26 +18,22 @@ object DateUtils {
     dateTimeMillis + MILLIS_IN_HOUR
   }
 
-  def parseDateToMillis(dateStr: String, dateFormat: SimpleDateFormat): Option[Long] = {
-    Try(dateFormat.parse(dateStr).getTime).toOption
+  def parseDateToMillis(dateStr: String, dateFormatter: DateTimeFormatter): Option[Long] = {
+    Try(LocalDateTime.parse(dateStr, dateFormatter).toInstant(ZoneOffset.UTC).toEpochMilli).toOption
   }
 
-  def parseDate(dateStr: String, dateFormat: SimpleDateFormat): Option[Date] = {
-    Try(dateFormat.parse(dateStr)).toOption
+  def parseDate(dateStr: String, dateFormatter: DateTimeFormatter): Option[LocalDateTime] = {
+    Try(LocalDateTime.parse(dateStr, dateFormatter)).toOption
   }
 
-  def fromLongToLocalDateTime(localDateTimeMillis: Long): LocalDateTime = {
-    LocalDateTime.ofInstant(Instant.ofEpochMilli(localDateTimeMillis), ZoneId.systemDefault())
+  def hashByDate(dateTimeMillis: Long): Long = {
+    LocalDateTime.ofInstant(Instant.ofEpochMilli(dateTimeMillis), ZoneOffset.UTC)
+      .truncatedTo(ChronoUnit.HOURS)
+      .toInstant(ZoneOffset.UTC)
+      .toEpochMilli
   }
 
-  def hashByDate(localDateTimeMillis: Long): Long = {
-    fromLongToLocalDateTime(localDateTimeMillis)
-      .withMinute(0).toInstant(ZoneOffset.UTC).toEpochMilli
-  }
-
-  def getStringFromDate(date: Date, format: DateTimeFormatter): String = {
-    date.toInstant
-      .atZone(ZoneId.systemDefault())
-      .toLocalDate.format(format)
+  def getStringFromDate(date: LocalDateTime, format: DateTimeFormatter): String = {
+    date.format(format)
   }
 }

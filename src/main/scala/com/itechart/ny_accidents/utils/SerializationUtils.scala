@@ -4,7 +4,7 @@ import java.io.{ByteArrayInputStream, ByteArrayOutputStream, ObjectInputStream, 
 import java.util.Base64
 
 
-object SerializationUtil {
+object SerializationUtils {
   private final val ENCODING = "UTF-8"
 
   def serialize(value: Any): String = {

@@ -1,6 +1,5 @@
 package com.itechart.ny_accidents.constants
 
-import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -10,12 +9,14 @@ object GeneralConstants {
   val DATE_TIME_FORMATTER_WEATHER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")
   val DATE_FORMATTER_ACCIDENTS: DateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy")
   val TIME_FORMATTER_ACCIDENTS: DateTimeFormatter = DateTimeFormatter.ofPattern("H:mm")
-  val DATE_TIME_FORMATTER_ACCIDENTS: DateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy H:mm")
+  val DATE_TIME_ACCIDENTS_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy H:mm")
+  val DATE_SUNRISES_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+  val DATE_TIME_SUNRISES_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm:ss a", Locale.ENGLISH)
 
-  val DATE_TIME_WEATHER_PATTERN:  SimpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm")
-  val DATE_TIME_ACCIDENTS_PATTERN: SimpleDateFormat = new SimpleDateFormat("MM/dd/yyyy H:mm")
-  val DATE_SUNRISES_FORMAT: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
-  val DATE_TIME_SUNRISES_FORMAT: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd h:mm:ss a", Locale.ENGLISH)
+//  val DATE_TIME_WEATHER_PATTERN:  SimpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm")
+//  val DATE_TIME_ACCIDENTS_PATTERN: SimpleDateFormat = new SimpleDateFormat("MM/dd/yyyy H:mm")
+//  val DATE_SUNRISES_FORMAT: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd")
+//  val DATE_TIME_SUNRISES_FORMAT: SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd h:mm:ss a", Locale.ENGLISH)
 
   val SUNRISE_YEAR = 2019
 
@@ -38,4 +39,17 @@ object GeneralConstants {
   val HTML_ELEMENT_DAY_SELECTOR = ".day"
   val HTML_ELEMENT_DATE_ATTRIBUTE = "rel"
   val HTML_ELEMENT_TD = "td"
+
+  val HASH_DIFFERENCE: Long = MILLIS_IN_HOUR
+  val FIRST_STATION_ID = 1 // In NY we always have only 3 weather stations with hand write id's 1, 2, 3
+  val LAST_STATION_ID = 3
+
+  val DAY_OF_WEEK_REPORT_HEADER: Seq[String] = Seq("Day_of_week","Accident_count","Percentage")
+  val HOUR_OF_DAY_REPORT_HEADER: Seq[String] = Seq("Hour_of_day","Accident_count","Percentage")
+  val DAY_PERIOD_REPORT_HEADER: Seq[String] = Seq("Day_period","Accident_count","Percentage")
+  val PHENOMENON_REPORT_HEADER: Seq[String] = Seq("Phenomenon","Accident_count","Percentage")
+  val BOROUGH_REPORT_HEADER: Seq[String] = Seq("Borough","Accident_count","Percentage")
+  val DISTRICT_REPORT_HEADER: Seq[String] = Seq("District","Accident_count","Percentage")
+  val POPULATION_TO_ACCIDENTS_REPORT_HEADER: Seq[String] = Seq("District","Ratio","Density", "Accident_Count")
+  val ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_HEADER: Seq[String] = Seq("Phenomenon","Accident_count","Total_phenomenon_hours", "Accident_per_hour")
 }

@@ -1,9 +1,9 @@
 package com.itechart.ny_accidents.entity
 
-import java.util.Date
+import java.time.LocalDateTime
 
 case class Accident(uniqueKey: Option[Long],
-                     dateTime: Option[Date],
+                    localDateTime: Option[LocalDateTime],
                     dateTimeMillis: Option[Long],
                     borough: Option[String],
                     latitude: Option[Double],
@@ -22,7 +22,7 @@ case class Accident(uniqueKey: Option[Long],
                     contributingFactors: List[Option[String]],
                     vehicleType: List[Option[String]])
 
-case class ReportAccident(dateTime: Option[Date],
+case class ReportAccident(dateTime: Option[LocalDateTime],
                           dateTimeMillis: Option[Long],
                           latitude: Option[Double],
                           longitude: Option[Double])
