@@ -6,14 +6,15 @@ import com.itechart.ny_accidents.utils.DateUtils
 import org.apache.spark.rdd.RDD
 
 class DatasetGenerator {
+
   def generateAccidentByWeatherDataset(data: RDD[MergedData]): RDD[Seq[String]] = {
     data
       .filter(obj => obj.weather.isDefined &&
-        obj.accident.dateTime.isDefined &&
+        obj.accident.localDateTime.isDefined &&
         obj.accident.latitude.isDefined &&
         obj.accident.longitude.isDefined)
       .map(mergedData => Seq(
-        DateUtils.getStringFromDate(mergedData.accident.dateTime.get,
+        DateUtils.getStringFromDate(mergedData.accident.localDateTime.get,
           GeneralConstants.KIBANA_REPORT_TIME_FORMAT),
         mergedData.accident.latitude.toString,
         mergedData.accident.longitude.toString,
@@ -26,7 +27,7 @@ class DatasetGenerator {
       obj.accident.latitude.isDefined &&
       obj.accident.longitude.isDefined)
       .map(mergedData => Seq(
-        DateUtils.getStringFromDate(mergedData.accident.dateTime.get,
+        DateUtils.getStringFromDate(mergedData.accident.localDateTime.get,
           GeneralConstants.KIBANA_REPORT_TIME_FORMAT),
         mergedData.accident.latitude.toString,
         mergedData.accident.longitude.toString,
