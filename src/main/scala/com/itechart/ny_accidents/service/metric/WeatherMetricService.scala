@@ -2,13 +2,13 @@ package com.itechart.ny_accidents.service.metric
 
 import com.google.inject.Guice
 import com.itechart.ny_accidents.GuiceModule
-import com.itechart.ny_accidents.constants.GeneralConstants
+import com.itechart.ny_accidents.constants.{GeneralConstants, Injector}
 import com.itechart.ny_accidents.entity.{MergedData, WeatherEntity, WeatherForAccident}
 import com.itechart.ny_accidents.service.{DayPeriodService, WeatherMappingService}
 import org.apache.spark.rdd.RDD
+import com.itechart.ny_accidents.constants.Injector.injector
 
 object WeatherMetricService extends PercentageMetricService {
-  private lazy val injector = Guice.createInjector(new GuiceModule)
   private lazy val weatherMappingService = injector.getInstance(classOf[WeatherMappingService])
 
   def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Int, Double)] = {
@@ -27,8 +27,8 @@ object WeatherMetricService extends PercentageMetricService {
 
   val definePeriod: RDD[MergedData] => RDD[(String, Int, Double)] = accidentsWithWeather => {
     val filteredData = accidentsWithWeather
-      .filter(_.accident.dateTime.isDefined)
-      .map(_.accident.dateTime.get)
+      .filter(_.accident.localDateTime.isDefined)
+      .map(_.accident.localDateTime.get)
     val length = filteredData.count
     val groupedData = filteredData
       .map(DayPeriodService.defineLighting)
@@ -36,8 +36,7 @@ object WeatherMetricService extends PercentageMetricService {
     calculatePercentage(groupedData, length)
   }
 
-  def calculateAccidentCountDuringPhenomenonPerHour(mergedAccidents: RDD[MergedData],
-                                                    phenomenonCount: RDD[(String, Int, Double)]): RDD[(String, Int, Double, Double)] = {
+  def calculateAccidentCountDuringPhenomenonPerHour(mergedAccidents: RDD[MergedData]): RDD[(String, Int, Double, Double)] = {
     val filteredData = mergedAccidents
       .filter(_.accident.dateTimeMillis.isDefined)
       .sortBy(_.accident.dateTimeMillis.get)
@@ -50,11 +49,11 @@ object WeatherMetricService extends PercentageMetricService {
       .getWeatherByStationsBetweenDates(firstAccidentDateTime, lastAccidentDateTime)
     val stationCount = weatherByStation.size
 
+    val phenomenonCount = WeatherMetricService.getPhenomenonPercentage(mergedAccidents)
     phenomenonCount.map { case (phenomenonName, accidentCountDuringPhenomenon, _) =>
       val hoursOfPhenomenon = countHoursOfPhenomenon(weatherByStation, stationCount, phenomenonName)
       (phenomenonName, accidentCountDuringPhenomenon, hoursOfPhenomenon, accidentCountDuringPhenomenon / hoursOfPhenomenon)
     }
-
   }
 
   def countHoursOfPhenomenon(weatherByStation: Map[Int, Seq[WeatherEntity]], stationCount: Int, phenomenonName: String): Double = {

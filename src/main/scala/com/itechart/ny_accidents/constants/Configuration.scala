@@ -6,6 +6,7 @@ object Configuration {
   private lazy val appConf = ConfigFactory.load("application.conf")
   private lazy val cacheConf = ConfigFactory.load("conf/cache.conf")
   private lazy val databaseConf = ConfigFactory.load("conf/ny_data_database.conf")
+  private lazy val yearDifferenceMetricConfig = ConfigFactory.load("conf/yearsDifference.conf")
 
   lazy val CACHE_NAME: String = cacheConf.getString("cache.name")
   lazy val CACHE_PATH: String = s"${System.getProperty("user.home")}/$CACHE_NAME"
@@ -13,6 +14,14 @@ object Configuration {
   lazy val CACHE_HEAP_SIZE: Int = cacheConf.getInt("cache.heap_size_units")
   lazy val CACHE_OFF_HEAP_SIZE: Int = cacheConf.getInt("cache.off_head_size_gb")
   lazy val DATA_FILE_PATH: String = s"${appConf.getString("file.inputPath")}${appConf.getString("file.input.inputFileNYAccidents")}"
+
+
+  lazy val FIRST_YEAR_VALUE: Int = yearDifferenceMetricConfig.getInt("years.first")
+  lazy val SECOND_YEAR_VALUE: Int = yearDifferenceMetricConfig.getInt("years.second")
+  lazy val FIRST_YEAR_FILE_PATH: String =
+    s"${appConf.getString("file.inputPath")}${yearDifferenceMetricConfig.getString("input.files." + FIRST_YEAR_VALUE.toString)}"
+  lazy val SECOND_YEAR_FILE_PATH: String =
+    s"${appConf.getString("file.inputPath")}${yearDifferenceMetricConfig.getString("input.files." + SECOND_YEAR_VALUE.toString)}"
 
   lazy val POPULATION_FILE_PATH: String = appConf.getString("file.population_path")
 
