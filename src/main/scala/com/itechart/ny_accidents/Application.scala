@@ -52,7 +52,7 @@ object Application extends App {
     .getPopulationToNumberOfAccidentsRatio(mergeData)
   logger.info("Population to number of accidents calculated")
   val accidentCountDuringPhenomenonPerHour: RDD[(String, Int, Double, Double)] =
-    weatherMetricService.calculateAccidentCountDuringPhenomenonPerHour(mergeData, weatherPhenomenon)
+    weatherMetricService.calculateAccidentCountDuringPhenomenonPerHour(mergeData)
   logger.info("Accidents count per hour for each phenomenon metric calculated")
 
 
