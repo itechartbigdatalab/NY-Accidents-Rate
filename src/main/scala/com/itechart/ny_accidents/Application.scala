@@ -30,7 +30,8 @@ object Application extends App {
   logger.info("Raw data read")
 
   val mergeData: RDD[MergedData] = mergeService
-    .mergeAccidentsWithWeatherAndDistricts[Accident, MergedData](rawData, mergeService.mapper).cache()
+    .mergeAccidentsWithWeatherAndDistricts[Accident, MergedData](raws, mergeService.withoutWeatherMapper).cache()
+
   logger.info("Merged data size: " + mergeData.count())
 
   val creationDate = org.apache.spark.sql.functions.current_date()
