@@ -30,7 +30,7 @@ object Application extends App {
   logger.info("Raw data read")
 
   val mergeData: RDD[MergedData] = mergeService
-    .mergeAccidentsWithWeatherAndDistricts[Accident, MergedData](raws, mergeService.withoutWeatherMapper).cache()
+    .mergeAccidentsWithWeatherAndDistricts[Accident, MergedData](rawData, mergeService.withoutWeatherMapper).cache()
 
   logger.info("Merged data size: " + mergeData.count())
 
