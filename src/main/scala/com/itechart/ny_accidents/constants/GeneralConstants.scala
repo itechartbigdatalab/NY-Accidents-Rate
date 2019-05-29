@@ -49,6 +49,7 @@ object GeneralConstants {
   val DAY_PERIOD_REPORT_HEADER: Seq[String] = Seq("Day_period","Accident_count","Percentage")
   val PHENOMENON_REPORT_HEADER: Seq[String] = Seq("Phenomenon","Accident_count","Percentage")
   val BOROUGH_REPORT_HEADER: Seq[String] = Seq("Borough","Accident_count","Percentage")
+  val YEAR_DIFFERENCE_HEADER: Seq[String] = Seq("District","Accident_count_difference")
   val DISTRICT_REPORT_HEADER: Seq[String] = Seq("District","Accident_count","Percentage")
   val POPULATION_TO_ACCIDENTS_REPORT_HEADER: Seq[String] = Seq("District","Ratio","Density", "Accident_Count")
   val ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_HEADER: Seq[String] = Seq("Phenomenon","Accident_count","Total_phenomenon_hours", "Accident_per_hour")
