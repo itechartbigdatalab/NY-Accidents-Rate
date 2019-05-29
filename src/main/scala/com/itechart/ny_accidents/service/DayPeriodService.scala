@@ -8,7 +8,7 @@ import net.ruippeixotog.scalascraper.browser.JsoupBrowser
 import net.ruippeixotog.scalascraper.dsl.DSL._
 import net.ruippeixotog.scalascraper.scraper.ContentExtractors.{attr, elementList, texts}
 
-object DayPeriodService extends {
+object DayPeriodService {
 
   private val sunrisesSunsets: Map[LocalDate, Seq[LocalDateTime]] = parseSunrisesSunsets
 

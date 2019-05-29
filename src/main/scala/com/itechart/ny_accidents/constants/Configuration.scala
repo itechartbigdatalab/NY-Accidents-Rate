@@ -16,8 +16,8 @@ object Configuration {
   lazy val DATA_FILE_PATH: String = s"${appConf.getString("file.inputPath")}${appConf.getString("file.input.inputFileNYAccidents")}"
 
 
-  lazy val FIRST_YEAR_VALUE: Int = yearDifferenceMetricConfig.getInt("years.first")
-  lazy val SECOND_YEAR_VALUE: Int = yearDifferenceMetricConfig.getInt("years.second")
+  lazy val FIRST_YEAR_VALUE: Int = yearDifferenceMetricConfig.getInt("years.start")
+  lazy val SECOND_YEAR_VALUE: Int = yearDifferenceMetricConfig.getInt("years.end")
   lazy val FIRST_YEAR_FILE_PATH: String =
     s"${appConf.getString("file.inputPath")}${yearDifferenceMetricConfig.getString("input.files." + FIRST_YEAR_VALUE.toString)}"
   lazy val SECOND_YEAR_FILE_PATH: String =
