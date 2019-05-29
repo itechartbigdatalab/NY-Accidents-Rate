@@ -1,7 +1,6 @@
 package com.itechart.ny_accidents
 
-
-import com.google.inject.Guice
+import com.itechart.ny_accidents.constants.Injector.injector
 import com.itechart.ny_accidents.constants.Configuration
 import com.itechart.ny_accidents.database.NYDataDatabase
 import com.itechart.ny_accidents.database.dao.PopulationStorage
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory
 object Application extends App {
   lazy val logger = LoggerFactory.getLogger(getClass)
 
-  val injector = Guice.createInjector(new GuiceModule)
   val accidentsParser = injector.getInstance(classOf[AccidentsParser])
   val mergeService = injector.getInstance(classOf[MergeService])
   val weatherMetricService = WeatherMetricService
