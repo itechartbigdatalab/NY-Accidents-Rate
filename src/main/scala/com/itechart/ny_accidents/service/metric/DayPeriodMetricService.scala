@@ -35,18 +35,8 @@ object DayPeriodMetricService {
     hashDateCalendar.set(Calendar.YEAR, SUNRISE_YEAR)
     val lightParameters = sunriseSchedule(hashDateCalendar.getTime)
     lightParameters.foreach(_.setYear(seq.head.getYear))
-    val accidentsMorning = seq.filter(date =>
-      if (date.before(lightParameters(SUNRISE_C)) && date.after(lightParameters(TWILIGHT_START_C)))
-        true
-      else
-        false
-    )
-    val accidentsEvening = seq.filter(date =>
-      if (date.before(lightParameters(TWILIGHT_END_C)) && date.after(lightParameters(SUNSET_C)))
-        true
-      else
-        false
-    )
+    val accidentsMorning = seq.filter(date => date.before(lightParameters(SUNRISE_C)) && date.after(lightParameters(TWILIGHT_START_C)))
+    val accidentsEvening = seq.filter(date => date.before(lightParameters(TWILIGHT_END_C)) && date.after(lightParameters(SUNSET_C)))
     (accidentsMorning.size,accidentsEvening.size)
   }
 }
