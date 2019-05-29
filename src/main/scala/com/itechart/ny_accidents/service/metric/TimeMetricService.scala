@@ -1,10 +1,10 @@
 package com.itechart.ny_accidents.service.metric
 
-import java.time.DayOfWeek
 import java.time.format.TextStyle
-import java.util.{Calendar, Locale}
+import java.time.{DayOfWeek, LocalDateTime}
+import java.util.Locale
 
-import com.itechart.ny_accidents.entity.{MergedData, ReportMergedData}
+import com.itechart.ny_accidents.entity.MergedData
 import org.apache.spark.rdd.RDD
 
 
@@ -12,35 +12,27 @@ object TimeMetricService extends PercentageMetricService {
 
   def countHours(accidentsWithWeather: RDD[MergedData]): RDD[(Int, Int, Double)] = {
     val filteredData = accidentsWithWeather
-      .filter(_.accident.dateTime.isDefined)
-      .map(_.accident.dateTime.get)
+      .filter(_.accident.localDateTime.isDefined)
+      .map(_.accident.localDateTime.get)
     val length = filteredData.count
     val groupedData = filteredData
-      .map(dateTime => {
-        val calendar = Calendar.getInstance()
-        calendar.setTime(dateTime)
-        calendar.get(Calendar.HOUR_OF_DAY)
-      })
+      .map(_.getHour)
       .groupBy(identity)
     calculatePercentage(groupedData, length)
   }
 
   def countDayOfWeek(accidentsWithWeather: RDD[MergedData]): RDD[(String, Int, Double)] = {
-    val filteredData = accidentsWithWeather
-      .filter(_.accident.dateTime.isDefined)
-      .map(_.accident.dateTime.get)
+    val filteredData: RDD[LocalDateTime] = accidentsWithWeather
+      .filter(_.accident.localDateTime.isDefined)
+      .map(_.accident.localDateTime.get)
     val length = filteredData.count
     val groupedData = filteredData
-      .map(dateTime => {
-        val calendar = Calendar.getInstance()
-        calendar.setTime(dateTime)
-        calendar.get(Calendar.DAY_OF_WEEK)
-      })
+      .map(_.getDayOfWeek.getValue)
       .groupBy(identity)
-      .map(d => (DayOfWeek.of(d._1).getDisplayName(TextStyle.SHORT, Locale.ENGLISH), d._2))
+      .sortBy(_._1)
+      .map(d => (d._1 + ") " + DayOfWeek.of(d._1).getDisplayName(TextStyle.SHORT, Locale.ENGLISH), d._2))
     calculatePercentage(groupedData, length)
   }
-
 
 
 }

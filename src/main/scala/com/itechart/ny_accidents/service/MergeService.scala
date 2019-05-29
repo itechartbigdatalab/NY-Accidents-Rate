@@ -55,7 +55,7 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
 
   def splitData(accidents: RDD[Accident]): RDD[ReportAccident] = {
     accidents.map(accident => {
-      ReportAccident(accident.dateTime, accident.dateTimeMillis, accident.latitude, accident.longitude)
+      ReportAccident(accident.localDateTime, accident.dateTimeMillis, accident.latitude, accident.longitude)
     })
   }
 
