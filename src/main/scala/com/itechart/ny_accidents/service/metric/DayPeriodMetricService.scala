@@ -13,9 +13,15 @@ object DayPeriodMetricService {
   def getFrequency(data: RDD[MergedData]): Map[String,Long] ={
     val filteredData = data.collect()
       .filter(_.accident.dateTime.isDefined)
-      .map(_.accident.dateTime.get).groupBy(date => (date.getDate, date.getMonth)).map(t => (countMorningAndEveningSeconds(t._2.head), checkAccidents(t._2.toSeq)))
-    val preparedData = filteredData.reduce((l, r) =>
-      ((l._1._1 + r._1._1, l._1._2 + r._1._2), (l._2._1 + r._2._1, l._2._2 +r._2._2 )))
+      .map(_.accident.dateTime.get)
+      .groupBy(date => (date.getDate, date.getMonth))
+      .map(t => (countMorningAndEveningSeconds(t._2.head), checkAccidents(t._2.toSeq)))
+    val preparedData = filteredData
+      .reduce(
+        {case (((leftMorningSeconds, leftEveningSeconds), (leftMorningAccidents, leftEveningAccidents)),
+        ((rightMorningSeconds, rightEveningSeconds), (rightMorningAccidents, rightEveningAccidents))) =>
+      ((leftMorningSeconds + rightMorningSeconds, leftEveningSeconds + rightEveningSeconds),
+        (leftMorningAccidents + rightMorningAccidents, leftEveningAccidents + rightEveningAccidents ))})
     Map(("morning twilight" ,preparedData._1._1 / preparedData._2._1),("evening twilight", preparedData._1._2 / preparedData._2._2))
   }
   private def countMorningAndEveningSeconds(date:java.util.Date): (Long, Long) ={
