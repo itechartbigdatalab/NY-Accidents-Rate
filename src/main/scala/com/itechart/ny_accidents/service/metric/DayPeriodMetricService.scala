@@ -16,13 +16,11 @@ object DayPeriodMetricService {
       .map(_.accident.dateTime.get)
       .groupBy(date => (date.getDate, date.getMonth))
       .map(t => (countMorningAndEveningSeconds(t._2.head), checkAccidents(t._2.toSeq)))
-    val preparedData = filteredData
-      .reduce(
-        {case (((leftMorningSeconds, leftEveningSeconds), (leftMorningAccidents, leftEveningAccidents)),
-        ((rightMorningSeconds, rightEveningSeconds), (rightMorningAccidents, rightEveningAccidents))) =>
-      ((leftMorningSeconds + rightMorningSeconds, leftEveningSeconds + rightEveningSeconds),
-        (leftMorningAccidents + rightMorningAccidents, leftEveningAccidents + rightEveningAccidents ))})
-    Map(("morning twilight" ,preparedData._1._1 / preparedData._2._1),("evening twilight", preparedData._1._2 / preparedData._2._2))
+    val morningMilliseconds = filteredData.map(_._1._1).sum
+    val morningAccidents = filteredData.map(_._2._1).sum
+    val eveningMillseconds = filteredData.map(_._1._2).sum
+    val eveningAccidents = filteredData.map(_._2._2).sum
+    Map(("morning twilight" ,morningMilliseconds / morningAccidents),("evening twilight", eveningMillseconds / eveningAccidents))
   }
   private def countMorningAndEveningSeconds(date:java.util.Date): (Long, Long) ={
     val hashDateCalendar = Calendar.getInstance()
