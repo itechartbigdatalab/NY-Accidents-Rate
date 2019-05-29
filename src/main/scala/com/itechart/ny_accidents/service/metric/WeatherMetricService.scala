@@ -36,8 +36,7 @@ object WeatherMetricService extends PercentageMetricService {
     calculatePercentage(groupedData, length)
   }
 
-  def calculateAccidentCountDuringPhenomenonPerHour(mergedAccidents: RDD[MergedData],
-                                                    phenomenonCount: RDD[(String, Int, Double)]): RDD[(String, Int, Double, Double)] = {
+  def calculateAccidentCountDuringPhenomenonPerHour(mergedAccidents: RDD[MergedData]): RDD[(String, Int, Double, Double)] = {
     val filteredData = mergedAccidents
       .filter(_.accident.dateTimeMillis.isDefined)
       .sortBy(_.accident.dateTimeMillis.get)
@@ -50,11 +49,11 @@ object WeatherMetricService extends PercentageMetricService {
       .getWeatherByStationsBetweenDates(firstAccidentDateTime, lastAccidentDateTime)
     val stationCount = weatherByStation.size
 
+    val phenomenonCount = WeatherMetricService.getPhenomenonPercentage(mergedAccidents)
     phenomenonCount.map { case (phenomenonName, accidentCountDuringPhenomenon, _) =>
       val hoursOfPhenomenon = countHoursOfPhenomenon(weatherByStation, stationCount, phenomenonName)
       (phenomenonName, accidentCountDuringPhenomenon, hoursOfPhenomenon, accidentCountDuringPhenomenon / hoursOfPhenomenon)
     }
-
   }
 
   def countHoursOfPhenomenon(weatherByStation: Map[Int, Seq[WeatherEntity]], stationCount: Int, phenomenonName: String): Double = {
