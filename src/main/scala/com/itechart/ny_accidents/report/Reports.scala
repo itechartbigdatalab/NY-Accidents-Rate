@@ -21,7 +21,7 @@ class Reports {
   def generateDataFrameReportForTupleRDD[A <: Product](data: RDD[A], schema: StructType): DataFrame = {
     val rdd = data.map(Row.fromTuple)
     Spark.sparkSql.createDataFrame(rdd, schema)
-      .withColumn(PK_DATAFRAME_NAME,monotonically_increasing_id())
+      .withColumn(PK_DATAFRAME_NAME, monotonically_increasing_id())
       .withColumn(DATE_COLUMN_NAME, current_date())
   }
 }
