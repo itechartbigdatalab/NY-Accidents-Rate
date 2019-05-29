@@ -5,7 +5,7 @@
 [build-badge]: https://travis-ci.org/itechartbigdatalab/NY-Accidents-Rate.svg?branch=master
 [build]: https://travis-ci.org/itechartbigdatalab/NY-Accidents-Rate
 
-[coveralls-badge]: https://img.shields.io/coveralls/itechartbigdatalab/NY-Accidents-Rate/master.png?style=flat-square
+[coveralls-badge]: https://img.shields.io/coveralls/itechartbigdatalab/NY-Accidents-Rate/master.png?style=flat-square&branch=master
 [coveralls]: https://coveralls.io/github/itechartbigdatalab/NY-Accidents-Rate
 
 <br/>
