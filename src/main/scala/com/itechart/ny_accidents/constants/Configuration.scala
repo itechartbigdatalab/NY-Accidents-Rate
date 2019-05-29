@@ -9,7 +9,7 @@ object Configuration {
   private lazy val yearDifferenceMetricConfig = ConfigFactory.load("conf/yearsDifference.conf")
 
   lazy val CACHE_NAME: String = cacheConf.getString("cache.name")
-  lazy val CACHE_PATH: String = s"/home/${System.getProperty("user.name")}/$CACHE_NAME"
+  lazy val CACHE_PATH: String = s"${System.getProperty("user.home")}/$CACHE_NAME"
   lazy val CACHE_DISK_SIZE: Int = cacheConf.getInt("cache.disk_size_gb")
   lazy val CACHE_HEAP_SIZE: Int = cacheConf.getInt("cache.heap_size_units")
   lazy val CACHE_OFF_HEAP_SIZE: Int = cacheConf.getInt("cache.off_head_size_gb")
@@ -40,4 +40,9 @@ object Configuration {
 
   lazy val MONGO_HOST: String = "mongodb://localhost:27017"
   lazy val WAIT_QUEUE_SIZE_MONGO: Int = 100
+
+  lazy val PATH_TO_DATASET_TO_SPLIT: String = appConf.getString("file.path_to_split_dataset")
+  lazy val SPLIT_BASE_DIR: String = appConf.getString("file.split_dataset_base_folder")
+  lazy val SPLIT_DATASET_BASE_FOLDER: String =  s"${System.getProperty("user.home")}/$SPLIT_BASE_DIR"
+  lazy val CSV_BASE_NAME: String = appConf.getString("file.csv_base_name")
 }

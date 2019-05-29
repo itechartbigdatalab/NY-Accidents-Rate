@@ -43,7 +43,6 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
   def withoutWeatherMapper(value: Accident): MergedData = {
     if (counter % 1000 == 0) logger.info("COUNTER: " + counter)
     counter += 1
-
     value.uniqueKey match {
       case Some(pk) =>
         cacheService.readMergedDataFromCache(pk) match {
