@@ -26,34 +26,26 @@ object Application extends App {
   val populationStorage = injector.getInstance(classOf[PopulationStorage])
   sys.addShutdownHook(cacheService.close)
 
-  val raws = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
+  val rawData = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
   logger.info("Raw data read")
 
   val mergeData: RDD[MergedData] = mergeService
-    .mergeAccidentsWithWeatherAndDistricts[Accident, MergedData](raws, mergeService.mapper).cache()
+    .mergeAccidentsWithWeatherAndDistricts[Accident, MergedData](rawData, mergeService.mapper).cache()
   logger.info("Merged data size: " + mergeData.count())
 
   val creationDate = org.apache.spark.sql.functions.current_date()
   val reports = injector.getInstance(classOf[Reports])
 
-  val dayOfWeekReport = new DayOfWeekReportGenerator().apply(mergeData, reports, creationDate)
-  val hourOfDayReport = new HourOfDayReportGenerator().apply(mergeData, reports, creationDate)
-  val periodReport = new PeriodReportGenerator().apply(mergeData, reports, creationDate)
-  val weatherReport = new WeatherReportGenerator().apply(mergeData, reports, creationDate)
-  val boroughReport = new BoroughReportGenerator().apply(mergeData, reports, creationDate)
-  val districtReport = new DistrictReportGenerator().apply(mergeData, reports, creationDate)
-  val populationToNumberOfAccidentsReport = new PopulationToNumberOfAccidentsReportGenerator(populationService)
-    .apply(mergeData, reports, creationDate)
-  val accidentCountDuringPhenomenonPerHourReport = new AccidentCountDuringPhenomenonPerHourReportGenerator()
-    .apply(mergeData, reports, creationDate)
+  val reportSeq = Seq(
+    new DayOfWeekReportGenerator(),
+    new HourOfDayReportGenerator(),
+    new PeriodReportGenerator(),
+    new WeatherReportGenerator(),
+    new BoroughReportGenerator(),
+    new DistrictReportGenerator(),
+    new PopulationToNumberOfAccidentsReportGenerator(populationService),
+    new AccidentCountDuringPhenomenonPerHourReportGenerator()
+  )
 
-  NYDataDatabase.insertDataFrame(DAY_OF_WEEK_REPORT_TABLE_NAME, dayOfWeekReport)
-  NYDataDatabase.insertDataFrame(HOUR_OF_DAY_REPORT_TABLE_NAME, hourOfDayReport)
-  NYDataDatabase.insertDataFrame(DAY_PERIOD_REPORT_TABLE_NAME, periodReport)
-  NYDataDatabase.insertDataFrame(PHENOMENON_REPORT_TABLE_NAME, weatherReport)
-  NYDataDatabase.insertDataFrame(BOROUGH_REPORT_TABLE_NAME, boroughReport)
-  NYDataDatabase.insertDataFrame(DISTRICT_REPORT_TABLE_NAME, districtReport)
-  NYDataDatabase.insertDataFrame(POPULATION_TO_ACCIDENTS_REPORT_TABLE_NAME, populationToNumberOfAccidentsReport)
-  NYDataDatabase.insertDataFrame(ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_TABLE_NAME, accidentCountDuringPhenomenonPerHourReport)
-
+  reportSeq.foreach(report => NYDataDatabase.insertDataFrame(report.tableName, report.apply(mergeData, reports, creationDate)))
 }
