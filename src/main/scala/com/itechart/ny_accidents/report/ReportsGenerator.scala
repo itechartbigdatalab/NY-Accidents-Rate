@@ -25,7 +25,7 @@ class ReportsGenerator @Inject()(populationService: PopulationMetricService) {
     logger.info("Hour of day calculated")
     val period = WeatherMetricService.definePeriod(data)
     logger.info("Period calculated")
-    val weatherPhenomenon = WeatherMetricService.getPhenomenonPercentage(data)
+    val weatherPhenomenon: RDD[(String, Int, Double)] = WeatherMetricService.getPhenomenonPercentage(data)
     logger.info("Weather phenomenon calculated")
     val boroughPercentage = DistrictMetricService.getBoroughPercentage(data)
     logger.info("Borough percentage calculated")
