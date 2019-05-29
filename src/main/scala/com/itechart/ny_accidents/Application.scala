@@ -56,40 +56,41 @@ object Application extends App {
   logger.info("Accidents count per hour for each phenomenon metric calculated")
 
 
+  val reportGenerateDate = org.apache.spark.sql.functions.current_date()
 
   val report = injector.getInstance(classOf[Reports])
-  val dayOfWeekReport = report.generateDataFrameReportForTupleRDD[(String, Int, Double)](dayOfWeek, DAY_OF_WEEK_REPORT_SCHEMA)
+  val dayOfWeekReport = report.generateDataFrameReportForTupleRDD(dayOfWeek, DAY_OF_WEEK_REPORT_SCHEMA, reportGenerateDate)
   NYDataDatabase.insertDataFrame(DAY_OF_WEEK_REPORT_TABLE_NAME, dayOfWeekReport)
   logger.info("Day of week report created")
 
-  val hourOfDayReport = report.generateDataFrameReportForTupleRDD[(Int, Int, Double)](hourOfDay, HOUR_OF_DAY_REPORT_SCHEMA)
+  val hourOfDayReport = report.generateDataFrameReportForTupleRDD(hourOfDay, HOUR_OF_DAY_REPORT_SCHEMA, reportGenerateDate)
   NYDataDatabase.insertDataFrame(HOUR_OF_DAY_REPORT_TABLE_NAME, hourOfDayReport)
   logger.info("Hour of day report created")
 
-  val periodReport = report.generateDataFrameReportForTupleRDD[(String, Int, Double)](period, DAY_OF_WEEK_REPORT_SCHEMA)
-  NYDataDatabase.insertDataFrame(DAY_OF_WEEK_REPORT_TABLE_NAME, periodReport)
+  val periodReport = report.generateDataFrameReportForTupleRDD(period, DAY_OF_WEEK_REPORT_SCHEMA, reportGenerateDate)
+  NYDataDatabase.insertDataFrame(DAY_PERIOD_REPORT_TABLE_NAME, periodReport)
   logger.info("Period report created")
 
-  val weatherReport = report.generateDataFrameReportForTupleRDD[(String, Int, Double)](weatherPhenomenon, PHENOMENON_REPORT_SCHEMA)
+  val weatherReport = report.generateDataFrameReportForTupleRDD(weatherPhenomenon, PHENOMENON_REPORT_SCHEMA, reportGenerateDate)
   NYDataDatabase.insertDataFrame(PHENOMENON_REPORT_TABLE_NAME, weatherReport)
   logger.info("Weather report created")
 
-  val boroughReport = report.generateDataFrameReportForTupleRDD[(String, Int, Double)](boroughPercentage, BOROUGH_REPORT_SCHEMA)
+  val boroughReport = report.generateDataFrameReportForTupleRDD(boroughPercentage, BOROUGH_REPORT_SCHEMA, reportGenerateDate)
   NYDataDatabase.insertDataFrame(BOROUGH_REPORT_TABLE_NAME, boroughReport)
   logger.info("Borough report created")
 
-  val districtsReport = report.generateDataFrameReportForTupleRDD[(String, Int, Double)](districtsPercentage, DISTRICT_REPORT_SCHEMA)
+  val districtsReport = report.generateDataFrameReportForTupleRDD(districtsPercentage, DISTRICT_REPORT_SCHEMA, reportGenerateDate)
   println("REPORT: " + districtsReport)
   NYDataDatabase.insertDataFrame(DISTRICT_REPORT_TABLE_NAME, districtsReport)
   logger.info("Districts report created")
 
   val populationToNumberOfAccidentsReport = report
-    .generateDataFrameReportForTupleRDD[(String, Double, Double, Int)](populationToNumberOfAccidents, POPULATION_TO_ACCIDENTS_REPORT_SCHEMA)
+    .generateDataFrameReportForTupleRDD(populationToNumberOfAccidents, POPULATION_TO_ACCIDENTS_REPORT_SCHEMA, reportGenerateDate)
   NYDataDatabase.insertDataFrame(POPULATION_TO_ACCIDENTS_REPORT_TABLE_NAME, populationToNumberOfAccidentsReport)
   logger.info("Population to number of accidents report created")
 
   val accidentCountDuringPhenomenonPerHourReport = report
-    .generateDataFrameReportForTupleRDD[(String, Int, Double, Double)](accidentCountDuringPhenomenonPerHour, ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_SCHEMA)
+    .generateDataFrameReportForTupleRDD(accidentCountDuringPhenomenonPerHour, ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_SCHEMA, reportGenerateDate)
   NYDataDatabase.insertDataFrame(ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_TABLE_NAME, accidentCountDuringPhenomenonPerHourReport)
   logger.info("Accidents count per hour for each phenomenon report created")
 }
