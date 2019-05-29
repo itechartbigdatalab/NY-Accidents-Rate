@@ -4,11 +4,11 @@ import java.util.Calendar
 
 import com.itechart.ny_accidents.constants.GeneralConstants._
 import com.itechart.ny_accidents.entity.MergedData
-import com.itechart.ny_accidents.service.DayPeriodService
+import com.itechart.ny_accidents.service.DayPeriodService.sunrisesSunsets
 import org.apache.spark.rdd.RDD
 
 object DayPeriodMetricService {
-  private val sunriseSchedule = DayPeriodService.sunrisesSunsets
+  private val sunriseSchedule = sunrisesSunsets
 
   def getFrequency(data: RDD[MergedData]): Map[String,Long] ={
     val filteredData = data.collect()
