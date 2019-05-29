@@ -3,8 +3,9 @@ package com.itechart.ny_accidents.service
 import com.google.inject.{Inject, Singleton}
 import com.itechart.ny_accidents.database.DistrictsStorage
 import com.itechart.ny_accidents.database.dao.cache.MergedDataCacheDAO
-import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident, ReportMergedData}
+import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident}
 import org.apache.spark.rdd.RDD
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.reflect.ClassTag
 
@@ -14,14 +15,15 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
                              districtsStorage: DistrictsStorage,
                              cacheService: MergedDataCacheDAO) {
   private var counter = 0
+  private lazy val logger: Logger = LoggerFactory.getLogger(getClass)
+
 
   def mergeAccidentsWithWeatherAndDistricts[A, B](accidents: RDD[A], fun: A => B)(implicit tag: ClassTag[B]): RDD[B] = {
     accidents.map(fun)
   }
 
   def fullMergeMapper(value: Accident): MergedData = {
-    if (counter % 1000 == 0)
-      println("COUNTER: " + counter)
+    if (counter % 1000 == 0) logger.info("COUNTER: " + counter)
     counter += 1
 
     value.uniqueKey match {
@@ -39,8 +41,7 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
   }
 
   def withoutWeatherMapper(value: Accident): MergedData = {
-    if (counter % 1000 == 0)
-      println("COUNTER: " + counter)
+    if (counter % 1000 == 0) logger.info("COUNTER: " + counter)
     counter += 1
 
     value.uniqueKey match {
@@ -86,21 +87,4 @@ class MergeService @Inject()(weatherService: WeatherMappingService,
     })
   }
 
-  // todo remove counter!
-  def splitDataMapper(value: ReportAccident): ReportMergedData = {
-    println("COUNTER: " + counter)
-    counter += 1
-
-    (value.latitude, value.longitude) match {
-      case (Some(latitude), Some(longitude)) =>
-        val district = districtsService.getDistrict(latitude, longitude, districtsStorage.districts)
-        value.dateTimeMillis match {
-          case Some(mills) =>
-            val weather = weatherService.findWeatherByTimeAndCoordinates(mills, latitude, longitude)
-            ReportMergedData(value, district, weather)
-          case _ => ReportMergedData(value, district, None)
-        }
-      case _ => ReportMergedData(value, None, None)
-    }
-  }
 }
