@@ -19,6 +19,6 @@ object PopulationService {
   }
 
   def calculateDensity(population: Population): Double = {
-    population.population.toDouble / (population.area * NUMBER_NORMALIZATION_FACTOR)
+    (((population.population.toDouble / (population.area * NUMBER_NORMALIZATION_FACTOR))*100).toInt) /100.0
   }
 }

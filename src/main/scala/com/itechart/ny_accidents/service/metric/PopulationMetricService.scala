@@ -21,7 +21,7 @@ class PopulationMetricService @Inject()(populationStorage: PopulationStorage) {
           density match {
             case 0 => None
             case _ =>
-              val ratio: Double = accidentsNumber / density
+              val ratio: Double = (((accidentsNumber / density) * 100).toInt)/100.0
               Some(district.districtName, ratio, density, accidentsNumber)
           }
         case _ => None
