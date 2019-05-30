@@ -9,7 +9,7 @@ import com.itechart.ny_accidents.entity.{Accident, MergedData}
 import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.service.MergeService
-import com.itechart.ny_accidents.service.metric.{DistrictMetricService, PopulationMetricService, TimeMetricService, WeatherMetricService}
+import com.itechart.ny_accidents.service.metric.{DayPeriodMetricService, DistrictMetricService, PopulationMetricService, TimeMetricService, WeatherMetricService}
 import com.itechart.ny_accidents.utils.FileWriterUtils
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory
@@ -21,13 +21,14 @@ object Application extends App {
   val accidentsParser = injector.getInstance(classOf[AccidentsParser])
   val mergeService = injector.getInstance(classOf[MergeService])
   val weatherMetricService = WeatherMetricService
+  val dayPeriodMetricService = injector.getInstance(classOf[DayPeriodMetricService])
   val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
   val populationService = injector.getInstance(classOf[PopulationMetricService])
   val populationStorage = injector.getInstance(classOf[PopulationStorage])
   sys.addShutdownHook(cacheService.close)
 
   val raws = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
-  logger.info("Raw data read")
+  logger.info("Raw data read {}", raws.collect())
 
   val mergeData: RDD[MergedData] = mergeService
     .mergeAccidentsWithWeatherAndDistricts[Accident, MergedData](raws, mergeService.mapper).cache()
@@ -51,8 +52,8 @@ object Application extends App {
   val accidentCountDuringPhenomenonPerHour: RDD[(String, Int, Double, Double)] =
     weatherMetricService.calculateAccidentCountDuringPhenomenonPerHour(mergeData, weatherPhenomenon)
   logger.info("Accidents count per hour for each phenomenon metric calculated")
-
-
+  val frequency: RDD[(String, Long)] = dayPeriodMetricService.getFrequency(mergeData)
+  logger.info("Metric day period hour frequency per accidents calculated")
 
   val report = injector.getInstance(classOf[Reports])
   val dayOfWeekReport = report.generateReportForTupleRDD[(String, Int, Double)](dayOfWeek, DAY_OF_WEEK_REPORT_HEADER)
@@ -77,8 +78,11 @@ object Application extends App {
 
   val districtsReport = report.generateReportForTupleRDD[(String, Int, Double)](districtsPercentage, DISTRICT_REPORT_HEADER)
   FileWriterUtils.writeToCsv(districtsReport, "reports/districts.csv")
-
   logger.info("Districts report created")
+
+  val frequencyReport = report.generateReportForTupleRDD[(String, Long)](frequency, FREQUENCY_REPORT_HEADER)
+  FileWriterUtils.writeToCsv(frequencyReport, "reports/frequency.csv")
+  logger.info("Frequency report created")
 
   val populationToNumberOfAccidentsReport = report
     .generateReportForTupleRDD[(String, Double, Double, Int)](populationToNumberOfAccidents, POPULATION_TO_ACCIDENTS_REPORT_HEADER)

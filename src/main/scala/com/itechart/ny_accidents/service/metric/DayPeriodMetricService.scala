@@ -1,46 +1,43 @@
 package com.itechart.ny_accidents.service.metric
 
-import java.util.Calendar
+import java.time.{Duration, LocalDateTime}
+import java.time.temporal.ChronoUnit
 
 import com.itechart.ny_accidents.constants.GeneralConstants._
 import com.itechart.ny_accidents.entity.MergedData
 import com.itechart.ny_accidents.service.DayPeriodService.sunrisesSunsets
+import com.itechart.ny_accidents.spark.Spark
 import org.apache.spark.rdd.RDD
 
-object DayPeriodMetricService {
+class DayPeriodMetricService  {
   private val sunriseSchedule = sunrisesSunsets
 
-  def getFrequency(data: RDD[MergedData]): Map[String,Long] ={
+  def getFrequency(data: RDD[MergedData]):  RDD[(String, Long)] ={
     val filteredData = data.collect()
-      .filter(_.accident.dateTime.isDefined)
-      .map(_.accident.dateTime.get)
-      .groupBy(date => (date.getDate, date.getMonth))
-      .map(t => (countMorningAndEveningSeconds(t._2.head), checkAccidents(t._2.toSeq)))
-    val morningMilliseconds = filteredData.map(_._1._1).sum
-    val morningAccidents = filteredData.map(_._2._1).sum
-    val eveningMillseconds = filteredData.map(_._1._2).sum
-    val eveningAccidents = filteredData.map(_._2._2).sum
-    Map(("morning twilight" ,morningMilliseconds / morningAccidents),("evening twilight", eveningMillseconds / eveningAccidents))
+      .filter(_.accident.localDateTime.isDefined)
+      .map(_.accident.localDateTime.get)
+      .groupBy(date => (date.getDayOfMonth, date.getMonth.getValue))
+      .map {
+        case (key, value) => (key, (countMorningAndEveningSeconds(value.head), checkAccidents(value.toSeq)))
+      }
+    lazy val morningSeconds = filteredData.map(_._2._1._1).sum
+    lazy val morningAccidents = filteredData.map(_._2._2._1).sum
+    lazy val eveningSeconds = filteredData.map(_._2._1._2).sum
+    lazy val eveningAccidents = filteredData.map(_._2._2._2).sum
+    Spark.sc.parallelize(Seq(("morning twilight" ,morningSeconds / morningAccidents),("evening twilight", eveningSeconds / eveningAccidents)))
   }
-  private def countMorningAndEveningSeconds(date:java.util.Date): (Long, Long) ={
-    val hashDateCalendar = Calendar.getInstance()
-    hashDateCalendar.setTime(date)
-    hashDateCalendar.set(Calendar.YEAR, SUNRISE_YEAR)
-    hashDateCalendar.set(Calendar.HOUR_OF_DAY, 0)
-    hashDateCalendar.set(Calendar.MINUTE, 0)
-    val lightParameters = sunriseSchedule(hashDateCalendar.getTime)
-    (lightParameters(SUNRISE_C).getTime - lightParameters(TWILIGHT_START_C).getTime, lightParameters(TWILIGHT_END_C).getTime - lightParameters(SUNSET_C).getTime)
+  private def countMorningAndEveningSeconds(date:LocalDateTime): (Long, Long) ={
+    val hashDateTime = date.truncatedTo(ChronoUnit.HOURS).withYear(SUNRISE_YEAR)
+    val lightParameters = sunriseSchedule(hashDateTime.toLocalDate)
+    (Duration.between(lightParameters(TWILIGHT_START_C),lightParameters(SUNRISE_C)).getSeconds,
+      Duration.between(lightParameters(SUNSET_C),lightParameters(TWILIGHT_END_C)).getSeconds)
   }
-  private def checkAccidents(seq:  Seq[java.util.Date]): (Int,Int) ={
-    val hashDateCalendar = Calendar.getInstance()
-    hashDateCalendar.setTime(seq.head)
-    hashDateCalendar.set(Calendar.HOUR_OF_DAY, 0)
-    hashDateCalendar.set(Calendar.MINUTE, 0)
-    hashDateCalendar.set(Calendar.YEAR, SUNRISE_YEAR)
-    val lightParameters = sunriseSchedule(hashDateCalendar.getTime)
-    lightParameters.foreach(_.setYear(seq.head.getYear))
-    val accidentsMorning = seq.filter(date => date.before(lightParameters(SUNRISE_C)) && date.after(lightParameters(TWILIGHT_START_C)))
-    val accidentsEvening = seq.filter(date => date.before(lightParameters(TWILIGHT_END_C)) && date.after(lightParameters(SUNSET_C)))
+  private def checkAccidents(seq:  Seq[LocalDateTime]): (Int,Int) ={
+    val hashDateTime = seq.head.truncatedTo(ChronoUnit.HOURS).withYear(SUNRISE_YEAR)
+    val lightParameters = sunriseSchedule(hashDateTime.toLocalDate)
+    lightParameters.foreach(_.withYear(seq.head.getYear))
+    val accidentsMorning = seq.filter(date => date.isBefore(lightParameters(SUNRISE_C)) && date.isAfter(lightParameters(TWILIGHT_START_C)))
+    val accidentsEvening = seq.filter(date => date.isBefore(lightParameters(TWILIGHT_END_C)) && date.isAfter(lightParameters(SUNSET_C)))
     (accidentsMorning.size,accidentsEvening.size)
   }
 }
