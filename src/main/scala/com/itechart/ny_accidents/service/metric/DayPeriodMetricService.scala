@@ -9,7 +9,7 @@ import com.itechart.ny_accidents.service.DayPeriodService.sunrisesSunsets
 import com.itechart.ny_accidents.spark.Spark
 import org.apache.spark.rdd.RDD
 
-class DayPeriodMetricService  {
+object DayPeriodMetricService  {
   private val sunriseSchedule = sunrisesSunsets
 
   def getFrequency(data: RDD[MergedData]):  RDD[(String, Long)] ={
