@@ -6,6 +6,7 @@ import com.itechart.ny_accidents.entity.MergedData
 import com.itechart.ny_accidents.service.PopulationService
 import javax.inject.Singleton
 import org.apache.spark.rdd.RDD
+import com.itechart.ny_accidents.utils.NumberUtils
 
 @Singleton
 class PopulationMetricService @Inject()(populationStorage: PopulationStorage) {
@@ -21,7 +22,7 @@ class PopulationMetricService @Inject()(populationStorage: PopulationStorage) {
           density match {
             case 0 => None
             case _ =>
-              val ratio: Double = (((accidentsNumber / density) * 100).toInt)/100.0
+              val ratio: Double = NumberUtils.truncateDouble(accidentsNumber / density)
               Some(district.districtName, ratio, density, accidentsNumber)
           }
         case _ => None

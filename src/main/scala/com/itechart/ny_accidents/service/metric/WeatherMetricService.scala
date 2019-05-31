@@ -7,6 +7,7 @@ import com.itechart.ny_accidents.entity.{MergedData, WeatherEntity, WeatherForAc
 import com.itechart.ny_accidents.service.{DayPeriodService, WeatherMappingService}
 import org.apache.spark.rdd.RDD
 import com.itechart.ny_accidents.constants.Injector.injector
+import com.itechart.ny_accidents.utils.NumberUtils
 
 object WeatherMetricService extends PercentageMetricService {
   private lazy val weatherMappingService = injector.getInstance(classOf[WeatherMappingService])
@@ -52,7 +53,7 @@ object WeatherMetricService extends PercentageMetricService {
     val phenomenonCount = WeatherMetricService.getPhenomenonPercentage(mergedAccidents)
     phenomenonCount.map { case (phenomenonName, accidentCountDuringPhenomenon, _) =>
       val hoursOfPhenomenon = countHoursOfPhenomenon(weatherByStation, stationCount, phenomenonName)
-      (phenomenonName, accidentCountDuringPhenomenon, hoursOfPhenomenon, accidentCountDuringPhenomenon / hoursOfPhenomenon)
+      (phenomenonName, accidentCountDuringPhenomenon, NumberUtils.truncateDouble(hoursOfPhenomenon), NumberUtils.truncateDouble(accidentCountDuringPhenomenon / hoursOfPhenomenon))
     }
   }
 
