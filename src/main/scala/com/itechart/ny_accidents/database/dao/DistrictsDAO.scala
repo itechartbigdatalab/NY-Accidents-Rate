@@ -23,16 +23,13 @@ class DistrictsDAO() {
     .option("password", NY_DATA_DATABASE_PASSWORD)
     .option("dbtable", s"(SELECT nta_name, borough_name, st_astext(geom) as geom FROM $DB_TABLE_NAME) as $DB_TABLE_NAME")
     .load()
-    .withColumnRenamed("nta_name", "districtName")
-    .withColumnRenamed("borough_name", "boroughName")
-    .withColumnRenamed("geom", "geometry")
     .createOrReplaceTempView(DB_TABLE_NAME)
 
   implicit val districtEncoder: Encoder[District] = Encoders.kryo[District]
   implicit val geometryEncoder: Encoder[Geometry] = Encoders.kryo[Geometry]
 
   lazy val districtsDataset: Dataset[District] = Spark.sparkSql.sql(
-    s"SELECT districtName, boroughName, geometry FROM $DB_TABLE_NAME")
+    s"SELECT nta_name, borough_name, geom FROM $DB_TABLE_NAME")
     .as[(String, String, String)]
     .map { case (districtName, boroughName, wktGeometry) =>
       District(districtName, boroughName, PostgisUtils.getGeometryFromText(wktGeometry))

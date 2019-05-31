@@ -9,13 +9,11 @@ object Spark {
   val conf: SparkConf = new SparkConf()
     .setAppName("ny_spark")
     .setMaster("local[*]")
-    .registerKryoClasses(Array(classOf[Geometry]))
 
   val sc = new SparkContext(conf)
   val sparkSql: SparkSession = SparkSession.builder
     .master("local")
     .config(conf)
-    .config("spark.serializer", classOf[KryoSerializer].getName)
     .getOrCreate()
 
 }
