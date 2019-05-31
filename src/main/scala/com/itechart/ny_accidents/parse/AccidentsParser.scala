@@ -2,27 +2,27 @@ package com.itechart.ny_accidents.parse
 
 import java.time.LocalDateTime
 
-import com.google.inject.Singleton
 import com.itechart.ny_accidents.constants.AccidentsHeader._
 import com.itechart.ny_accidents.constants.GeneralConstants
-import com.itechart.ny_accidents.entity.Accident
+import com.itechart.ny_accidents.constants.GeneralConstants.ZERO_DATE
+import com.itechart.ny_accidents.entity.{Accident, AccidentWithoutOption}
 import com.itechart.ny_accidents.spark.Spark
 import com.itechart.ny_accidents.utils.DateUtils
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.{DataFrame, Dataset, Row}
-import com.itechart.ny_accidents.spark.Spark.sparkSql.implicits._
+import org.apache.spark.sql._
+import com.itechart.ny_accidents.spark.Spark.districtEncoder
 import org.slf4j.LoggerFactory
 
 import scala.util.Try
 
-@Singleton
-class AccidentsParser {
+
+object AccidentsParser {
   private lazy val logger = LoggerFactory.getLogger(getClass)
   private lazy val YEAR_COL = 29
   private lazy val DATE_HEADER = "DATE"
   private lazy val DATE_MASK = "MM/dd/yyyy"
+
   private lazy val YEAR_HEADER = "YEAR"
 
   def readCsv(path: String): Dataset[Row] = {
@@ -32,7 +32,7 @@ class AccidentsParser {
       .csv(path)
   }
 
-  def readData(fileName: String): Dataset[Accident] = {
+  def readData(fileName: String): Dataset[AccidentWithoutOption] = {
     readCsv(fileName).map(accidentsMapper)
 //    Spark.sc.parallelize(csvAccidentsData.map(accidentsMapper))
   }
@@ -53,10 +53,9 @@ class AccidentsParser {
     (schema, map)
   }
 
-  def accidentsMapper(accident: Row): Accident = {
-
-    Accident(
-      toLong(accident, UNIQUE_NUMBER),
+  def accidentsMapper(accident: Row): AccidentWithoutOption = {
+    AccidentWithoutOption(
+      toLongInt(accident, UNIQUE_NUMBER),
       toLocalDate(accident.getString(DATE_C), accident.getString(TIME_C)),
       toMillis(accident, DATE_C, TIME_C),
       toString(accident, BOROUGH_C),
@@ -77,33 +76,34 @@ class AccidentsParser {
       toStringList(accident, VEHICLE_TYPE_CODE_COLUMNS))
   }
 
-  private def toLong(accident: Row, column: Int): Option[Long] = {
-    Try(accident.getString(column).toLong).toOption
+
+  private def toLongInt(accident: Row, column: Int): Long = {
+    accident.getInt(column).toLong
   }
 
-  private def toLocalDate(dateStr: String, timeStr: String): Option[LocalDateTime] = {
+  private def toLocalDate(dateStr: String, timeStr: String): LocalDateTime = {
     val dateTimeStr = dateStr + " " + timeStr
-    DateUtils.parseDate(dateTimeStr, GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
+    DateUtils.parseDate(dateTimeStr, GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER).getOrElse(ZERO_DATE)
   }
 
-  private def toMillis(row: Row, dateColumn: Int, timeColumn: Int): Option[Long] = {
+  private def toMillis(row: Row, dateColumn: Int, timeColumn: Int): Long = {
     val dateTime = row.getString(dateColumn) + " " + row.getString(timeColumn)
-    DateUtils.parseDateToMillis(dateTime, GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
+    DateUtils.parseDateToMillis(dateTime, GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER).getOrElse(0L)
   }
 
-  private def toDouble(accident: Row, column: Int): Option[Double] = {
-    Try(accident.getString(column).toDouble).toOption
+  private def toDouble(accident: Row, column: Int): Double = {
+    Try(accident.getDouble(column)).toOption.getOrElse(0)
   }
 
-  private def toString(accident: Row, column: Int): Option[String] = {
-    Try(accident(column).toString).toOption
+  private def toString(accident: Row, column: Int): String = {
+    accident.getString(column)
   }
 
-  private def toInt(accident: Row, column: Int): Option[Int] = {
-    Try(accident.getString(column).toInt).toOption
+  private def toInt(accident: Row, column: Int): Int = {
+    Try(accident.getInt(column)).getOrElse(0)
   }
 
-  private def toStringList(row: Row, columns: Array[Int]): List[Option[String]] = {
+  private def toStringList(row: Row, columns: Array[Int]): List[String] = {
     columns
       .map(toString(row, _))
       .toList

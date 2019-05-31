@@ -2,6 +2,7 @@ package com.itechart.ny_accidents.service
 
 import com.google.inject.{Inject, Singleton}
 import com.itechart.ny_accidents.constants.GeneralConstants.{FIRST_STATION_ID, HASH_DIFFERENCE, LAST_STATION_ID}
+import com.itechart.ny_accidents.database.NYDataDatabase
 import com.itechart.ny_accidents.database.dao.WeatherDAO
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherForAccident, WeatherStation}
 import com.itechart.ny_accidents.parse.WeatherParser
@@ -11,6 +12,8 @@ import com.itechart.ny_accidents.utils.{DateUtils, PostgisUtils}
 import org.apache.spark.sql.Dataset
 
 import scala.annotation.tailrec
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 import scala.util.Try
 
 @Singleton
@@ -20,8 +23,7 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
   var counter = 1
 
   private val allStations: Seq[WeatherStation] =
-    Seq()
-  //    Await.result(NYDataDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
+      Await.result(NYDataDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
   // map under have such structure -> Map[stationId, Map[TimeHash, Seq[WeatherEntity]]]
   private val allWeather: Map[Int, Map[Long, Seq[WeatherEntity]]] =
   Map()

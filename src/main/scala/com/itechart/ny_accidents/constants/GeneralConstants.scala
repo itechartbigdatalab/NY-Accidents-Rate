@@ -1,5 +1,6 @@
 package com.itechart.ny_accidents.constants
 
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -12,6 +13,8 @@ object GeneralConstants {
   val DATE_TIME_ACCIDENTS_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy H:mm")
   val DATE_SUNRISES_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
   val DATE_TIME_SUNRISES_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd h:mm:ss a", Locale.ENGLISH)
+
+  val ZERO_DATE: LocalDateTime = LocalDateTime.parse("01.01.1999 00:00", DATE_TIME_FORMATTER_WEATHER)
 
 //  val DATE_TIME_WEATHER_PATTERN:  SimpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm")
 //  val DATE_TIME_ACCIDENTS_PATTERN: SimpleDateFormat = new SimpleDateFormat("MM/dd/yyyy H:mm")

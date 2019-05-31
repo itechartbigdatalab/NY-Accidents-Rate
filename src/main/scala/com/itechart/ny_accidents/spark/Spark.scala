@@ -1,7 +1,7 @@
 package com.itechart.ny_accidents.spark
 
-import org.apache.log4j.{Level, LogManager, Logger}
-import org.apache.spark.sql.SparkSession
+import com.itechart.ny_accidents.entity.AccidentWithoutOption
+import org.apache.spark.sql.{Encoder, Encoders, SparkSession}
 import org.apache.spark.{SparkConf, SparkContext}
 
 object Spark {
@@ -11,4 +11,7 @@ object Spark {
     .master("local")
     .appName("ny_sql")
       .getOrCreate()
+  implicit val districtEncoder: Encoder[AccidentWithoutOption] = Encoders.kryo[AccidentWithoutOption]
+  implicit val superEncoder: Encoder[((Int, Long), AccidentWithoutOption)] = Encoders.kryo[((Int, Long), AccidentWithoutOption)]
+
 }

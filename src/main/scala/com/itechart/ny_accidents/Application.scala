@@ -19,37 +19,37 @@ import com.itechart.ny_accidents.utils.DateUtils
 import org.slf4j.LoggerFactory
 
 object Application extends App {
-  lazy val logger = LoggerFactory.getLogger(getClass)
-
-  val accidentsParser = injector.getInstance(classOf[AccidentsParser])
-  val mergeService = injector.getInstance(classOf[MergeService])
-  val weatherMetricService = WeatherMetricService
-  val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
-  val populationService = injector.getInstance(classOf[PopulationMetricService])
-  val populationStorage = injector.getInstance(classOf[PopulationStorage])
-  sys.addShutdownHook(cacheService.close)
-
-  val rawData = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
-  logger.info("Raw data read")
-
-  val mergeData: RDD[MergedData] = mergeService
-    .mergeAccidentsWithWeatherAndDistricts[Accident, MergedData](rawData, mergeService.withoutWeatherMapper).cache()
-
-  logger.info("Merged data size: " + mergeData.count())
-
-  val creationDate = org.apache.spark.sql.functions.current_date()
-  val reports = injector.getInstance(classOf[Reports])
-
-  val reportSeq = Seq(
-    new DayOfWeekReportGenerator(),
-    new HourOfDayReportGenerator(),
-    new PeriodReportGenerator(),
-    new WeatherReportGenerator(),
-    new BoroughReportGenerator(),
-    new DistrictReportGenerator(),
-    new PopulationToNumberOfAccidentsReportGenerator(populationService),
-    new AccidentCountDuringPhenomenonPerHourReportGenerator()
-  )
-
-  reportSeq.foreach(report => NYDataDatabase.insertDataFrame(report.tableName, report.apply(mergeData, reports, creationDate)))
+//  lazy val logger = LoggerFactory.getLogger(getClass)
+//
+//  val accidentsParser = injector.getInstance(classOf[AccidentsParser])
+//  val mergeService = injector.getInstance(classOf[MergeService])
+//  val weatherMetricService = WeatherMetricService
+//  val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
+//  val populationService = injector.getInstance(classOf[PopulationMetricService])
+//  val populationStorage = injector.getInstance(classOf[PopulationStorage])
+//  sys.addShutdownHook(cacheService.close)
+//
+//  val rawData = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
+//  logger.info("Raw data read")
+//
+//  val mergeData: RDD[MergedData] = mergeService
+//    .mergeAccidentsWithWeatherAndDistricts[Accident, MergedData](rawData, mergeService.withoutWeatherMapper).cache()
+//
+//  logger.info("Merged data size: " + mergeData.count())
+//
+//  val creationDate = org.apache.spark.sql.functions.current_date()
+//  val reports = injector.getInstance(classOf[Reports])
+//
+//  val reportSeq = Seq(
+//    new DayOfWeekReportGenerator(),
+//    new HourOfDayReportGenerator(),
+//    new PeriodReportGenerator(),
+//    new WeatherReportGenerator(),
+//    new BoroughReportGenerator(),
+//    new DistrictReportGenerator(),
+//    new PopulationToNumberOfAccidentsReportGenerator(populationService),
+//    new AccidentCountDuringPhenomenonPerHourReportGenerator()
+//  )
+//
+//  reportSeq.foreach(report => NYDataDatabase.insertDataFrame(report.tableName, report.apply(mergeData, reports, creationDate)))
 }
