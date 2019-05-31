@@ -41,5 +41,5 @@ class DistrictsDAO() {
   // TODO Collect will be removed when we migrate all code to spark sql.
   // Now it's just to support old code
   def all(): Seq[District] = districtsDataset.collect()
-
 }
+
