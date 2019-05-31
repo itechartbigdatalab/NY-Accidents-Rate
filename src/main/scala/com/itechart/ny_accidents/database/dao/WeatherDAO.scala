@@ -1,15 +1,18 @@
 package com.itechart.ny_accidents.database.dao
 
 import com.google.inject.Singleton
+import com.itechart.ny_accidents.constants.Configuration.{NY_DATA_DATABASE_PASSWORD, NY_DATA_DATABASE_URL, NY_DATA_DATABASE_USER}
 import com.itechart.ny_accidents.database.ExtendedPostgresDriver.api._
 import com.itechart.ny_accidents.entity.{WeatherEntity, WeatherStation}
+import com.itechart.ny_accidents.spark.Spark.sparkSql
 import com.vividsolutions.jts.geom.Point
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
 import slick.dbio.Effect
 import slick.jdbc.{JdbcProfile, PostgresProfile}
 import slick.sql.FixedSqlAction
 
 @Singleton
-class WeatherDAO () {
+class WeatherDAO() {
 
   val profile: JdbcProfile = PostgresProfile
 
@@ -17,6 +20,17 @@ class WeatherDAO () {
   private lazy val STATION_TABLE_NAME = "station"
   private lazy val weatherQuery = TableQuery[WeatherEntities]
   private lazy val stationQuery = TableQuery[Stations]
+
+  def loadAllWeatherSpark(): Dataset[Row] = {
+    sparkSql.read
+      .format("jdbc")
+      .option("url", NY_DATA_DATABASE_URL)
+      .option("dbtable", WEATHER_TABLE_NAME)
+      .option("user", NY_DATA_DATABASE_USER)
+      .option("password", NY_DATA_DATABASE_PASSWORD)
+      .load()
+  }
+
 
   private class WeatherEntities(tag: Tag) extends Table[WeatherEntity](tag, WEATHER_TABLE_NAME) {
     val id = column[Long]("id", O.PrimaryKey, O.AutoInc)
