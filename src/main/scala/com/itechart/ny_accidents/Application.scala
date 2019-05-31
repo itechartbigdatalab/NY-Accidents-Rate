@@ -1,7 +1,7 @@
 package com.itechart.ny_accidents
 
-import com.itechart.ny_accidents.constants.Injector.injector
 import com.itechart.ny_accidents.constants.Configuration
+import com.itechart.ny_accidents.constants.Injector.injector
 import com.itechart.ny_accidents.database.NYDataDatabase
 import com.itechart.ny_accidents.database.dao.PopulationStorage
 import com.itechart.ny_accidents.database.dao.cache.MergedDataCacheDAO
@@ -10,8 +10,7 @@ import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.report.generators._
 import com.itechart.ny_accidents.service.MergeService
-import com.itechart.ny_accidents.service.metric.{PopulationMetricService, WeatherMetricService}
-import com.itechart.ny_accidents.constants.ReportsDatabase._
+import com.itechart.ny_accidents.service.metric.{DayPeriodMetricService, PopulationMetricService, WeatherMetricService}
 import org.apache.spark.rdd.RDD
 import org.slf4j.LoggerFactory
 
@@ -21,6 +20,7 @@ object Application extends App {
   val accidentsParser = injector.getInstance(classOf[AccidentsParser])
   val mergeService = injector.getInstance(classOf[MergeService])
   val weatherMetricService = WeatherMetricService
+  val dayPeriodMetricService = DayPeriodMetricService
   val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
   val populationService = injector.getInstance(classOf[PopulationMetricService])
   val populationStorage = injector.getInstance(classOf[PopulationStorage])
@@ -45,7 +45,8 @@ object Application extends App {
     new BoroughReportGenerator(),
     new DistrictReportGenerator(),
     new PopulationToNumberOfAccidentsReportGenerator(populationService),
-    new AccidentCountDuringPhenomenonPerHourReportGenerator()
+    new AccidentCountDuringPhenomenonPerHourReportGenerator(),
+    new FrequencyReportGenerator()
   )
 
   reportSeq.foreach(report => NYDataDatabase.insertDataFrame(report.tableName, report.apply(mergeData, reports, creationDate)))
