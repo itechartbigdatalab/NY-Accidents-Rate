@@ -58,20 +58,14 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
         })
     }))
 
-  //  findBestWeather(stationId, hash, usePlus = false)
-  print("KISA")
-
   @tailrec private def findBestWeather(stationId: Int, dateHash: Long, usePlus: Boolean, currentDepth: Int): WeatherForAccident = {
-    if (currentDepth > 5) return null
+    if (currentDepth > 5)
+      return null
     val weatherOption = weatherMap.get((stationId, dateHash))
-
-    counter = counter + 1
-    if (counter % 100000 == 0) println(counter)
-
     if (weatherOption.isDefined) {
       weatherOption.get
     } else {
-      val newDateHash = if (usePlus) dateHash + HASH_DIFFERENCE else dateHash - HASH_DIFFERENCE
+      val newDateHash = if (usePlus) dateHash + HASH_DIFFERENCE * currentDepth else dateHash - HASH_DIFFERENCE * currentDepth
       findBestWeather(stationId, newDateHash, usePlus = !usePlus, currentDepth + 1)
     }
   }
@@ -145,7 +139,7 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
     }
   }
 
-  private def getNearestStationId(lat: Double, lon: Double): Int = {
+  def getNearestStationId(lat: Double, lon: Double): Int = {
     allStations
       .map(station => (station.geom.distance(PostgisUtils.createPoint(lat, lon)), station.id))
       .minBy(_._1)

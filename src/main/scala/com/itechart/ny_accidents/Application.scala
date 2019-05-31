@@ -9,10 +9,13 @@ import com.itechart.ny_accidents.entity.{Accident, MergedData}
 import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.report.generators._
-import com.itechart.ny_accidents.service.MergeService
+import com.itechart.ny_accidents.service.{MergeService, WeatherMappingService}
 import com.itechart.ny_accidents.service.metric.{PopulationMetricService, WeatherMetricService}
 import com.itechart.ny_accidents.constants.ReportsDatabase._
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Dataset
+import com.itechart.ny_accidents.spark.Spark.sparkSql.implicits._
+import com.itechart.ny_accidents.utils.DateUtils
 import org.slf4j.LoggerFactory
 
 object Application extends App {

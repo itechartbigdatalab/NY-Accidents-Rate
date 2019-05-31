@@ -9,10 +9,11 @@ import com.itechart.ny_accidents.entity.Accident
 import com.itechart.ny_accidents.spark.Spark
 import com.itechart.ny_accidents.utils.DateUtils
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, RelationalGroupedDataset, Row}
-import org.slf4j.LoggerFactory
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.{DataFrame, Dataset, Row}
+import com.itechart.ny_accidents.spark.Spark.sparkSql.implicits._
+import org.slf4j.LoggerFactory
 
 import scala.util.Try
 
@@ -24,16 +25,16 @@ class AccidentsParser {
   private lazy val DATE_MASK = "MM/dd/yyyy"
   private lazy val YEAR_HEADER = "YEAR"
 
-  def readCsv(path: String): DataFrame = {
+  def readCsv(path: String): Dataset[Row] = {
     Spark.sparkSql.read
       .option("header", "true")
       .option("inferSchema", "true")
       .csv(path)
   }
 
-  def readData(fileName: String): RDD[Accident] = {
-    val csvAccidentsData = readCsv(fileName).collect()
-    Spark.sc.parallelize(csvAccidentsData.map(accidentsMapper))
+  def readData(fileName: String): Dataset[Accident] = {
+    readCsv(fileName).map(accidentsMapper)
+//    Spark.sc.parallelize(csvAccidentsData.map(accidentsMapper))
   }
 
   def splitDatasetByYear(path: String): (StructType, Map[Int, Array[Row]]) = {
