@@ -53,5 +53,4 @@ object Application extends App {
 
   reportSeq.foreach(report => NYDataDatabase.insertDataFrame(report.tableName, report.apply(mergeData, reports, creationDate)))
   logger.info("Reports id: " + creationDate.hashCode())
-  println("Reports id: " + creationDate.hashCode())
 }
