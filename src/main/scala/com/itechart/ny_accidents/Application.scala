@@ -19,13 +19,13 @@ import org.slf4j.LoggerFactory
 object Application extends App {
   lazy val logger = LoggerFactory.getLogger(getClass)
 
-  val accidentsParser = injector.getInstance(classOf[AccidentsParser])
-  val mergeService = injector.getInstance(classOf[MergeService])
-  val weatherMetricService = WeatherMetricService
-  val dayPeriodMetricService = DayPeriodMetricService
-  val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
-  val populationService = injector.getInstance(classOf[PopulationMetricService])
-  val populationStorage = injector.getInstance(classOf[PopulationStorage])
+  lazy val accidentsParser = injector.getInstance(classOf[AccidentsParser])
+  lazy val mergeService = injector.getInstance(classOf[MergeService])
+  lazy val weatherMetricService = WeatherMetricService
+  lazy val dayPeriodMetricService = DayPeriodMetricService
+  lazy val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
+  lazy val populationService = injector.getInstance(classOf[PopulationMetricService])
+  lazy val populationStorage = injector.getInstance(classOf[PopulationStorage])
   sys.addShutdownHook(cacheService.close)
 
   val rawData = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
@@ -36,7 +36,7 @@ object Application extends App {
 
   logger.info("Merged data size: " + mergeData.count())
 
-  val creationDate = org.apache.spark.sql.functions.current_date()
+  val creationDate = org.apache.spark.sql.functions.current_timestamp()
   val reports = injector.getInstance(classOf[Reports])
 
   val reportSeq = Seq(
@@ -53,4 +53,5 @@ object Application extends App {
 
   reportSeq.foreach(report => NYDataDatabase.insertDataFrame(report.tableName, report.apply(mergeData, reports, creationDate)))
   logger.info("Reports id: " + creationDate.hashCode())
+  println("Reports id: " + creationDate.hashCode())
 }
