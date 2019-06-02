@@ -1,6 +1,7 @@
 package com.itechart.ny_accidents.database
 
 import com.itechart.ny_accidents.constants.Configuration._
+import com.itechart.ny_accidents.spark.Spark
 import org.apache.spark.sql.{DataFrame, SaveMode}
 import slick.jdbc
 import slick.jdbc.JdbcBackend

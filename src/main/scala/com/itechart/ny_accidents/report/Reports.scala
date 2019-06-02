@@ -1,13 +1,10 @@
 package com.itechart.ny_accidents.report
 
-import java.sql.Date
-
 import com.google.inject.Singleton
 import com.itechart.ny_accidents.spark.Spark
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Column, DataFrame, Row}
 import org.apache.spark.sql.types.StructType
-import org.apache.spark.sql.functions._
+import org.apache.spark.sql.{Column, DataFrame, Row}
 
 @Singleton
 class Reports {
@@ -22,7 +19,7 @@ class Reports {
   def generateDataFrameReportForTupleRDD[A <: Product](data: RDD[A], schema: StructType, date: Column): DataFrame = {
     val rdd = data.map(Row.fromTuple)
     Spark.sparkSql.createDataFrame(rdd, schema)
-      .withColumn(PK_DATAFRAME_NAME, monotonically_increasing_id())
+      .withColumn(PK_DATAFRAME_NAME, org.apache.spark.sql.functions.lit(date.hashCode()))
       .withColumn(DATE_COLUMN_NAME, date)
   }
 }

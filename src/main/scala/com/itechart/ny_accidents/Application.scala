@@ -11,7 +11,9 @@ import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.report.generators._
 import com.itechart.ny_accidents.service.MergeService
 import com.itechart.ny_accidents.service.metric.{DayPeriodMetricService, PopulationMetricService, WeatherMetricService}
+import com.itechart.ny_accidents.spark.Spark
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Column
 import org.slf4j.LoggerFactory
 
 object Application extends App {
@@ -50,4 +52,5 @@ object Application extends App {
   )
 
   reportSeq.foreach(report => NYDataDatabase.insertDataFrame(report.tableName, report.apply(mergeData, reports, creationDate)))
+  logger.info("Reports id: " + creationDate.hashCode())
 }
