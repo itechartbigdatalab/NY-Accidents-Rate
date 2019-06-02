@@ -10,6 +10,7 @@ import scala.util.control.Exception
 
 @Singleton
 class WeatherParser {
+  private lazy val CLEAR_PHENOMENON = "Clear"
 
   // TODO rewrite dynamic update
   def parseCsv(path: String): Seq[WeatherEntity] = {
@@ -22,6 +23,7 @@ class WeatherParser {
       .map(parseWeatherLine)
       .filter(_.isDefined)
       .map(_.get)
+      .map(weather => if(weather.phenomenon.isEmpty) weather.copy(phenomenon = CLEAR_PHENOMENON))
   }
 
   def parseCsv(paths: Array[String]): Seq[WeatherEntity] = {
