@@ -11,5 +11,5 @@ import scala.concurrent.duration.Duration
 @Singleton
 class DistrictsStorage @Inject()(districtsDAO: DistrictsDAO) {
   lazy val districts: Seq[District] = Await.result(
-    NYDataDatabase.database.run(districtsDAO.all()), Duration.Inf)
+    NYDataDatabase.database.run(districtsDAO.alldb()), Duration.Inf)
 }
