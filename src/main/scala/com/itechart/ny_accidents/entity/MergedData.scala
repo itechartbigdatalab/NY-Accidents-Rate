@@ -1,7 +1,7 @@
 package com.itechart.ny_accidents.entity
 
 case class MergedDataDataSets(accident: AccidentWithoutOptionAndLocalDate,
-                              district: DistrictWithoutGeometry,
+                              district: District,
                               weather: WeatherForAccident)
 
 case class MergedData(accident: Accident,

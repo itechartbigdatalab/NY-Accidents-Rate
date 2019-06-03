@@ -12,6 +12,8 @@ object WeatherMetricService extends PercentageMetricService {
   def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Int, Double)] = {
     val filteredData = data.filter(_.weather.isDefined).map(_.weather.get)
     val length = filteredData.count()
+    println("Filtered data length: " + filteredData.count)
+    filteredData.foreach(println)
     val groupedData = filteredData.groupBy(_.phenomenon)
 
     // TODO Need rewrite

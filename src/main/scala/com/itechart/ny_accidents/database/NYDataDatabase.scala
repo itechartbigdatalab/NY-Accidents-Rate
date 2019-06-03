@@ -15,7 +15,7 @@ object NYDataDatabase {
       .option("dbtable", tableName)
       .option("user", NY_DATA_DATABASE_USER)
       .option("password", NY_DATA_DATABASE_PASSWORD)
-      .mode(SaveMode.Append)
+      .mode(SaveMode.Overwrite)
       .save()
   }
 }
