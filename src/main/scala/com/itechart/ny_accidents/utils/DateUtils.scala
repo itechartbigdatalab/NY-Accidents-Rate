@@ -2,13 +2,14 @@ package com.itechart.ny_accidents.utils
 
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
+import java.sql.{Date => SqlDate}
 
-import com.itechart.ny_accidents.constants.GeneralConstants.{MILLIS_IN_HOUR, MILLIS_IN_MINUTE, HASH_DIFFERENCE}
+import com.itechart.ny_accidents.constants.GeneralConstants.{HASH_DIFFERENCE, MILLIS_IN_HOUR, MILLIS_IN_MINUTE}
 import com.itechart.ny_accidents.entity.WeatherForAccident
 import org.apache.spark.sql.Row
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 object DateUtils {
 
@@ -30,6 +31,16 @@ object DateUtils {
 
   def parseDate(dateStr: String, dateFormatter: DateTimeFormatter): Option[LocalDateTime] = {
     Try(LocalDateTime.parse(dateStr, dateFormatter)).toOption
+  }
+
+  def parseSqlDate(dateString: String, dateFormatter: DateTimeFormatter): Option[SqlDate] = {
+    Try(new SqlDate(LocalDate.parse(dateString, dateFormatter)
+      .atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli)) match {
+      case Success(value) => Some(value)
+      case Failure(exception) =>
+        println(exception)
+        None
+    }
   }
 
   def hashByDate(dateTimeMillis: Long): Long = {

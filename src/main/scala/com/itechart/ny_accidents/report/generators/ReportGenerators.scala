@@ -8,7 +8,6 @@ import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.service.metric.{DistrictMetricService, PopulationMetricService, TimeMetricService, WeatherMetricService}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame}
-import org.apache.spark.sql.types.StructType
 
 trait ReportGenerator{
   def apply(data: RDD[MergedData], report: Reports): Seq[Seq[String]] = {

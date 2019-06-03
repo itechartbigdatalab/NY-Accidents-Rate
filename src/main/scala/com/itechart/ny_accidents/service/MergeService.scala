@@ -20,15 +20,15 @@ object MergeService {
   import com.itechart.ny_accidents.spark.Spark.sparkSql.implicits._
 
 
-  def mergeData(data: Dataset[AccidentWithoutOptionAndLocalDate]): RDD[MergedData] = {
+  def mergeData(data: Dataset[AccidentSparkFormat]): RDD[MergedData] = {
     val accidentWithIds = addIdToAccident(data)
     val mergedDataDataSets = mergeAccidentsWithWeatherAndDistricts(accidentWithIds)
 
     mergedDataDataSets.rdd.map(mergedDataMapper)
   }
 
-  private def addIdToAccident(data: Dataset[AccidentWithoutOptionAndLocalDate]):
-  Dataset[((Int, Long), AccidentWithoutOptionAndLocalDate)] = {
+  private def addIdToAccident(data: Dataset[AccidentSparkFormat]):
+  Dataset[((Int, Long), AccidentSparkFormat)] = {
     data.filter(_.latitude.isDefined)
       .filter(_.longitude.isDefined)
       .filter(_.dateTimeMillis.isDefined)
@@ -39,7 +39,7 @@ object MergeService {
       }).as("accident")
   }
 
-  private def mergeAccidentsWithWeatherAndDistricts(accidentsWithIds: Dataset[((Int, Long), AccidentWithoutOptionAndLocalDate)]):
+  private def mergeAccidentsWithWeatherAndDistricts(accidentsWithIds: Dataset[((Int, Long), AccidentSparkFormat)]):
   Dataset[MergedDataDataSets] = {
     val weather = weatherService.weather.as("weather").cache()
     val districts = districtsStorage.districtsDataSet.map(district => (district.districtName, district))

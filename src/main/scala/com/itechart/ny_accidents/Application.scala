@@ -19,7 +19,6 @@ import org.slf4j.LoggerFactory
 object Application extends App {
   lazy val logger = LoggerFactory.getLogger(getClass)
 
-  val accidentsParser = AccidentsParser
   val weatherMetricService = WeatherMetricService
   val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
   val populationService = injector.getInstance(classOf[PopulationMetricService])
@@ -30,7 +29,7 @@ object Application extends App {
   val districtsStorage = injector.getInstance(classOf[DistrictsStorage])
   val reports = injector.getInstance(classOf[Reports])
 
-  val accidents: Dataset[AccidentWithoutOptionAndLocalDate] = accidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
+  val accidents: Dataset[AccidentSparkFormat] = AccidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
   logger.info("Raw data read - " + accidents.count())
   val mergedData = MergeService.mergeData(accidents).cache()
 
