@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.itechart.ny_accidents.database.dao.PopulationStorage
 import com.itechart.ny_accidents.entity.MergedData
 import com.itechart.ny_accidents.service.PopulationService
+import com.itechart.ny_accidents.utils.NumberUtils
 import javax.inject.Singleton
 import org.apache.spark.rdd.RDD
 
@@ -21,7 +22,7 @@ class PopulationMetricService @Inject()(populationStorage: PopulationStorage) {
           density match {
             case 0 => None
             case _ =>
-              val ratio: Double = accidentsNumber / density
+              val ratio: Double = NumberUtils.truncateDouble(accidentsNumber / density)
               Some(district.districtName, ratio, density, accidentsNumber)
           }
         case _ => None

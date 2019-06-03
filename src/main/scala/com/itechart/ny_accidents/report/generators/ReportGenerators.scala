@@ -5,7 +5,7 @@ import com.itechart.ny_accidents.constants.GeneralConstants._
 import com.itechart.ny_accidents.constants.ReportsDatabase._
 import com.itechart.ny_accidents.entity.MergedData
 import com.itechart.ny_accidents.report.Reports
-import com.itechart.ny_accidents.service.metric.{DistrictMetricService, PopulationMetricService, TimeMetricService, WeatherMetricService}
+import com.itechart.ny_accidents.service.metric.{DayPeriodMetricService, DistrictMetricService, PopulationMetricService, TimeMetricService, WeatherMetricService}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, DataFrame}
 
@@ -152,4 +152,21 @@ class AccidentCountDuringPhenomenonPerHourReportGenerator extends ReportGenerato
   }
 
   override def tableName: String = ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_TABLE_NAME
+}
+
+
+class FrequencyReportGenerator extends ReportGenerator {
+  override protected def calculateReport(data: RDD[MergedData]): RDD[_ <: Product] = {
+    DayPeriodMetricService.getFrequency(data)
+  }
+
+  override protected def generateReport(data: RDD[_ <: Product], report: Reports): Seq[Seq[String]] = {
+    report.generateReportForTupleRDD(data, FREQUENCY_REPORT_HEADER)
+  }
+
+  override protected def generateDataFrame(data: RDD[_ <: Product], report: Reports, creationDate: Column): DataFrame = {
+    report.generateDataFrameReportForTupleRDD(data, FREQUENCY_REPORT_SCHEMA, creationDate)
+  }
+
+  override def tableName: String = FREQUENCY_REPORT_TABLE_NAME
 }

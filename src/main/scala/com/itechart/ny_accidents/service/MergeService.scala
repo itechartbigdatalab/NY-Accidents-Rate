@@ -45,11 +45,16 @@ object MergeService {
     val districts = districtsStorage.districtsDataSet.map(district => (district.districtName, district))
 
     val accidentsWithWeather = accidentsWithIds.joinWith(weather, accidentsWithIds("_1") === weather("_1"), "inner")
-      .map(t => (t._1._2, t._2._2))
-      .map(t => (districtsService.getDistrictName(t._1.latitude.get, t._1.longitude.get), t._1, t._2)).cache()
+      .map { case (accident, weatherForAccident) => (accident._2, weatherForAccident._2) }
+      .map { case (accident, weatherForAccident) =>
+        (districtsService.getDistrictName(accident.latitude.get, accident.longitude.get), accident, weatherForAccident)
+      }.cache()
+
     accidentsWithWeather.joinWith(districts, accidentsWithWeather("_1") === districts("_1"), "inner")
-      .map(t => (t._1._2, t._1._3, t._2._2))
-      .map(t => MergedDataDataSets(t._1, t._3, t._2))
+      .map { case (accidentAndWeather, district) =>
+        (accidentAndWeather._2, accidentAndWeather._3, district._2)
+      }
+      .map { case (accident, weatherForAccident, district) => MergedDataDataSets(accident, district, weatherForAccident) }
   }
 
   private def mergedDataMapper(data: MergedDataDataSets): MergedData = {

@@ -2,6 +2,7 @@ package com.itechart.ny_accidents.service
 
 import com.google.inject.Singleton
 import com.itechart.ny_accidents.entity.{MergedData, Population}
+import com.itechart.ny_accidents.utils.NumberUtils
 import org.apache.spark.rdd.RDD
 
 import scala.util.Try
@@ -19,6 +20,6 @@ object PopulationService {
   }
 
   def calculateDensity(population: Population): Double = {
-    population.population.toDouble / (population.area * NUMBER_NORMALIZATION_FACTOR)
+    NumberUtils.truncateDouble(population.population.toDouble / (population.area * NUMBER_NORMALIZATION_FACTOR))
   }
 }

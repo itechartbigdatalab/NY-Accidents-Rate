@@ -4,6 +4,7 @@ import com.itechart.ny_accidents.constants.GeneralConstants
 import com.itechart.ny_accidents.constants.Injector.injector
 import com.itechart.ny_accidents.entity.{MergedData, WeatherEntity, WeatherForAccident}
 import com.itechart.ny_accidents.service.{DayPeriodService, WeatherMappingService}
+import com.itechart.ny_accidents.utils.NumberUtils
 import org.apache.spark.rdd.RDD
 
 object WeatherMetricService extends PercentageMetricService {
@@ -12,8 +13,6 @@ object WeatherMetricService extends PercentageMetricService {
   def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Int, Double)] = {
     val filteredData = data.filter(_.weather.isDefined).map(_.weather.get)
     val length = filteredData.count()
-    println("Filtered data length: " + filteredData.count)
-    filteredData.foreach(println)
     val groupedData = filteredData.groupBy(_.phenomenon)
 
     // TODO Need rewrite
@@ -52,7 +51,7 @@ object WeatherMetricService extends PercentageMetricService {
     val phenomenonCount = WeatherMetricService.getPhenomenonPercentage(mergedAccidents)
     phenomenonCount.map { case (phenomenonName, accidentCountDuringPhenomenon, _) =>
       val hoursOfPhenomenon = countHoursOfPhenomenon(weatherByStation, stationCount, phenomenonName)
-      (phenomenonName, accidentCountDuringPhenomenon, hoursOfPhenomenon, accidentCountDuringPhenomenon / hoursOfPhenomenon)
+      (phenomenonName, accidentCountDuringPhenomenon, NumberUtils.truncateDouble(hoursOfPhenomenon), NumberUtils.truncateDouble(accidentCountDuringPhenomenon / hoursOfPhenomenon))
     }
   }
 

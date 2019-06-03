@@ -8,7 +8,7 @@ import com.itechart.ny_accidents.database.dao.{DistrictsDAO, PopulationStorage}
 import com.itechart.ny_accidents.entity._
 import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
-import com.itechart.ny_accidents.report.generators.{AccidentCountDuringPhenomenonPerHourReportGenerator, BoroughReportGenerator, DayOfWeekReportGenerator, DistrictReportGenerator, HourOfDayReportGenerator, PeriodReportGenerator, PopulationToNumberOfAccidentsReportGenerator, WeatherReportGenerator}
+import com.itechart.ny_accidents.report.generators.{AccidentCountDuringPhenomenonPerHourReportGenerator, BoroughReportGenerator, DayOfWeekReportGenerator, DistrictReportGenerator, FrequencyReportGenerator, HourOfDayReportGenerator, PeriodReportGenerator, PopulationToNumberOfAccidentsReportGenerator, WeatherReportGenerator}
 import com.itechart.ny_accidents.service.metric.{PopulationMetricService, WeatherMetricService}
 import com.itechart.ny_accidents.service.{DistrictsService, MergeService, WeatherMappingService}
 import com.itechart.ny_accidents.utils.FileWriterUtils
@@ -44,10 +44,11 @@ object Application extends App {
     new BoroughReportGenerator(),
     new DistrictReportGenerator(),
     new PopulationToNumberOfAccidentsReportGenerator(populationService),
-    new AccidentCountDuringPhenomenonPerHourReportGenerator()
+    new AccidentCountDuringPhenomenonPerHourReportGenerator(),
+    new FrequencyReportGenerator()
   )
 
-  reportSeq.foreach(report => FileWriterUtils.writeToCsv(report.apply(mergedData, reports), report.tableName))
+  reportSeq.foreach(report => FileWriterUtils.writeToCsv(report.apply(mergedData, reports), s"reports/${report.tableName}"))
   reportSeq.foreach(report => NYDataDatabase.insertDataFrame(report.tableName, report.apply(mergedData, reports, creationDate)))
 
 }
