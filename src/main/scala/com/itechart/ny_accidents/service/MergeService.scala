@@ -15,7 +15,6 @@ object MergeService {
   private lazy val districtsService = injector.getInstance(classOf[DistrictsService])
   private lazy val districtsStorage = injector.getInstance(classOf[DistrictsStorage])
 
-  private var counter = 0
   private lazy val logger: Logger = LoggerFactory.getLogger(getClass)
 
   import com.itechart.ny_accidents.spark.Spark.sparkSql.implicits._
