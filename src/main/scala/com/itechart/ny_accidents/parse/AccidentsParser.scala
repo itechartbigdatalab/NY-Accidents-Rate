@@ -27,7 +27,7 @@ class AccidentsParser {
   def readCsv(path: String): DataFrame = {
     Spark.sparkSql.read
       .option("header", "true")
-      .option("inferSchema", "true")
+      .option("mode", "DROPMALFORMED")
       .csv(path)
   }
 
