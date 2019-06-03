@@ -23,19 +23,18 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
   var counter = 1
 
   private val allStations: Seq[WeatherStation] =
-      Await.result(NYDataDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
+    Await.result(NYDataDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
   // map under have such structure -> Map[stationId, Map[TimeHash, Seq[WeatherEntity]]]
   private val allWeather: Map[Int, Map[Long, Seq[WeatherEntity]]] =
-  Map()
-  //    Await.result(
-  //    NYDataDatabase.database.run(weatherDAO.allWeather()), Duration.Inf)
-  //    .sortBy(weather => weather.dateTime)
-  //    .groupBy(weather => weather.stationId)
-  //    .mapValues(weathers => {
-  //      weathers.map(weather => (DateUtils.hashByDate(weather.dateTime), weather))
-  //        .groupBy(_._1)
-  //        .mapValues(seq => seq.map(_._2))
-  //    })
+    Await.result(
+      NYDataDatabase.database.run(weatherDAO.allWeather()), Duration.Inf)
+      .sortBy(weather => weather.dateTime)
+      .groupBy(weather => weather.stationId)
+      .mapValues(weathers => {
+        weathers.map(weather => (DateUtils.hashByDate(weather.dateTime), weather))
+          .groupBy(_._1)
+          .mapValues(seq => seq.map(_._2))
+      })
 
   private val newSparkWeather: Array[((Int, Long), WeatherForAccident)] = weatherDAO.loadAllWeatherSpark()
     .map(row => ((row.getInt(1), DateUtils.hashByDate(row.getLong(2))), DateUtils.weatherForAccidentMapper(row)))

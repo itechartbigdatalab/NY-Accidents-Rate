@@ -12,6 +12,10 @@ import scala.util.Try
 
 object DateUtils {
 
+  def getLocalDateFromMillis(dateTimeMillis: Long): LocalDateTime = {
+    LocalDateTime.ofInstant(Instant.ofEpochMilli(dateTimeMillis), ZoneOffset.UTC)
+  }
+
   def subtractHour(dateTimeMillis: Long): Long = {
     dateTimeMillis - MILLIS_IN_HOUR
   }
