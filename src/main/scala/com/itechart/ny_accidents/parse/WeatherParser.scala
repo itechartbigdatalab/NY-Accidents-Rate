@@ -23,7 +23,7 @@ class WeatherParser {
       .map(parseWeatherLine)
       .filter(_.isDefined)
       .map(_.get)
-      .map(weather => if(weather.phenomenon.isEmpty) weather.copy(phenomenon = CLEAR_PHENOMENON))
+      .map(weather => if(weather.phenomenon.isEmpty) weather.copy(phenomenon = CLEAR_PHENOMENON) else weather)
   }
 
   def parseCsv(paths: Array[String]): Seq[WeatherEntity] = {
