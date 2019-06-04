@@ -71,20 +71,6 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
     }
   }
 
-  def findWeatherByTimeAndCoordinates(accidentTime: Long, lat: Double, lon: Double): Option[WeatherForAccident] = {
-    val stationId = getNearestStationId(lat, lon)
-    // we take weather for current hour, for future one and for previous, because if we have got 10:58 accident and
-    // weather time for 10 o'clock is 10:05, and the next weather is 11:05, it's will be more accurately to take 11:05 weather
-    Seq(
-      Try(allWeather(stationId)(DateUtils.hashByDate(accidentTime))).toOption,
-      Try(allWeather(stationId)(DateUtils.hashByDate(DateUtils.addHour(accidentTime)))).toOption,
-      Try(allWeather(stationId)(DateUtils.hashByDate(DateUtils.subtractHour(accidentTime)))).toOption
-    ).filter(_.isDefined).map(_.get).reduceOption(_ ++ _) match {
-      case Some(value) => Some(findBestMatchWeather(value, accidentTime))
-      case _ => None
-    }
-  }
-
   def getWeatherByStationsBetweenDates(earlyDate: Long, laterDate: Long): Map[Int, Seq[WeatherEntity]] = {
     val earlyDateHash = DateUtils.hashByDate(earlyDate)
     val laterDateHash = DateUtils.hashByDate(laterDate)
@@ -102,6 +88,29 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
       .toMap
   }
 
+  def getNearestStationId(lat: Double, lon: Double): Int = {
+    allStations
+      .map(station => (station.geom.distance(PostgisUtils.createPoint(lat, lon)), station.id))
+      .minBy(_._1)
+      ._2
+  }
+
+  @Deprecated
+  def findWeatherByTimeAndCoordinates(accidentTime: Long, lat: Double, lon: Double): Option[WeatherForAccident] = {
+    val stationId = getNearestStationId(lat, lon)
+    // we take weather for current hour, for future one and for previous, because if we have got 10:58 accident and
+    // weather time for 10 o'clock is 10:05, and the next weather is 11:05, it's will be more accurately to take 11:05 weather
+    Seq(
+      Try(allWeather(stationId)(DateUtils.hashByDate(accidentTime))).toOption,
+      Try(allWeather(stationId)(DateUtils.hashByDate(DateUtils.addHour(accidentTime)))).toOption,
+      Try(allWeather(stationId)(DateUtils.hashByDate(DateUtils.subtractHour(accidentTime)))).toOption
+    ).filter(_.isDefined).map(_.get).reduceOption(_ ++ _) match {
+      case Some(value) => Some(findBestMatchWeather(value, accidentTime))
+      case _ => None
+    }
+  }
+
+  @Deprecated
   private def findBestMatchWeather(hashedWeatherForPeriod: Seq[WeatherEntity], accidentTime: Long): WeatherForAccident = {
     val farWeather = Try(
       hashedWeatherForPeriod
@@ -127,6 +136,7 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
     )
   }
 
+  @Deprecated
   private def nearestWeather(farWeather: Option[WeatherEntity], lessWeather: Option[WeatherEntity], time: Long): WeatherEntity = {
     (farWeather, lessWeather) match {
       case (Some(far), Some(less)) =>
@@ -138,13 +148,6 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
       case (None, Some(less)) => less
       case (Some(far), None) => far
     }
-  }
-
-  def getNearestStationId(lat: Double, lon: Double): Int = {
-    allStations
-      .map(station => (station.geom.distance(PostgisUtils.createPoint(lat, lon)), station.id))
-      .minBy(_._1)
-      ._2
   }
 
 }
