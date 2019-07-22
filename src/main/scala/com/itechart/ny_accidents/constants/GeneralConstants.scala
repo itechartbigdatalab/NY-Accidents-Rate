@@ -58,4 +58,6 @@ object GeneralConstants {
   val POPULATION_TO_ACCIDENTS_REPORT_HEADER: Seq[String] = Seq("District","Ratio","Density", "Accident_Count")
   val ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_HEADER: Seq[String] = Seq("Phenomenon","Accident_count","Total_phenomenon_hours", "Accident_per_hour")
   val FREQUENCY_REPORT_HEADER: Seq[String] = Seq("Day_period","Frequency")
+  val DETAILED_DISTRICT_REPORT_HEADER: Seq[String] = Seq("district","pedestrians_injured","pedestrians_killed",
+    "cyclist_injured", "cyclist_killed", "motorist_injured","motorist_killed", "total", "pedestrians", "cyclist", "motorist")
 }

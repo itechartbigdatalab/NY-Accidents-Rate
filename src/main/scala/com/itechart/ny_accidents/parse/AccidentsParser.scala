@@ -113,10 +113,9 @@ object AccidentsParser {
     Option(accident.getString(column))
   }
 
-  private def toInt(accident: Row, column: Int): Option[Int] = {
+  private def toInt(accident: Row, column: Int): Int = {
     val value = Try(accident.getInt(column)).getOrElse(0)
-    if (value == 0) None
-    else Some(value)
+    value
   }
 
   private def toStringList(row: Row, columns: Array[Int]): List[Option[String]] = {

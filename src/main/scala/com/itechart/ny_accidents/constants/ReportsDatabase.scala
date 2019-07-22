@@ -1,6 +1,6 @@
 package com.itechart.ny_accidents.constants
 
-import org.apache.spark.sql.types.{DateType, DoubleType, IntegerType, LongType, StringType, StructType}
+import org.apache.spark.sql.types._
 
 object ReportsDatabase {
   lazy val DAY_OF_WEEK_REPORT_SCHEMA: StructType = new StructType()
@@ -33,6 +33,15 @@ object ReportsDatabase {
     .add("accidents_count", IntegerType)
     .add("percentage", DoubleType)
 
+  lazy val DETAILED_DISTRICT_REPORT_SCHEMA: StructType = new StructType()
+    .add("district", StringType)
+    .add("number_of_pedestrians_injured", IntegerType)
+    .add("number_of_pedestrians_killed", IntegerType)
+    .add("number_of_cyclist_injured", IntegerType)
+    .add("number_of_cyclist_killed", IntegerType)
+    .add("number_of_motorist_injured", IntegerType)
+    .add("number_of_motorist_killed", IntegerType)
+
   lazy val POPULATION_TO_ACCIDENTS_REPORT_SCHEMA: StructType = new StructType()
     .add("district", StringType)
     .add("ratio", DoubleType)
@@ -57,4 +66,5 @@ object ReportsDatabase {
   lazy val POPULATION_TO_ACCIDENTS_REPORT_TABLE_NAME = "population_to_accident"
   lazy val ACCIDENTS_DURING_PHENOMENON_COUNT_REPORT_TABLE_NAME = "accidents_during_phenomenon_report"
   lazy val FREQUENCY_REPORT_TABLE_NAME = "frequency_report"
+  lazy val DETAILED_DISTRICT_REPORT_TABLE_NAME = "detailed_district_report"
 }

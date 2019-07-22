@@ -106,6 +106,22 @@ class BoroughReportGenerator extends ReportGenerator {
   override def tableName: String = BOROUGH_REPORT_TABLE_NAME
 }
 
+class DetailedDistrictReportGenerator extends ReportGenerator {
+  override protected def calculateReport(data: RDD[MergedData]): RDD[_ <: Product] = {
+    DistrictMetricService.getDetailedDistrictData(data)
+  }
+
+  override protected def generateReport(data: RDD[_ <: Product], report: Reports): Seq[Seq[String]] = {
+    report.generateReportForTupleRDD(data, DETAILED_DISTRICT_REPORT_HEADER)
+  }
+
+  override protected def generateDataFrame(data: RDD[_ <: Product], report: Reports, creationDate: Column): DataFrame = {
+    report.generateDataFrameReportForTupleRDD(data, DETAILED_DISTRICT_REPORT_SCHEMA, creationDate)
+  }
+
+  override def tableName: String = DETAILED_DISTRICT_REPORT_TABLE_NAME
+}
+
 class DistrictReportGenerator extends ReportGenerator {
   override protected def calculateReport(data: RDD[MergedData]): RDD[_ <: Product] = {
     DistrictMetricService.getDistrictsPercentage(data)
