@@ -2,7 +2,9 @@ package com.itechart.ny_accidents
 
 import com.itechart.ny_accidents.constants.Configuration
 import com.itechart.ny_accidents.constants.Injector.injector
+
 import com.itechart.ny_accidents.database.DistrictsStorage
+
 import com.itechart.ny_accidents.database.dao.cache.MergedDataCacheDAO
 import com.itechart.ny_accidents.database.dao.{DistrictsDAO, PopulationStorage}
 import com.itechart.ny_accidents.entity._
@@ -13,6 +15,7 @@ import com.itechart.ny_accidents.service.metric.{PopulationMetricService, Weathe
 import com.itechart.ny_accidents.service.{DistrictsService, MergeService, WeatherMappingService}
 import com.itechart.ny_accidents.utils.FileWriterUtils
 import org.apache.spark.sql.Dataset
+
 import org.slf4j.LoggerFactory
 
 
@@ -20,6 +23,7 @@ object Application extends App {
   lazy val logger = LoggerFactory.getLogger(getClass)
 
   val weatherMetricService = WeatherMetricService
+  val dayPeriodMetricService = DayPeriodMetricService
   val cacheService = injector.getInstance(classOf[MergedDataCacheDAO])
   val populationService = injector.getInstance(classOf[PopulationMetricService])
   val populationStorage = injector.getInstance(classOf[PopulationStorage])
@@ -29,9 +33,11 @@ object Application extends App {
   val districtsStorage = injector.getInstance(classOf[DistrictsStorage])
   val reports = injector.getInstance(classOf[Reports])
 
+
   val accidents: Dataset[AccidentSparkFormat] = AccidentsParser.readData(Configuration.DATA_FILE_PATH).cache()
   logger.info("Raw data read - " + accidents.count())
   val mergedData = MergeService.mergeData(accidents).cache()
+ 
 
   println("Merged data length: " + mergedData.count)
 
@@ -45,8 +51,10 @@ object Application extends App {
     new DistrictReportGenerator(),
     new PopulationToNumberOfAccidentsReportGenerator(populationService),
     new AccidentCountDuringPhenomenonPerHourReportGenerator(),
+
     new FrequencyReportGenerator(),
     new DetailedDistrictReportGenerator()
+
   )
 
   reportSeq.foreach(report => FileWriterUtils.writeToCsv(report.apply(mergedData, reports), s"reports/${report.tableName}"))

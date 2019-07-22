@@ -42,6 +42,7 @@ object DayPeriodMetricService  {
       Duration.between(lightParameters(SUNRISE_C),lightParameters(SUNSET_C)).getSeconds,
       Duration.between(lightParameters(SUNSET_C),lightParameters(TWILIGHT_END_C)).getSeconds
     )
+
   }
   private def checkAccidents(seq:  Seq[LocalDateTime]): (Int,Int, Int,Int) ={
     val hashDateTime = seq.head.truncatedTo(ChronoUnit.HOURS).withYear(SUNRISE_YEAR)
@@ -53,4 +54,6 @@ object DayPeriodMetricService  {
     val accidentsEvening = seq.filter(date => date.isBefore(lightParameters(TWILIGHT_END_C)) && date.isAfter(lightParameters(SUNSET_C)))
     (accidentsNight.size, accidentsMorning.size,accidentsDay.size, accidentsEvening.size)
   }
+
 }
+

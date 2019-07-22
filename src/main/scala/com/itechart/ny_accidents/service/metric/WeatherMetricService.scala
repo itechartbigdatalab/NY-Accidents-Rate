@@ -7,6 +7,7 @@ import com.itechart.ny_accidents.service.{DayPeriodService, WeatherMappingServic
 import com.itechart.ny_accidents.utils.NumberUtils
 import org.apache.spark.rdd.RDD
 
+
 object WeatherMetricService extends PercentageMetricService {
   private lazy val weatherMappingService = injector.getInstance(classOf[WeatherMappingService])
 

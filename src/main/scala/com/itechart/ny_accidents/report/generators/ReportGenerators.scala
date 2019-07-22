@@ -185,4 +185,6 @@ class FrequencyReportGenerator extends ReportGenerator {
   }
 
   override def tableName: String = FREQUENCY_REPORT_TABLE_NAME
+
 }
+

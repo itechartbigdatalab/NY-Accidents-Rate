@@ -12,6 +12,7 @@ object DayPeriodService {
 
   private[service] val sunrisesSunsets: Map[LocalDate, Seq[LocalDateTime]] = parseSunrisesSunsets
 
+
   private def parseSunrisesSunsets: Map[LocalDate, Seq[LocalDateTime]] = {
     val browser = JsoupBrowser()
     (FIRST_MONTH_URL to LAST_MONTH_URL)

@@ -6,4 +6,6 @@ object NumberUtils {
   def truncateDouble(value:Double): Double ={
     BigDecimal(value).setScale(2, BigDecimal.RoundingMode.HALF_UP).toDouble
   }
+
 }
+

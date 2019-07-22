@@ -12,6 +12,7 @@ class Reports {
 
   def generateReportForTupleRDD[A <: Product](data: RDD[A], header: Seq[String]): Seq[Seq[String]] = {
     header +: data.collect().map(obj => obj.productIterator.toSeq.map(_.toString))
+
   }
 
   def generateDataFrameReportForTupleRDD[A <: Product](data: RDD[A], schema: StructType, date: Column): DataFrame = {
