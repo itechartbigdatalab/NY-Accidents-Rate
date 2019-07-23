@@ -10,7 +10,9 @@ import net.ruippeixotog.scalascraper.scraper.ContentExtractors.{attr, elementLis
 
 object DayPeriodService {
 
+
   private[service] val sunrisesSunsets: Map[LocalDate, Seq[LocalDateTime]] = parseSunrisesSunsets
+
 
   private def parseSunrisesSunsets: Map[LocalDate, Seq[LocalDateTime]] = {
     val browser = JsoupBrowser()

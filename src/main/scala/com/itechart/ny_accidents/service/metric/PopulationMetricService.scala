@@ -7,6 +7,7 @@ import com.itechart.ny_accidents.service.PopulationService
 import com.itechart.ny_accidents.utils.NumberUtils
 import javax.inject.Singleton
 import org.apache.spark.rdd.RDD
+import com.itechart.ny_accidents.utils.NumberUtils
 
 @Singleton
 class PopulationMetricService @Inject()(populationStorage: PopulationStorage) {
