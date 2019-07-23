@@ -16,6 +16,7 @@ object WeatherMetricService extends PercentageMetricService {
     val groupedData = filteredData.groupBy(_.phenomenon)
 
     // TODO Need rewrite
+    
     calculatePercentage[WeatherForAccident, String](groupedData, length).map(metric => {
       metric._1.isEmpty match {
         case true => ("Clear", metric._2, metric._3)
