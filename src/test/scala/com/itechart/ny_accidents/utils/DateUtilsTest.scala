@@ -1,6 +1,5 @@
 package com.itechart.ny_accidents.utils
 
-import java.sql.Date
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
@@ -25,7 +24,7 @@ class DateUtilsTest extends FunSpec {
 
     it("should correctly calculate hash of date") {
       val testValue = 1558095790000L
-      val expectedValue = 1558094400000L
+      val expectedValue = 1558096200000L
 
       assert(DateUtils.hashByDate(testValue) == expectedValue)
     }
