@@ -59,9 +59,6 @@ object ReportsDatabase {
     .add("day period", StringType)
     .add("frequency", LongType)
 
-  lazy val FREQUENCY_REPORT_SCHEMA: StructType = new StructType()
-    .add("day period", StringType)
-    .add("frequency", LongType)
 
   lazy val DAY_OF_WEEK_REPORT_TABLE_NAME = "day_of_week_report"
   lazy val HOUR_OF_DAY_REPORT_TABLE_NAME = "hour_of_day_report"

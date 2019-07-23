@@ -29,7 +29,7 @@ object AccidentsParser {
   def readCsv(path: String): Dataset[Row] = {
     Spark.sparkSql.read
       .option("header", "true")
-      .option("mode", "DROPMALFORMED")
+      .option("inferSchema", "true")
       .csv(path)
   }
 
@@ -131,3 +131,4 @@ object AccidentsParser {
     }
   }
 }
+

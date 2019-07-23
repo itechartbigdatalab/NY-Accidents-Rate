@@ -3,18 +3,16 @@ package com.itechart.ny_accidents
 import com.itechart.ny_accidents.constants.Configuration
 import com.itechart.ny_accidents.constants.Injector.injector
 import com.itechart.ny_accidents.database.DistrictsStorage
-
 import com.itechart.ny_accidents.database.dao.cache.MergedDataCacheDAO
 import com.itechart.ny_accidents.database.dao.{DistrictsDAO, PopulationStorage}
 import com.itechart.ny_accidents.entity._
 import com.itechart.ny_accidents.parse.AccidentsParser
 import com.itechart.ny_accidents.report.Reports
 import com.itechart.ny_accidents.report.generators._
-import com.itechart.ny_accidents.service.metric.{PopulationMetricService, WeatherMetricService}
+import com.itechart.ny_accidents.service.metric.{DayPeriodMetricService, PopulationMetricService, WeatherMetricService}
 import com.itechart.ny_accidents.service.{DistrictsService, MergeService, WeatherMappingService}
 import com.itechart.ny_accidents.utils.FileWriterUtils
 import org.apache.spark.sql.Dataset
-
 import org.slf4j.LoggerFactory
 
 
