@@ -8,8 +8,8 @@ class SerializationUtilsTest extends FunSpec {
     it("should serialize MergedData") {
       val testData = MergedData(
         Accident(Some(1), None, None, None, None,
-          None, None, None, None, None, None, None,
-          None, None, None, None, None, List(), List()), None, None)
+          None, None, None, None, 0, 0, 0,
+          0, 0, 0, 0, 0, List(), List()), None, None)
       val expectedValue = "rO0ABXNyACtjb20uaXRlY2hhcnQubnlfYWNjaWRlbnRzLmVudGl0eS5NZXJnZWREYXRheFwKq74VmBUCAANMAAhhY2NpZGVudHQAK0xjb20vaXRlY2hhcnQvbnlfYWNjaWRlbnRzL2VudGl0eS9BY2NpZGVudDtMAAhkaXN0cmljdHQADkxzY2FsYS9PcHRpb247TAAHd2VhdGhlcnEAfgACeHBzcgApY29tLml0ZWNoYXJ0Lm55X2FjY2lkZW50cy5lbnRpdHkuQWNjaWRlbnS+/fB7Dw2bZQIAE0wAB2Jvcm91Z2hxAH4AAkwAE2NvbnRyaWJ1dGluZ0ZhY3RvcnN0ACFMc2NhbGEvY29sbGVjdGlvbi9pbW11dGFibGUvTGlzdDtMAAtjcm9zc1N0cmVldHEAfgACTAAOY3ljbGlzdEluanVyZWRxAH4AAkwADWN5Y2xpc3RLaWxsZWRxAH4AAkwADmRhdGVUaW1lTWlsbGlzcQB+AAJMAAhsYXRpdHVkZXEAfgACTAANbG9jYWxEYXRlVGltZXEAfgACTAAJbG9uZ2l0dWRlcQB+AAJMAA9tb3RvcmlzdEluanVyZWRxAH4AAkwADm1vdG9yaXN0S2lsbGVkcQB+AAJMAAlvZmZTdHJlZXRxAH4AAkwACG9uU3RyZWV0cQB+AAJMABJwZWRlc3RyaWFuc0luanVyZWRxAH4AAkwAEXBlZGVzdHJpYW5zS2lsbGVkcQB+AAJMAA5wZXJzb25zSW5qdXJlZHEAfgACTAANcGVyc29uc0tpbGxlZHEAfgACTAAJdW5pcXVlS2V5cQB+AAJMAAt2ZWhpY2xlVHlwZXEAfgAFeHBzcgALc2NhbGEuTm9uZSRGUCT2U8qUrAIAAHhyAAxzY2FsYS5PcHRpb27+aTf92w5mdAIAAHhwc3IAMnNjYWxhLmNvbGxlY3Rpb24uaW1tdXRhYmxlLkxpc3QkU2VyaWFsaXphdGlvblByb3h5AAAAAAAAAAEDAAB4cHNyACxzY2FsYS5jb2xsZWN0aW9uLmltbXV0YWJsZS5MaXN0U2VyaWFsaXplRW5kJIpcY1v3UwttAgAAeHB4cQB+AAlxAH4ACXEAfgAJcQB+AAlxAH4ACXEAfgAJcQB+AAlxAH4ACXEAfgAJcQB+AAlxAH4ACXEAfgAJcQB+AAlxAH4ACXEAfgAJc3IACnNjYWxhLlNvbWURIvJpXqGLdAIAAUwABXZhbHVldAASTGphdmEvbGFuZy9PYmplY3Q7eHEAfgAIc3IADmphdmEubGFuZy5Mb25nO4vkkMyPI98CAAFKAAV2YWx1ZXhyABBqYXZhLmxhbmcuTnVtYmVyhqyVHQuU4IsCAAB4cAAAAAAAAAABcQB+AAtxAH4ACXEAfgAJ"
 
       println(SerializationUtils.serialize(testData))
@@ -20,8 +20,8 @@ class SerializationUtilsTest extends FunSpec {
       val testData = "rO0ABXNyACtjb20uaXRlY2hhcnQubnlfYWNjaWRlbnRzLmVudGl0eS5NZXJnZWREYXRheFwKq74VmBUCAANMAAhhY2NpZGVudHQAK0xjb20vaXRlY2hhcnQvbnlfYWNjaWRlbnRzL2VudGl0eS9BY2NpZGVudDtMAAhkaXN0cmljdHQADkxzY2FsYS9PcHRpb247TAAHd2VhdGhlcnEAfgACeHBzcgApY29tLml0ZWNoYXJ0Lm55X2FjY2lkZW50cy5lbnRpdHkuQWNjaWRlbnS+/fB7Dw2bZQIAE0wAB2Jvcm91Z2hxAH4AAkwAE2NvbnRyaWJ1dGluZ0ZhY3RvcnN0ACFMc2NhbGEvY29sbGVjdGlvbi9pbW11dGFibGUvTGlzdDtMAAtjcm9zc1N0cmVldHEAfgACTAAOY3ljbGlzdEluanVyZWRxAH4AAkwADWN5Y2xpc3RLaWxsZWRxAH4AAkwADmRhdGVUaW1lTWlsbGlzcQB+AAJMAAhsYXRpdHVkZXEAfgACTAANbG9jYWxEYXRlVGltZXEAfgACTAAJbG9uZ2l0dWRlcQB+AAJMAA9tb3RvcmlzdEluanVyZWRxAH4AAkwADm1vdG9yaXN0S2lsbGVkcQB+AAJMAAlvZmZTdHJlZXRxAH4AAkwACG9uU3RyZWV0cQB+AAJMABJwZWRlc3RyaWFuc0luanVyZWRxAH4AAkwAEXBlZGVzdHJpYW5zS2lsbGVkcQB+AAJMAA5wZXJzb25zSW5qdXJlZHEAfgACTAANcGVyc29uc0tpbGxlZHEAfgACTAAJdW5pcXVlS2V5cQB+AAJMAAt2ZWhpY2xlVHlwZXEAfgAFeHBzcgALc2NhbGEuTm9uZSRGUCT2U8qUrAIAAHhyAAxzY2FsYS5PcHRpb27+aTf92w5mdAIAAHhwc3IAMnNjYWxhLmNvbGxlY3Rpb24uaW1tdXRhYmxlLkxpc3QkU2VyaWFsaXphdGlvblByb3h5AAAAAAAAAAEDAAB4cHNyACxzY2FsYS5jb2xsZWN0aW9uLmltbXV0YWJsZS5MaXN0U2VyaWFsaXplRW5kJIpcY1v3UwttAgAAeHB4cQB+AAlxAH4ACXEAfgAJcQB+AAlxAH4ACXEAfgAJcQB+AAlxAH4ACXEAfgAJcQB+AAlxAH4ACXEAfgAJcQB+AAlxAH4ACXEAfgAJc3IACnNjYWxhLlNvbWURIvJpXqGLdAIAAUwABXZhbHVldAASTGphdmEvbGFuZy9PYmplY3Q7eHEAfgAIc3IADmphdmEubGFuZy5Mb25nO4vkkMyPI98CAAFKAAV2YWx1ZXhyABBqYXZhLmxhbmcuTnVtYmVyhqyVHQuU4IsCAAB4cAAAAAAAAAABcQB+AAtxAH4ACXEAfgAJ"
       val expectedValue = MergedData(
         Accident(Some(1), None, None, None, None,
-          None, None, None, None, None, None, None,
-          None, None, None, None, None, List(), List()), None, None)
+          None, None, None, None, 0, 0, 0,
+          0, 0, 0, 0, 0, List(), List()), None, None)
       val result = SerializationUtils.deserialize[MergedData](testData)
 
       assert(result == expectedValue)
