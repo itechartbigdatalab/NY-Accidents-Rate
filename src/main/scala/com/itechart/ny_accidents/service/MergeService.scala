@@ -58,12 +58,15 @@ object MergeService {
   }
 
   private def mergedDataMapper(data: MergedDataDataSets): MergedData = {
-    val localDateTime: LocalDateTime = DateUtils.getLocalDateFromMillis(data.accident.dateTimeMillis.get)
+    val localDateTime: Option[LocalDateTime] = data.accident.dateTimeMillis match {
+      case Some(value) => Some(DateUtils.getLocalDateFromMillis(value))
+      case None => None
+    }
     val oldAccident = data.accident
     val oldDistrict = data.district
 
     val accident = Accident(oldAccident.uniqueKey,
-      Option(localDateTime),
+      localDateTime,
       oldAccident.dateTimeMillis,
       oldAccident.borough,
       oldAccident.latitude,
