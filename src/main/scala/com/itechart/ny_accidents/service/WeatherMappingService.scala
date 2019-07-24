@@ -19,9 +19,6 @@ import scala.util.Try
 @Singleton
 class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: WeatherParser) {
 
-
-  var counter = 1
-
   private val allStations: Seq[WeatherStation] =
     Await.result(NYDataDatabase.database.run(weatherDAO.allStations()), Duration.Inf)
   // map under have such structure -> Map[stationId, Map[TimeHash, Seq[WeatherEntity]]]
@@ -55,16 +52,16 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
     .flatMap(stationId => {
       (minDate to maxDate by HASH_DIFFERENCE)
         .map(hash => {
-          ((stationId, hash), findBestWeather(stationId, hash, usePlus = false, 1))
+          ((stationId, hash), findBestWeather(stationId, hash, usePlus = false, 1).orNull)
         })
     }))
 
-  @tailrec private def findBestWeather(stationId: Int, dateHash: Long, usePlus: Boolean, currentDepth: Int): WeatherForAccident = {
+  @tailrec private def findBestWeather(stationId: Int, dateHash: Long, usePlus: Boolean, currentDepth: Int): Option[WeatherForAccident] = {
     if (currentDepth > 5)
-      return null
+      return None
     val weatherOption = weatherMap.get((stationId, dateHash))
     if (weatherOption.isDefined) {
-      weatherOption.get
+      Option(weatherOption.get)
     } else {
       val newDateHash = if (usePlus) dateHash + HASH_DIFFERENCE * currentDepth else dateHash - HASH_DIFFERENCE * currentDepth
       findBestWeather(stationId, newDateHash, usePlus = !usePlus, currentDepth + 1)
