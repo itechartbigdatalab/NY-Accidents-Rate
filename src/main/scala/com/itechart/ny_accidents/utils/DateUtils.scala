@@ -8,13 +8,14 @@ import java.time.{Instant, LocalDate, LocalDateTime, ZoneOffset}
 import com.itechart.ny_accidents.constants.GeneralConstants.{HASH_DIFFERENCE, MILLIS_IN_HOUR, MILLIS_IN_MINUTE}
 import com.itechart.ny_accidents.entity.WeatherForAccident
 import org.apache.spark.sql.Row
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
 
 import scala.util.{Failure, Success, Try}
 
 object DateUtils {
 
-  lazy val logger = LoggerFactory.getLogger(getClass)
+  lazy val logger: Logger = LoggerFactory.getLogger(getClass)
+  val hashMultiplicity = 15
 
   def getLocalDateFromMillis(dateTimeMillis: Long): LocalDateTime = {
     LocalDateTime.ofInstant(Instant.ofEpochMilli(dateTimeMillis), ZoneOffset.UTC)
@@ -52,10 +53,10 @@ object DateUtils {
       .toInstant(ZoneOffset.UTC)
       .toEpochMilli
     val diff = dateTimeMillis - dateTimeWithoutHours
-    if (diff < MILLIS_IN_MINUTE * 7.5) dateTimeWithoutHours
-    else if (diff < MILLIS_IN_MINUTE * 22.5) dateTimeWithoutHours + HASH_DIFFERENCE
-    else if (diff < MILLIS_IN_MINUTE * 37.5) dateTimeWithoutHours + HASH_DIFFERENCE * 2
-    else if (diff < MILLIS_IN_MINUTE * 52.5) dateTimeWithoutHours + HASH_DIFFERENCE * 3
+    if (diff < MILLIS_IN_MINUTE * hashMultiplicity / 2) dateTimeWithoutHours
+    else if (diff < MILLIS_IN_MINUTE * hashMultiplicity / 3) dateTimeWithoutHours + HASH_DIFFERENCE
+    else if (diff < MILLIS_IN_MINUTE * hashMultiplicity / 5) dateTimeWithoutHours + HASH_DIFFERENCE * 2
+    else if (diff < MILLIS_IN_MINUTE * hashMultiplicity / 7) dateTimeWithoutHours + HASH_DIFFERENCE * 3
     else dateTimeWithoutHours + HASH_DIFFERENCE * 4
   }
 

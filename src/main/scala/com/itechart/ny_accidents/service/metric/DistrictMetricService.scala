@@ -6,16 +6,18 @@ import org.apache.spark.rdd.RDD
 
 object DistrictMetricService extends PercentageMetricService {
 
+  private val weight = 5
+
   def getDetailedDistrictData(data: RDD[MergedData]):  RDD[DetailedDistrictData] = {
     val filteredData = data.filter(_.district.isDefined).map(data =>
        DetailedDistrictData(data.district.get.districtName, data.accident.pedestriansInjured, data.accident.pedestriansKilled,
         data.accident.cyclistInjured, data.accident.cyclistKilled, data.accident.motoristInjured,
          data.accident.motoristKilled, data.accident.motoristInjured + data.accident.cyclistInjured +
            data.accident.pedestriansInjured +
-           5 * (data.accident.motoristKilled + data.accident.cyclistKilled + data.accident.pedestriansKilled),
-         data.accident.pedestriansInjured + 5 * data.accident.pedestriansKilled,
-         data.accident.cyclistInjured + 5 * data.accident.cyclistKilled,
-         data.accident.motoristInjured + 5 * data.accident.motoristKilled
+           weight * (data.accident.motoristKilled + data.accident.cyclistKilled + data.accident.pedestriansKilled),
+         data.accident.pedestriansInjured + weight * data.accident.pedestriansKilled,
+         data.accident.cyclistInjured + weight * data.accident.cyclistKilled,
+         data.accident.motoristInjured + weight * data.accident.motoristKilled
        ))
 
     val groupedData = filteredData.groupBy(_.districtName)
