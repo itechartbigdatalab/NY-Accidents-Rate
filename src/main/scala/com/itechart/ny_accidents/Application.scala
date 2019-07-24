@@ -36,7 +36,7 @@ object Application extends App {
   val mergedData = MergeService.mergeData(accidents).cache()
 
 
-  println("Merged data length: " + mergedData.count)
+  logger.info("Merged data length: " + mergedData.count)
 
   val creationDate = org.apache.spark.sql.functions.current_date()
   val reportSeq = Seq(
