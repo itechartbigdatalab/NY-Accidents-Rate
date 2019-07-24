@@ -36,13 +36,14 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: Wea
   private val newSparkWeather: Array[((Int, Long), WeatherForAccident)] = weatherDAO.loadAllWeatherSpark()
     .map(row => ((row.getInt(1), DateUtils.hashByDate(row.getLong(2))), DateUtils.weatherForAccidentMapper(row)))
     .collect()
-    .sortWith((a, b) => {
-      if (a._1._1 < b._1._1) {
+    .sortWith({case (((idFirst,hashDateFirst),weatherFirst), ((idSecond,hashDateSecond),weatherSecond)) => {
+      if (idFirst < idSecond) {
         true
-      } else if (a._1._1 > b._1._1) {
+      } else if (idFirst > idSecond) {
         false
-      } else a._1._2 < b._1._2
-    })
+      } else hashDateFirst < hashDateSecond
+    }})
+
   private val minDate = newSparkWeather(0)._1._2
   private val maxDate = newSparkWeather(newSparkWeather.length - 1)._1._2
 

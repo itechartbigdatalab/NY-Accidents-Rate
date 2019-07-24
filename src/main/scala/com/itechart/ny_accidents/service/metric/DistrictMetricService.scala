@@ -21,7 +21,7 @@ object DistrictMetricService extends PercentageMetricService {
        ))
 
     val groupedData = filteredData.groupBy(_.districtName)
-      .map(detailedDistrictData => (detailedDistrictData._1, detailedDistrictData._2
+      .map({case (districtName, detailedDistrictData) => (districtName, detailedDistrictData
         .reduce((accumulator,next) => DetailedDistrictData(accumulator.districtName,
           accumulator.pedestriansInjured + next.pedestriansInjured,
           accumulator.pedestriansKilled + next.pedestriansKilled,
@@ -32,7 +32,7 @@ object DistrictMetricService extends PercentageMetricService {
           accumulator.total + next.total,
           accumulator.pedestrians + next.pedestrians,
           accumulator.cyclist + next.cyclist,
-          accumulator.motorist + next.motorist))))
+          accumulator.motorist + next.motorist)))})
     groupedData.values
   }
 
