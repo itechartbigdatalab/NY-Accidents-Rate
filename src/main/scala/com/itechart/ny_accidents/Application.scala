@@ -54,6 +54,5 @@ object Application extends App {
   )
 
   reportSeq.foreach(report => FileWriterUtils.writeToCsv(report.apply(mergedData, reports), s"reports/${report.tableName}"))
-  //reportSeq.foreach(report => NYDataDatabase.insertDataFrame(report.tableName, report.apply(mergedData, reports, creationDate)))
 
 }

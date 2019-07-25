@@ -4,7 +4,7 @@ import com.google.inject.Singleton
 import com.itechart.ny_accidents.constants.Injector.injector
 import com.itechart.ny_accidents.database.DistrictsStorage
 import com.itechart.ny_accidents.database.dao.MongoDistrictsDAO
-import com.itechart.ny_accidents.entity.{District, DistrictMongo, DistrictWithGeometry}
+import com.itechart.ny_accidents.entity.{DistrictMongo, DistrictWithGeometry}
 import com.itechart.ny_accidents.utils.{PostgisUtils, StringUtils}
 import com.mongodb.client.model.geojson.Position
 
@@ -18,7 +18,6 @@ class DistrictsService {
   private lazy val districtsStorage = injector.getInstance(classOf[DistrictsStorage])
 
   @Deprecated
-  // Will be deleted, do not use it!
   def getDistrict(latitude: Double, longitude: Double): Future[Option[DistrictMongo]] = {
     val mongoDao = new MongoDistrictsDAO
 
