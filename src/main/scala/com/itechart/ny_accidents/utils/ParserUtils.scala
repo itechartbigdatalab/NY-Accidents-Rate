@@ -22,15 +22,12 @@ object ParserUtils {
 
   def toMillis(row: Row, dateColumn: Int, timeColumn: Int): Option[Long] = {
     val dateTime = row.getString(dateColumn) + " " + row.getString(timeColumn)
-    val value = DateUtils.parseDateToMillis(dateTime, GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER).getOrElse(0L)
-    if (value == 0) None
-    else Some(value)
+    DateUtils.parseDateToMillis(dateTime, GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER).filter(value => value != 0)
   }
 
   def toDouble(accident: Row, column: Int): Option[Double] = {
-    val value: Double = Try(accident.getDouble(column)).toOption.getOrElse(0)
-    if (value == 0) None
-    else Some(value)
+    Try(accident.getDouble(column)).filter(value => value != 0).toOption
+
   }
 
   def toString(accident: Row, column: Int): Option[String] = {
@@ -38,8 +35,7 @@ object ParserUtils {
   }
 
   def toInt(accident: Row, column: Int): Int = {
-    val value = Try(accident.getInt(column)).getOrElse(0)
-    value
+    Try(accident.getInt(column)).getOrElse(0)
   }
 
   def toStringList(row: Row, columns: Array[Int]): List[Option[String]] = {
