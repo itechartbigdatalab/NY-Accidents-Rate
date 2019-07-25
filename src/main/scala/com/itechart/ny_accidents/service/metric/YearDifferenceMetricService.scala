@@ -23,7 +23,6 @@ class YearDifferenceMetricService {
       .map(_.district.get)
       .groupBy(_.districtName)
       .map(tuple => (tuple._1, (tuple._2.size, secondYearValue)))
-    //    val secondYearAccidentCount = DistrictMetricService.getDistrictsPercentage(secondYear).map(t => (t._1, (t._2, secondYearValue))).cache()
 
     val combinedData = firstYearAccidentCount.union(secondYearAccidentCount)
     combinedData.reduceByKey((first, second) => {

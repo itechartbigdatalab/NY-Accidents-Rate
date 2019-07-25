@@ -9,8 +9,8 @@ import org.scalatest.FunSpec
 
 class TimeMetricServiceTest extends FunSpec {
   lazy val emptyAccident = Accident(None, None, None, None, None,
-    None, None, None, None, None, None,
-    None, None, None, None, None, None, List(), List())
+    None, None, None, None, 0, 0,
+    0, 0, 0, 0, 0, 0, List(), List())
 
   describe("A TimeMetricService") {
     it("should return RDD of tuple with number of accidents for each hour") {
@@ -20,10 +20,10 @@ class TimeMetricServiceTest extends FunSpec {
       val fourthDate = DateUtils.parseDate("05/15/2016 17:30", GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
 
       val testData: RDD[MergedData] = TestSparkApi.spark.parallelize(Seq(
-        MergedData(emptyAccident.copy(localDateTime = firstDate), Some(District("a", "A", null)), None),
-        MergedData(emptyAccident.copy(localDateTime = secondDate), Some(District("b", "B", null)), None),
-        MergedData(emptyAccident.copy(localDateTime = thirdDate), Some(District("c", "C", null)), None),
-        MergedData(emptyAccident.copy(localDateTime = fourthDate), Some(District("d", "D", null)), None)
+        MergedData(emptyAccident.copy(localDateTime = firstDate), Some(District("a", "A")), None),
+        MergedData(emptyAccident.copy(localDateTime = secondDate), Some(District("b", "B")), None),
+        MergedData(emptyAccident.copy(localDateTime = thirdDate), Some(District("c", "C")), None),
+        MergedData(emptyAccident.copy(localDateTime = fourthDate), Some(District("d", "D")), None)
       ))
 
       val expectedValue = Seq(
@@ -44,10 +44,10 @@ class TimeMetricServiceTest extends FunSpec {
       val fourthDate = DateUtils.parseDate("08/15/2016 17:30", GeneralConstants.DATE_TIME_ACCIDENTS_FORMATTER)
 
       val testData: RDD[MergedData] = TestSparkApi.spark.parallelize(Seq(
-        MergedData(emptyAccident.copy(localDateTime = firstDate), Some(District("a", "A", null)), None),
-        MergedData(emptyAccident.copy(localDateTime = secondDate), Some(District("b", "B", null)), None),
-        MergedData(emptyAccident.copy(localDateTime = thirdDate), Some(District("c", "C", null)), None),
-        MergedData(emptyAccident.copy(localDateTime = fourthDate), Some(District("d", "D", null)), None)
+        MergedData(emptyAccident.copy(localDateTime = firstDate), Some(District("a", "A")), None),
+        MergedData(emptyAccident.copy(localDateTime = secondDate), Some(District("b", "B")), None),
+        MergedData(emptyAccident.copy(localDateTime = thirdDate), Some(District("c", "C")), None),
+        MergedData(emptyAccident.copy(localDateTime = fourthDate), Some(District("d", "D")), None)
       ))
 
       val expectedValue = Seq(

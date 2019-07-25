@@ -1,13 +1,12 @@
 package com.itechart.ny_accidents.service.metric
 
-import com.google.inject.Guice
-import com.itechart.ny_accidents.GuiceModule
-import com.itechart.ny_accidents.constants.{GeneralConstants, Injector}
+import com.itechart.ny_accidents.constants.GeneralConstants
+import com.itechart.ny_accidents.constants.Injector.injector
 import com.itechart.ny_accidents.entity.{MergedData, WeatherEntity, WeatherForAccident}
 import com.itechart.ny_accidents.service.{DayPeriodService, WeatherMappingService}
-import org.apache.spark.rdd.RDD
-import com.itechart.ny_accidents.constants.Injector.injector
 import com.itechart.ny_accidents.utils.NumberUtils
+import org.apache.spark.rdd.RDD
+
 
 object WeatherMetricService extends PercentageMetricService {
   private lazy val weatherMappingService = injector.getInstance(classOf[WeatherMappingService])
@@ -18,6 +17,7 @@ object WeatherMetricService extends PercentageMetricService {
     val groupedData = filteredData.groupBy(_.phenomenon)
 
     // TODO Need rewrite
+
     calculatePercentage[WeatherForAccident, String](groupedData, length).map(metric => {
       metric._1.isEmpty match {
         case true => ("Clear", metric._2, metric._3)

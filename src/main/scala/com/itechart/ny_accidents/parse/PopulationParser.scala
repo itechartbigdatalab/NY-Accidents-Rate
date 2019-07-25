@@ -46,7 +46,7 @@ class PopulationParser {
     Exception.allCatch.opt {
       val districtName = row(PopulationsHeader.NTA_NAME).toString
       val district = districtsService.getDistrict(districtName.toLowerCase,
-        districtsStorage.districts).get
+        districtsStorage.districtsWithGeometry).get
 
       Population(
         row(PopulationsHeader.YEAR_COL).toString.toInt,

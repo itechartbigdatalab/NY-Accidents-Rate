@@ -10,7 +10,8 @@ import net.ruippeixotog.scalascraper.scraper.ContentExtractors.{attr, elementLis
 
 object DayPeriodService {
 
-  val sunrisesSunsets: Map[LocalDate, Seq[LocalDateTime]] = parseSunrisesSunsets
+
+  private[service] val sunrisesSunsets: Map[LocalDate, Seq[LocalDateTime]] = parseSunrisesSunsets
 
 
   private def parseSunrisesSunsets: Map[LocalDate, Seq[LocalDateTime]] = {

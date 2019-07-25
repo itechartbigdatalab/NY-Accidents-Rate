@@ -1,89 +1,95 @@
 package com.itechart.ny_accidents.service
 
-import com.google.inject.{Inject, Singleton}
+import java.time.LocalDateTime
+
+import com.itechart.ny_accidents.constants.Injector.injector
 import com.itechart.ny_accidents.database.DistrictsStorage
-import com.itechart.ny_accidents.database.dao.cache.MergedDataCacheDAO
-import com.itechart.ny_accidents.entity.{Accident, MergedData, ReportAccident}
+import com.itechart.ny_accidents.entity._
+import com.itechart.ny_accidents.utils.DateUtils
 import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.Dataset
 import org.slf4j.{Logger, LoggerFactory}
 
-import scala.reflect.ClassTag
+object MergeService {
+  private lazy val weatherService = injector.getInstance(classOf[WeatherMappingService])
+  private lazy val districtsService = injector.getInstance(classOf[DistrictsService])
+  private lazy val districtsStorage = injector.getInstance(classOf[DistrictsStorage])
 
-@Singleton
-class MergeService @Inject()(weatherService: WeatherMappingService,
-                             districtsService: DistrictsService,
-                             districtsStorage: DistrictsStorage,
-                             cacheService: MergedDataCacheDAO) {
-  private var counter = 0
   private lazy val logger: Logger = LoggerFactory.getLogger(getClass)
 
+  import com.itechart.ny_accidents.spark.Spark.sparkSql.implicits._
 
-  def mergeAccidentsWithWeatherAndDistricts[A, B](accidents: RDD[A], fun: A => B)(implicit tag: ClassTag[B]): RDD[B] = {
-    accidents.map(fun)
+
+  def mergeData(data: Dataset[AccidentSparkFormat]): RDD[MergedData] = {
+    val accidentWithIds = addIdToAccident(data)
+    val mergedDataDataSets = mergeAccidentsWithWeatherAndDistricts(accidentWithIds)
+
+    mergedDataDataSets.rdd.map(mergedDataMapper)
   }
 
-  def fullMergeMapper(value: Accident): MergedData = {
-    if (counter % 1000 == 0) logger.info("COUNTER: " + counter)
-    counter += 1
+  private def addIdToAccident(data: Dataset[AccidentSparkFormat]):
+  Dataset[((Int, Long), AccidentSparkFormat)] = {
+    data.filter(_.latitude.isDefined)
+      .filter(_.longitude.isDefined)
+      .filter(_.dateTimeMillis.isDefined)
+      .map(accident => {
+        val stationId = weatherService.getNearestStationId(accident.latitude.get, accident.longitude.get)
+        val hash = DateUtils.hashByDate(accident.dateTimeMillis.get)
+        ((stationId, hash), accident)
+      }).as("accident")
+  }
 
-    value.uniqueKey match {
-      case Some(pk) =>
-        cacheService.readMergedDataFromCache(pk) match {
-          case Some(data) => data
-          case None =>
-            println("Not in cache")
-            val data = fullMergeData(value)
-            cacheService.cacheMergedData(data)
-            data
-        }
-      case None => fullMergeData(value)
+  private def mergeAccidentsWithWeatherAndDistricts(accidentsWithIds: Dataset[((Int, Long), AccidentSparkFormat)]):
+  Dataset[MergedDataDataSets] = {
+    val weather = weatherService.weather.as("weather").cache()
+    val districts = districtsStorage.districtsDataSet.map(district => (district.districtName, district))
+
+    val accidentsWithWeather = accidentsWithIds.joinWith(weather, accidentsWithIds("_1") === weather("_1"), "inner")
+      .map { case (accident, weatherForAccident) => (accident._2, weatherForAccident._2) }
+      .map { case (accident, weatherForAccident) =>
+        (districtsService.getDistrictName(accident.latitude.get, accident.longitude.get), accident, weatherForAccident)
+      }.cache()
+
+    accidentsWithWeather.joinWith(districts, accidentsWithWeather("_1") === districts("_1"), "inner")
+      .map { case (accidentAndWeather, district) =>
+        (accidentAndWeather._2, accidentAndWeather._3, district._2)
+      }
+      .map { case (accident, weatherForAccident, district) => MergedDataDataSets(accident, district, weatherForAccident) }
+  }
+
+  private def mergedDataMapper(data: MergedDataDataSets): MergedData = {
+    val localDateTime: Option[LocalDateTime] = data.accident.dateTimeMillis match {
+      case Some(value) => Some(DateUtils.getLocalDateFromMillis(value))
+      case None => None
     }
-  }
+    val oldAccident = data.accident
+    val oldDistrict = data.district
 
-  def withoutWeatherMapper(value: Accident): MergedData = {
-    if (counter % 1000 == 0) logger.info("COUNTER: " + counter)
-    counter += 1
-    value.uniqueKey match {
-      case Some(pk) =>
-        cacheService.readMergedDataFromCache(pk) match {
-          case Some(data) => data
-          case None =>
-            println("Not in cache")
-            val data = mergeWithoutWeather(value)
-            cacheService.cacheMergedData(data)
-            data
-        }
-      case None => mergeWithoutWeather(value)
-    }
-  }
+    val accident = Accident(oldAccident.uniqueKey,
+      localDateTime,
+      oldAccident.dateTimeMillis,
+      oldAccident.borough,
+      oldAccident.latitude,
+      oldAccident.longitude,
+      oldAccident.onStreet,
+      oldAccident.crossStreet,
+      oldAccident.offStreet,
+      oldAccident.personsInjured,
+      oldAccident.personsKilled,
+      oldAccident.pedestriansInjured,
+      oldAccident.pedestriansKilled,
+      oldAccident.cyclistInjured,
+      oldAccident.cyclistKilled,
+      oldAccident.motoristInjured,
+      oldAccident.motoristKilled,
+      oldAccident.contributingFactors,
+      oldAccident.vehicleType
+    )
 
-  private def mergeWithoutWeather(value: Accident): MergedData = {
-    (value.latitude, value.longitude) match {
-      case (Some(latitude), Some(longitude)) =>
-        val district = districtsService.getDistrict(latitude, longitude, districtsStorage.districts)
-        MergedData(value, district, None)
-      case _ => MergedData(value, None, None)
-    }
-  }
+    val district = District(oldDistrict.districtName, oldDistrict.boroughName)
+    val weather = data.weather
 
-  private def fullMergeData(value: Accident): MergedData = {
-    (value.latitude, value.longitude) match {
-      case (Some(latitude), Some(longitude)) =>
-        val district = districtsService.getDistrict(latitude, longitude, districtsStorage.districts)
-        value.dateTimeMillis match {
-          case Some(mills) =>
-            val weather = weatherService.findWeatherByTimeAndCoordinates(mills, latitude, longitude)
-            MergedData(value, district, weather)
-          case _ => MergedData(value, district, None)
-        }
-      case _ => MergedData(value, None, None)
-    }
-  }
-
-  def splitData(accidents: RDD[Accident]): RDD[ReportAccident] = {
-    accidents.map(accident => {
-      ReportAccident(accident.localDateTime, accident.dateTimeMillis, accident.latitude, accident.longitude)
-    })
+    MergedData(accident, Option(district), Option(weather))
   }
 
 }

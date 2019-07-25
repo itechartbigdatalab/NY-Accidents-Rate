@@ -7,7 +7,11 @@ import org.apache.spark.sql.types.StructType
 
 object FileWriterUtils {
   def writeToCsv(data: Seq[Seq[String]], path: String): Unit = {
-    CSVWriter.open(path).writeAll(data)
+    if(!path.endsWith(".csv")) {
+      writeToCsv(data, path + ".csv")
+    } else {
+      CSVWriter.open(path).writeAll(data)
+    }
   }
 
   def createNewCsv(path: String, rows: Array[Row], schema: StructType): Unit = {

@@ -1,5 +1,9 @@
 package com.itechart.ny_accidents.entity
 
+case class MergedDataDataSets(accident: AccidentSparkFormat,
+                              district: District,
+                              weather: WeatherForAccident)
+
 case class MergedData(accident: Accident,
                       district: Option[District],
                       weather: Option[WeatherForAccident])

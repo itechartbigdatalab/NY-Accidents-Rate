@@ -2,6 +2,7 @@ package com.itechart.ny_accidents.service
 
 import com.google.inject.Singleton
 import com.itechart.ny_accidents.entity.{MergedData, Population}
+import com.itechart.ny_accidents.utils.NumberUtils
 import org.apache.spark.rdd.RDD
 import com.itechart.ny_accidents.utils.NumberUtils
 
