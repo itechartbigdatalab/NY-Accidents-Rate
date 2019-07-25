@@ -9,7 +9,7 @@ object DistrictMetricService extends PercentageMetricService {
   private val weight = 5
 
   def getDetailedDistrictData(data: RDD[MergedData]):  RDD[DetailedDistrictData] = {
-    val filteredData = data.filter(_.district.isDefined).map(data =>
+   data.filter(_.district.isDefined).map(data =>
        DetailedDistrictData(data.district.get.districtName, data.accident.pedestriansInjured, data.accident.pedestriansKilled,
         data.accident.cyclistInjured, data.accident.cyclistKilled, data.accident.motoristInjured,
          data.accident.motoristKilled, data.accident.motoristInjured + data.accident.cyclistInjured +
@@ -18,9 +18,7 @@ object DistrictMetricService extends PercentageMetricService {
          data.accident.pedestriansInjured + weight * data.accident.pedestriansKilled,
          data.accident.cyclistInjured + weight * data.accident.cyclistKilled,
          data.accident.motoristInjured + weight * data.accident.motoristKilled
-       ))
-
-    val groupedData = filteredData.groupBy(_.districtName)
+       )).groupBy(_.districtName)
       .map({case (districtName, detailedDistrictData) => (districtName, detailedDistrictData
         .reduce((accumulator,next) => DetailedDistrictData(accumulator.districtName,
           accumulator.pedestriansInjured + next.pedestriansInjured,
@@ -32,8 +30,7 @@ object DistrictMetricService extends PercentageMetricService {
           accumulator.total + next.total,
           accumulator.pedestrians + next.pedestrians,
           accumulator.cyclist + next.cyclist,
-          accumulator.motorist + next.motorist)))})
-    groupedData.values
+          accumulator.motorist + next.motorist)))}).values
   }
 
   def getDistrictsPercentage(data: RDD[MergedData]): RDD[(String, Int, Double)] = {
