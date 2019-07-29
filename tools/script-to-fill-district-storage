@@ -1,0 +1,3 @@
+MY_PG_USER=tiger;
+INPUT_FILE=Neighborhoods_2012b.csv;
+cat ${INPUT_FILE} | psql -U ${MY_PG_USER} -W -c "create table temp_district(geom text not null,borough_name text not null,nta_name text not null,area text not null,len text not null); COPY temp_district FROM STDIN WITH csv DELIMITER ',' HEADER; insert into district(borough_name, nta_name, geom) select nta_name,borough_name,ST_geomfromtext(t.geom, 2163) as geom from temp_district t; drop table temp_district;" ny_data
