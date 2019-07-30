@@ -12,18 +12,10 @@ object WeatherMetricService extends PercentageMetricService {
   private lazy val weatherMappingService = injector.getInstance(classOf[WeatherMappingService])
 
   def getPhenomenonPercentage(data: RDD[MergedData]): RDD[(String, Int, Double)] = {
-    val filteredData = data.filter(_.weather.isDefined).map(_.weather.get)
+    val filteredData = data.filter(_.weather.isDefined).filter(_.weather.get.phenomenon.isDefined).map(_.weather.get)
     val length = filteredData.count()
-    val groupedData = filteredData.groupBy(_.phenomenon)
-
-    // TODO Need rewrite
-
-    calculatePercentage[WeatherForAccident, String](groupedData, length).map(metric => {
-      metric._1.isEmpty match {
-        case true => ("Clear", metric._2, metric._3)
-        case false => metric
-      }
-    })
+    val groupedData = filteredData.groupBy(_.phenomenon.get)
+    calculatePercentage[WeatherForAccident, String](groupedData, length)
   }
 
   val definePeriod: RDD[MergedData] => RDD[(String, Int, Double)] = accidentsWithWeather => {

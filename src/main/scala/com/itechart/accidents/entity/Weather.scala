@@ -14,9 +14,9 @@ case class WeatherEntity(id: Long,
 
 case class WeatherStation(id: Int, name: String, geom: Point)
 
-case class WeatherForAccident(temperature: Double,
-                              pressure: Double,
-                              humidity: Double,
-                              phenomenon: String,
-                              windSpeed: Double,
-                              visibility: Double)
+case class WeatherForAccident(temperature: Option[Double],
+                              pressure: Option[Double],
+                              humidity: Option[Double],
+                              phenomenon: Option[String],
+                              windSpeed: Option[Double],
+                              visibility: Option[Double])

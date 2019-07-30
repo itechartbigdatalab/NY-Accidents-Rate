@@ -37,7 +37,6 @@ object Application extends App {
   logger.info("Raw data read - " + accidents.count())
   val mergedData = NYMergeService.mergeData(accidents).cache()
 
-
   logger.info("Merged data length: " + mergedData.count)
 
   val creationDate = org.apache.spark.sql.functions.current_date()

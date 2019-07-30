@@ -51,22 +51,22 @@ object NYAccidentsParser {
       ParserUtils.toLongFromInt(accident, UNIQUE_NUMBER),
       ParserUtils.toDate(accident, DATE_C),
       ParserUtils.toMillis(accident, DATE_C, TIME_C),
-      ParserUtils.toString(accident, BOROUGH_C),
+      None,
       ParserUtils.toDouble(accident, LATITUDE_C),
       ParserUtils.toDouble(accident, LONGITUDE_C),
       ParserUtils.toString(accident, ON_STREET_NAME_C),
-      ParserUtils.toString(accident, CROSS_STREET_NAME_C),
-      ParserUtils.toString(accident, OFF_STREET_NAME_C),
+      None,
+      None,
       ParserUtils.toInt(accident, PERSONS_INJURED_C),
       ParserUtils.toInt(accident, PERSONS_KILLED_C),
-      ParserUtils.toInt(accident, PEDESTRIANS_INJURED),
-      ParserUtils.toInt(accident, PERSONS_KILLED_C),
-      ParserUtils.toInt(accident, CYCLIST_INJURED),
-      ParserUtils.toInt(accident, CYCLIST_KILLED),
-      ParserUtils.toInt(accident, MOTORIST_INJURED),
-      ParserUtils.toInt(accident, MOTORIST_KILLED),
+      None,
+      None,
+      None,
+      None,
+      None,
+      None,
       ParserUtils.toStringList(accident, CONTRIBUTING_FACTOR_VEHICLE_COLUMNS),
-      ParserUtils.toStringList(accident, VEHICLE_TYPE_CODE_COLUMNS)
+      List(None)
     )
   }
 

@@ -125,12 +125,12 @@ class WeatherMappingService @Inject()(weatherDAO: WeatherDAO, weatherParser: NYW
     val currentWeather = nearestWeather(farWeather, lessWeather, accidentTime)
 
     WeatherForAccident(
-      currentWeather.temperature,
-      currentWeather.pressure,
-      currentWeather.humidity,
-      currentWeather.phenomenon,
-      currentWeather.windSpeed,
-      currentWeather.visibility
+      Some(currentWeather.temperature),
+      Some(currentWeather.pressure),
+        Some(currentWeather.humidity),
+          Some(currentWeather.phenomenon),
+            Some(currentWeather.windSpeed),
+              Some(currentWeather.visibility)
     )
   }
 

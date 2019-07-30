@@ -9,11 +9,11 @@ import org.scalatest.FunSpec
 
 class DistrictMetricServiceTest extends FunSpec {
   lazy val firstAccident = Accident(None, None, None, None, Some(40.869335),
-    Some(-73.8255), None, None, None, 0, 0,
-    0, 0, 1, 0, 1, 0, List(), List())
+    Some(-73.8255), None, None, None, Some(0), Some(0),
+      Some(0), Some(0), Some(1), Some(0), Some(1), Some(0), List(), List())
   lazy val secondAccident = Accident(None, None, None, None,Some(40.869335),
-    Some(-73.8255), None, None, None, 0, 0,
-    1, 0, 1, 2, 4, 0, List(), List())
+    Some(-73.8255), None, None, None, Some(0), Some(0),
+      Some(1), Some(0), Some(1), Some(2), Some(4), Some(0), List(), List())
 
   describe("A DistrictMetricService") {
     it("should return RDD of detailed district data") {

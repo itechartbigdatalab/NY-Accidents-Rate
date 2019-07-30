@@ -9,8 +9,8 @@ import org.scalatest.FunSpec
 
 class TimeMetricServiceTest extends FunSpec {
   lazy val emptyAccident = Accident(None, None, None, None, None,
-    None, None, None, None, 0, 0,
-    0, 0, 0, 0, 0, 0, List(), List())
+    None, None, None, None, Some(0), Some(0),
+    Some(0), Some(0), Some(0), Some(0), Some(0), Some(0), List(), List())
 
   describe("A TimeMetricService") {
     it("should return RDD of tuple with number of accidents for each hour") {

@@ -10,14 +10,14 @@ object DistrictMetricService extends PercentageMetricService {
 
   def getDetailedDistrictData(data: RDD[MergedData]):  RDD[DetailedDistrictData] = {
    data.filter(_.district.isDefined).map(data =>
-       DetailedDistrictData(data.district.get.districtName, data.accident.pedestriansInjured, data.accident.pedestriansKilled,
-        data.accident.cyclistInjured, data.accident.cyclistKilled, data.accident.motoristInjured,
-         data.accident.motoristKilled, data.accident.motoristInjured + data.accident.cyclistInjured +
-           data.accident.pedestriansInjured +
-           weight * (data.accident.motoristKilled + data.accident.cyclistKilled + data.accident.pedestriansKilled),
-         data.accident.pedestriansInjured + weight * data.accident.pedestriansKilled,
-         data.accident.cyclistInjured + weight * data.accident.cyclistKilled,
-         data.accident.motoristInjured + weight * data.accident.motoristKilled
+       DetailedDistrictData(data.district.get.districtName, data.accident.pedestriansInjured.getOrElse(0), data.accident.pedestriansKilled.getOrElse(0),
+        data.accident.cyclistInjured.getOrElse(0), data.accident.cyclistKilled.getOrElse(0), data.accident.motoristInjured.getOrElse(0),
+         data.accident.motoristKilled.getOrElse(0), data.accident.motoristInjured.getOrElse(0) + data.accident.cyclistInjured.getOrElse(0) +
+           data.accident.pedestriansInjured.getOrElse(0) +
+           weight * (data.accident.motoristKilled.getOrElse(0) + data.accident.cyclistKilled.getOrElse(0) + data.accident.pedestriansKilled.getOrElse(0)),
+         data.accident.pedestriansInjured.getOrElse(0) + weight * data.accident.pedestriansKilled.getOrElse(0),
+         data.accident.cyclistInjured.getOrElse(0) + weight * data.accident.cyclistKilled.getOrElse(0),
+         data.accident.motoristInjured.getOrElse(0) + weight * data.accident.motoristKilled.getOrElse(0)
        )).groupBy(_.districtName)
       .map({case (districtName, detailedDistrictData) => (districtName, detailedDistrictData
         .reduce((accumulator,next) => DetailedDistrictData(accumulator.districtName,

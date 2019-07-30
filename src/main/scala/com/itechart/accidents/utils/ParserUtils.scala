@@ -34,8 +34,8 @@ object ParserUtils {
     Option(accident.getString(column))
   }
 
-  def toInt(accident: Row, column: Int): Int = {
-    Try(accident.getInt(column)).getOrElse(0)
+  def toInt(accident: Row, column: Int): Option[Int]= {
+    Try(accident.getInt(column)).toOption
   }
 
   def toStringList(row: Row, columns: Array[Int]): List[Option[String]] = {
